@@ -1,0 +1,706 @@
+{
+  "meta": {
+    "name": "Ghostpost Dojo Targeting Matrix",
+    "version": "1.0",
+    "source": "Dojo Merchant Acceptance Guide - September 2023",
+    "purpose": "Auto-filter Instagram/LinkedIn leads by Dojo eligibility",
+    "updated": "2026-03-06",
+    "rules": {
+      "GREEN": "Supported - target for outreach",
+      "AMBER": "Supported with conditions (***) - target but flag for manual review",
+      "RED": "Prohibited - auto-skip, never DM"
+    }
+  },
+
+  "supported_verticals": [
+    {
+      "category": "Accountants & Auditors",
+      "status": "AMBER",
+      "condition": "Must be registered with ICAEW or ICAS",
+      "verticals": ["Accountancy Firms", "Auditing Firms"],
+      "instagram_search": ["accountant", "bookkeeper", "chartered accountant", "tax advisor"],
+      "linkedin_search": ["Accountant", "Bookkeeper", "Tax Advisor", "Chartered Accountant"],
+      "hashtags": ["#accountant", "#bookkeeper", "#smallbusinessaccountant", "#taxadvisor"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking"]
+    },
+    {
+      "category": "Aesthetics, Health & Beauty Spas and Tattoo",
+      "status": "AMBER",
+      "condition": "Non-surgical only. Practitioners must be qualified and insured. Limited appetite for training courses.",
+      "verticals": ["Aesthetics", "Health & Beauty Spas", "Tanning Salons", "Beauticians", "Massage Parlours", "Tattoo Parlours (not including surgery)"],
+      "instagram_search": ["aesthetics clinic", "beauty salon", "skin clinic", "tanning salon", "beautician", "tattoo studio", "tattoo artist", "massage therapist", "beauty therapist", "lash tech", "nail tech"],
+      "linkedin_search": ["Aesthetics Clinic Owner", "Beauty Salon Owner", "Skin Clinic", "Tattoo Studio Owner"],
+      "hashtags": ["#aesthetics", "#beautysalon", "#skinclinic", "#tattooartist", "#beautician", "#lashtech", "#nailtech", "#tanning"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking", "consultation_forms", "deposits", "client_portal"]
+    },
+    {
+      "category": "Amusement & Recreation Services",
+      "status": "AMBER",
+      "condition": "Prefer F2F ticket sales at fixed premises. No memberships.",
+      "verticals": ["Video Arcades", "Adventure Golf", "Foot Golf", "Theme Parks", "Fun Fairs", "Paintball & Combat Games", "Snooker Clubs", "Ten-Pin Bowling", "Tourist Attractions", "Carnivals", "Circus", "Zoo"],
+      "instagram_search": ["adventure golf", "paintball", "bowling alley", "arcade", "fun fair", "tourist attraction", "escape room"],
+      "linkedin_search": ["Leisure Business Owner", "Adventure Park Manager", "Bowling Alley Owner"],
+      "hashtags": ["#adventuregolf", "#paintball", "#bowlingalley", "#arcade", "#leisurebusiness"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking"]
+    },
+    {
+      "category": "Antique Shops",
+      "status": "AMBER",
+      "condition": "Small same-day takeaway items only. No high value or large items.",
+      "verticals": ["Antique Shops"],
+      "instagram_search": ["antique shop", "vintage shop", "antiques dealer"],
+      "linkedin_search": ["Antique Shop Owner"],
+      "hashtags": ["#antiqueshop", "#vintageshop", "#antiques"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": []
+    },
+    {
+      "category": "Aquariums & Sea Aquariums",
+      "status": "GREEN",
+      "verticals": ["Fish Shops", "Aquariums"],
+      "instagram_search": ["fish shop", "aquarium shop", "tropical fish store"],
+      "linkedin_search": ["Aquarium Shop Owner", "Fish Store Owner"],
+      "hashtags": ["#fishshop", "#aquarium", "#tropicalfish"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": []
+    },
+    {
+      "category": "Art Dealers & Art Galleries",
+      "status": "AMBER",
+      "condition": "Must own stock. Cannot sell on behalf of other artists. No high value items.",
+      "verticals": ["Art Dealer", "Art Gallery", "Art Exhibition"],
+      "instagram_search": ["art gallery", "art dealer", "art exhibition"],
+      "linkedin_search": ["Art Gallery Owner", "Art Dealer"],
+      "hashtags": ["#artgallery", "#artdealer", "#artexhibition"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": []
+    },
+    {
+      "category": "Artists Supply & Craft Shop",
+      "status": "GREEN",
+      "verticals": ["Arts & Crafts", "Arts & Crafts Supplies"],
+      "instagram_search": ["craft shop", "art supplies", "craft supplies store"],
+      "linkedin_search": ["Craft Shop Owner", "Art Supplies Store"],
+      "hashtags": ["#craftshop", "#artsupplies", "#craftsupplies"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": []
+    },
+    {
+      "category": "Automotive, Car Garage, MOT Centre",
+      "status": "AMBER",
+      "condition": "New car/motorbike sales need franchise. Used car sales = larger, reputable businesses only.",
+      "verticals": ["Car Body & Repair Shop", "Mechanics & Car Garage", "Car Servicing & MOT Centres", "Vehicle Specialists", "Vehicle Paint or Spray Shop", "Vehicle Tinting", "Tyre Sales & Repair", "Car Accessories", "New Car Sales", "New Motorbike Sales", "Towing Services", "Car Parts"],
+      "instagram_search": ["car garage", "MOT centre", "mechanic", "tyre shop", "car body shop", "vehicle tinting", "car servicing"],
+      "linkedin_search": ["Garage Owner", "MOT Centre Manager", "Mechanic Business Owner"],
+      "hashtags": ["#cargarage", "#MOT", "#mechanic", "#tyreshop", "#carbodyshop", "#vehicletinting"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking"]
+    },
+    {
+      "category": "Bakeries & Patisserie, Sweet & Specialist Food",
+      "status": "GREEN",
+      "verticals": ["Ice Cream Parlour", "Dessert Parlour", "Cookie Stores", "Doughnut Stores", "Pie Stores", "Cake Stores", "Pasty Shops", "Cheese and Dairy Shop"],
+      "instagram_search": ["bakery", "cake shop", "dessert parlour", "ice cream parlour", "patisserie", "doughnut shop", "pasty shop"],
+      "linkedin_search": ["Bakery Owner", "Patisserie Owner", "Dessert Shop Owner"],
+      "hashtags": ["#bakery", "#cakeshop", "#patisserie", "#dessertshop", "#icecreamparlour"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["ordering", "delivery"]
+    },
+    {
+      "category": "Beer, Wine, Pubs, Bars, Nightclubs & Alcohol Shop",
+      "status": "GREEN",
+      "verticals": ["Pubs", "Ale Houses", "Tap Rooms", "Wine Bar", "Cocktail Bar", "Nightclubs", "Breweries", "Drinking Establishment", "Off Licences"],
+      "instagram_search": ["pub", "wine bar", "cocktail bar", "nightclub", "brewery", "craft beer bar", "ale house", "tap room"],
+      "linkedin_search": ["Pub Owner", "Bar Owner", "Nightclub Owner", "Brewery Owner"],
+      "hashtags": ["#pub", "#winebar", "#cocktailbar", "#nightclub", "#brewery", "#craftbeer"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking", "ordering", "epos"]
+    },
+    {
+      "category": "Bicycle Shops",
+      "status": "GREEN",
+      "verticals": ["Bicycle Shop", "Electric Scooters", "Mountain bikes", "Bike Parts & Repairs"],
+      "instagram_search": ["bike shop", "bicycle shop", "cycle shop", "ebike shop"],
+      "linkedin_search": ["Bike Shop Owner", "Cycle Shop Owner"],
+      "hashtags": ["#bikeshop", "#cycleshop", "#bicycleshop", "#ebike"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking"]
+    },
+    {
+      "category": "Book Stores",
+      "status": "GREEN",
+      "verticals": ["General Book Stores", "Libraries (No Memberships)"],
+      "instagram_search": ["bookshop", "book store", "independent bookshop"],
+      "linkedin_search": ["Bookshop Owner", "Book Store Manager"],
+      "hashtags": ["#bookshop", "#indiebookshop", "#bookstore"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": []
+    },
+    {
+      "category": "Building, Construction & Home Improvements",
+      "status": "AMBER",
+      "condition": "F2F sales mainly. No bathroom/kitchen installations. Gas engineers need Gas Safe registration.",
+      "verticals": ["Building Materials", "Carpenter & Joiner", "Carpet & Flooring Shop", "Plumbers", "Electricians", "Boiler & Gas Engineers", "Curtains & Blinds", "Window Blinds & Shutters", "Tiles", "Quarry"],
+      "instagram_search": ["builder", "plumber", "electrician", "carpenter", "flooring shop", "boiler engineer", "gas engineer"],
+      "linkedin_search": ["Builder", "Plumber", "Electrician", "Carpenter", "Gas Engineer"],
+      "hashtags": ["#builder", "#plumber", "#electrician", "#carpenter", "#gasengineering"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking"]
+    },
+    {
+      "category": "Butchers / Fishmongers",
+      "status": "GREEN",
+      "verticals": ["Butchers", "Fishmongers", "Seafood Market", "Frozen Meats", "Meatmongers"],
+      "instagram_search": ["butcher", "fishmonger", "butcher shop", "seafood market", "meat shop"],
+      "linkedin_search": ["Butcher Shop Owner", "Fishmonger"],
+      "hashtags": ["#butcher", "#fishmonger", "#butchershop", "#localbutcher"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["ordering", "delivery"]
+    },
+    {
+      "category": "Cafe, Restaurant, Takeaway & Fast Food",
+      "status": "GREEN",
+      "verticals": ["Deli", "Cafeteria", "Diners", "Eating Establishment", "Sandwich Shops", "Takeaways"],
+      "instagram_search": ["restaurant", "cafe", "coffee shop", "takeaway", "diner", "deli", "sandwich shop", "bistro", "brasserie", "street food"],
+      "linkedin_search": ["Restaurant Owner", "Cafe Owner", "Takeaway Owner", "Chef Owner"],
+      "hashtags": ["#restaurant", "#cafe", "#coffeeshop", "#takeaway", "#diner", "#streetfood", "#independentrestaurant"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking", "ordering", "delivery", "epos"]
+    },
+    {
+      "category": "Camera & Photography",
+      "status": "AMBER",
+      "condition": "Studios reviewed case-by-case. Must be well established.",
+      "verticals": ["Camera Sales & Supplies", "Photography Studio", "Commercial Photography"],
+      "instagram_search": ["photography studio", "photographer", "camera shop"],
+      "linkedin_search": ["Photography Studio Owner", "Camera Shop Owner"],
+      "hashtags": ["#photographystudio", "#photographer", "#camerashop"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking"]
+    },
+    {
+      "category": "Caterers",
+      "status": "AMBER",
+      "condition": "Credit assessment required. Mobile food vendors OK with F2F.",
+      "verticals": ["Caterers"],
+      "instagram_search": ["caterer", "catering company", "mobile caterer", "food van", "street food vendor"],
+      "linkedin_search": ["Catering Business Owner", "Mobile Caterer"],
+      "hashtags": ["#caterer", "#catering", "#mobilecatering", "#streetfood"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking", "ordering"]
+    },
+    {
+      "category": "Chemist, Pharmacy & Drug Stores",
+      "status": "AMBER",
+      "condition": "F2F only. No CNP. Must be on General Pharmaceutical Council Register.",
+      "verticals": ["Pharmaceuticals & Pharmacies", "Toiletries", "Cosmetics"],
+      "instagram_search": ["pharmacy", "chemist", "cosmetics shop"],
+      "linkedin_search": ["Pharmacy Owner", "Chemist"],
+      "hashtags": ["#pharmacy", "#chemist", "#independentpharmacy"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": []
+    },
+    {
+      "category": "Child Day Care Services",
+      "status": "AMBER",
+      "condition": "Must be registered with local council and Ofsted.",
+      "verticals": ["Creche", "Babysitting", "Child Minders"],
+      "instagram_search": ["nursery", "childminder", "creche", "daycare"],
+      "linkedin_search": ["Nursery Owner", "Childminder", "Day Care Manager"],
+      "hashtags": ["#nursery", "#childminder", "#daycare", "#childcare"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking"]
+    },
+    {
+      "category": "Cinema",
+      "status": "GREEN",
+      "verticals": ["Cinema", "Theatre", "Film"],
+      "instagram_search": ["independent cinema", "theatre", "film screening"],
+      "linkedin_search": ["Cinema Owner", "Theatre Manager"],
+      "hashtags": ["#cinema", "#theatre", "#independentcinema"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking"]
+    },
+    {
+      "category": "Cleaning & Laundry",
+      "status": "GREEN",
+      "verticals": ["Launderette", "Dry Cleaners", "Window Cleaning"],
+      "instagram_search": ["dry cleaners", "launderette", "cleaning company", "window cleaner"],
+      "linkedin_search": ["Cleaning Business Owner", "Dry Cleaner Owner"],
+      "hashtags": ["#drycleaner", "#launderette", "#cleaningcompany"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": []
+    },
+    {
+      "category": "Clothing & Apparel",
+      "status": "AMBER",
+      "condition": "No jewellery, no wedding dresses, no bespoke items.",
+      "verticals": ["Clothing Stores", "Fashion", "Boutique Store", "Vintage & Thrift Stores", "Baby Wear", "Alterations"],
+      "instagram_search": ["boutique", "clothing store", "fashion store", "vintage shop", "thrift store"],
+      "linkedin_search": ["Boutique Owner", "Fashion Store Owner", "Vintage Shop Owner"],
+      "hashtags": ["#boutique", "#fashionstore", "#vintageshop", "#independentfashion"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": []
+    },
+    {
+      "category": "Computer Stores",
+      "status": "GREEN",
+      "verticals": ["Software Shops (F2F)", "Electronics & Computer Repairs", "Laptops & Desktop Sales"],
+      "instagram_search": ["computer shop", "pc repair", "tech store", "computer repair"],
+      "linkedin_search": ["Computer Shop Owner", "IT Repair Business"],
+      "hashtags": ["#computerrepair", "#techstore", "#pcrepair"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking"]
+    },
+    {
+      "category": "Printing & Signage",
+      "status": "GREEN",
+      "verticals": ["Commercial Signage", "Vehicle Wrapping", "Printing", "Photocopying"],
+      "instagram_search": ["print shop", "signage company", "vehicle wrapping", "printing services"],
+      "linkedin_search": ["Print Shop Owner", "Signage Company Owner"],
+      "hashtags": ["#printshop", "#signage", "#vehiclewrap", "#printing"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": []
+    },
+    {
+      "category": "Courier Services",
+      "status": "GREEN",
+      "verticals": ["Delivery Services (UK Only)", "Carriers (UK Only)"],
+      "instagram_search": ["courier service", "delivery service", "same day delivery"],
+      "linkedin_search": ["Courier Business Owner", "Delivery Service"],
+      "hashtags": ["#courier", "#deliveryservice", "#samedaydelivery"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": []
+    },
+    {
+      "category": "Dentist & Orthodontist",
+      "status": "AMBER",
+      "condition": "Must be on General Dental Council Register. Higher appetite for NHS services.",
+      "verticals": ["General Dentistry", "Dental Hygienist", "Teeth Whitening", "Invisalign"],
+      "instagram_search": ["dentist", "dental practice", "teeth whitening", "orthodontist", "dental clinic"],
+      "linkedin_search": ["Dental Practice Owner", "Dentist", "Orthodontist"],
+      "hashtags": ["#dentist", "#dentalpractice", "#teethwhitening", "#orthodontist"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking", "consultation_forms"]
+    },
+    {
+      "category": "Department & Discount Stores",
+      "status": "GREEN",
+      "verticals": ["Homeware", "Kitchenware", "Variety Store", "Discount Shops"],
+      "instagram_search": ["homeware shop", "kitchenware", "discount store", "pound shop"],
+      "linkedin_search": ["Homeware Shop Owner", "Discount Store Owner"],
+      "hashtags": ["#homeware", "#kitchenware", "#discountstore"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": []
+    },
+    {
+      "category": "Electric & Appliance Shop",
+      "status": "GREEN",
+      "verticals": ["Electrical Parts", "Electronics Stores", "Lighting (OTC)"],
+      "instagram_search": ["electronics store", "electrical shop", "lighting shop"],
+      "linkedin_search": ["Electronics Store Owner"],
+      "hashtags": ["#electronicsstore", "#electricalshop"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": []
+    },
+    {
+      "category": "Farming & Farm Supplies",
+      "status": "GREEN",
+      "verticals": ["Agricultural Supplies", "Cattle Feed", "General Farming Stores"],
+      "instagram_search": ["farm shop", "agricultural supplies", "farming store"],
+      "linkedin_search": ["Farm Shop Owner", "Agricultural Supplies"],
+      "hashtags": ["#farmshop", "#agriculture", "#farmingsupplies"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": []
+    },
+    {
+      "category": "Florist Supplies & Garden",
+      "status": "GREEN",
+      "verticals": ["Florists", "Lawn & Garden Supplies", "Garden Centres", "Nursery Stock", "Hydroponic Stores"],
+      "instagram_search": ["florist", "garden centre", "flower shop", "plant shop", "nursery"],
+      "linkedin_search": ["Florist", "Garden Centre Owner", "Plant Shop Owner"],
+      "hashtags": ["#florist", "#gardencentre", "#flowershop", "#plantshop"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["ordering", "delivery"]
+    },
+    {
+      "category": "Footwear",
+      "status": "GREEN",
+      "verticals": ["Shoes", "Boots", "Trainers", "Commercial Footwear"],
+      "instagram_search": ["shoe shop", "trainer store", "footwear shop"],
+      "linkedin_search": ["Shoe Shop Owner", "Footwear Retailer"],
+      "hashtags": ["#shoeshop", "#trainers", "#footwear"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": []
+    },
+    {
+      "category": "Gift, Card, Novelty & Souvenir Shop",
+      "status": "GREEN",
+      "verticals": ["Gifts", "Cards", "Novelty Items", "Souvenir Shops"],
+      "instagram_search": ["gift shop", "card shop", "souvenir shop", "novelty store"],
+      "linkedin_search": ["Gift Shop Owner", "Card Shop Owner"],
+      "hashtags": ["#giftshop", "#cardshop", "#souvenirshop"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": []
+    },
+    {
+      "category": "Golf Courses & Clubs",
+      "status": "AMBER",
+      "condition": "Credit assessment required due to longer lead times.",
+      "verticals": ["Golf Equipment", "Golf Clubs", "Green Fees", "Golf Academy", "Golf Lessons"],
+      "instagram_search": ["golf club", "golf course", "golf pro shop", "golf academy"],
+      "linkedin_search": ["Golf Club Manager", "Golf Course Owner", "Golf Professional"],
+      "hashtags": ["#golfclub", "#golfcourse", "#golfproshop"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking"]
+    },
+    {
+      "category": "Grocery Stores & Supermarkets",
+      "status": "GREEN",
+      "verticals": ["Grocery Stores", "Corner Shop", "Convenience Store", "Newsagent"],
+      "instagram_search": ["corner shop", "convenience store", "newsagent", "grocery store", "local shop"],
+      "linkedin_search": ["Shop Owner", "Convenience Store Owner", "Newsagent"],
+      "hashtags": ["#cornershop", "#conveniencestore", "#newsagent", "#localshop"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["ordering", "delivery"]
+    },
+    {
+      "category": "Hairdresser, Hair Salon & Barber",
+      "status": "GREEN",
+      "verticals": ["Hairdresser", "Hair Salon", "Barbers", "Mobile Hairdressers"],
+      "instagram_search": ["hairdresser", "hair salon", "barber", "barber shop", "hair stylist", "mobile hairdresser"],
+      "linkedin_search": ["Hair Salon Owner", "Barber Shop Owner", "Hairdresser"],
+      "hashtags": ["#hairdresser", "#hairsalon", "#barber", "#barbershop", "#hairstylist"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking", "client_portal"]
+    },
+    {
+      "category": "Hardware & DIY Shop",
+      "status": "GREEN",
+      "verticals": ["Decorating Shops", "Glassware", "Home Supply", "Ironmongers", "Paint Shop"],
+      "instagram_search": ["DIY shop", "hardware store", "ironmonger", "paint shop", "decorating shop"],
+      "linkedin_search": ["Hardware Store Owner", "DIY Shop Owner"],
+      "hashtags": ["#diyshop", "#hardwarestore", "#ironmonger"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": []
+    },
+    {
+      "category": "Medical Services & Health Practitioners",
+      "status": "AMBER",
+      "condition": "Must be registered on Health & Care Professions Council register.",
+      "verticals": ["Physiotherapists", "Chiropodist", "Chiropractor", "Optometrists", "Osteopaths", "Dermatologists", "Opticians", "Baby Scan Clinics"],
+      "instagram_search": ["physiotherapist", "physio clinic", "chiropractor", "osteopath", "optician", "dermatologist", "chiropodist"],
+      "linkedin_search": ["Physiotherapy Practice Owner", "Chiropractor", "Osteopath", "Optician"],
+      "hashtags": ["#physio", "#physiotherapy", "#chiropractor", "#osteopath", "#optician"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking", "consultation_forms"]
+    },
+    {
+      "category": "Hotels, Motels & Resorts",
+      "status": "AMBER",
+      "condition": "Well established, financially healthy. No large chains. Credit assessment required.",
+      "verticals": ["Guest Houses", "B&Bs", "Self Catering", "Bed & Breakfasts"],
+      "instagram_search": ["guest house", "B&B", "bed and breakfast", "boutique hotel", "self catering"],
+      "linkedin_search": ["Hotel Owner", "B&B Owner", "Guest House Owner"],
+      "hashtags": ["#guesthouse", "#bedandbreakfast", "#boutiquehotel", "#BnB"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking"]
+    },
+    {
+      "category": "Key Cutter & Shoe Repair",
+      "status": "GREEN",
+      "verticals": ["Keycutters", "Shoe Repairers", "Locksmiths"],
+      "instagram_search": ["locksmith", "key cutter", "shoe repair", "cobbler"],
+      "linkedin_search": ["Locksmith", "Shoe Repair Business"],
+      "hashtags": ["#locksmith", "#shoerepair", "#keycutter"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": []
+    },
+    {
+      "category": "Mobile Phone & Telecom",
+      "status": "GREEN",
+      "verticals": ["Phone Repairs", "Phone Accessories", "Phones & Handsets", "iPads & Tablets"],
+      "instagram_search": ["phone repair", "phone shop", "mobile phone repair", "phone accessories"],
+      "linkedin_search": ["Phone Repair Shop Owner", "Mobile Phone Store Owner"],
+      "hashtags": ["#phonerepair", "#phoneshop", "#mobilerepair"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking"]
+    },
+    {
+      "category": "Musical Instruments",
+      "status": "GREEN",
+      "verticals": ["Music Stores", "Instrument & Music Accessories"],
+      "instagram_search": ["music shop", "instrument store", "guitar shop", "record shop"],
+      "linkedin_search": ["Music Shop Owner", "Instrument Store Owner"],
+      "hashtags": ["#musicshop", "#guitarshop", "#recordshop"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": []
+    },
+    {
+      "category": "Pest Control",
+      "status": "GREEN",
+      "verticals": ["Pest Control", "Disinfecting", "Exterminating"],
+      "instagram_search": ["pest control", "exterminator"],
+      "linkedin_search": ["Pest Control Business Owner"],
+      "hashtags": ["#pestcontrol", "#exterminator"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking"]
+    },
+    {
+      "category": "Pet Shops",
+      "status": "GREEN",
+      "verticals": ["Pet Shops (no exotics)", "Horse & Equine Shop", "Equestrian Services"],
+      "instagram_search": ["pet shop", "pet store", "equestrian shop", "horse supplies"],
+      "linkedin_search": ["Pet Shop Owner", "Equestrian Business"],
+      "hashtags": ["#petshop", "#petstore", "#equestrian"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking"]
+    },
+    {
+      "category": "Petrol Station",
+      "status": "GREEN",
+      "verticals": ["Petrol Station", "Service Station"],
+      "instagram_search": ["petrol station", "service station"],
+      "linkedin_search": ["Petrol Station Owner"],
+      "hashtags": ["#petrolstation"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": []
+    },
+    {
+      "category": "Sports Clubs",
+      "status": "AMBER",
+      "condition": "F&D sales, hospitality, merchandise & on-the-door tickets ONLY. No season tickets.",
+      "verticals": ["Football Clubs", "Rugby Clubs"],
+      "instagram_search": ["football club", "rugby club", "grassroots football"],
+      "linkedin_search": ["Football Club Manager", "Rugby Club Manager"],
+      "hashtags": ["#footballclub", "#rugbyclub", "#grassrootsfootball"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking"]
+    },
+    {
+      "category": "Stationery & Office Supplies",
+      "status": "GREEN",
+      "verticals": ["Stationery", "Office Supplies B2C"],
+      "instagram_search": ["stationery shop", "office supplies"],
+      "linkedin_search": ["Stationery Shop Owner"],
+      "hashtags": ["#stationeryshop", "#officesupplies"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": []
+    },
+    {
+      "category": "Tobacco / Vape Stores",
+      "status": "AMBER",
+      "condition": "F2F ONLY. No CNP. No CBD or drug paraphernalia. MCC 5993.",
+      "verticals": ["E-Cigarettes & E-Liquids", "Vape", "Tobacco & Cigar"],
+      "instagram_search": ["vape shop", "tobacco shop", "e-cigarette store"],
+      "linkedin_search": ["Vape Shop Owner"],
+      "hashtags": ["#vapeshop", "#tobacconist", "#vapestore"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": []
+    },
+    {
+      "category": "Transportation Services",
+      "status": "AMBER",
+      "condition": "Need personal or operator licence. Higher fraud risk vertical.",
+      "verticals": ["Taxi Services", "Black Cabs", "Airport Shuttles", "Chauffeurs"],
+      "instagram_search": ["taxi service", "private hire", "chauffeur", "airport transfer"],
+      "linkedin_search": ["Taxi Company Owner", "Private Hire Operator", "Chauffeur Service"],
+      "hashtags": ["#taxi", "#privatehire", "#chauffeur", "#airporttransfer"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking"]
+    },
+    {
+      "category": "Tree Surgeons & Landscaping",
+      "status": "GREEN",
+      "verticals": ["Tree Surgeons", "Landscape Gardening"],
+      "instagram_search": ["tree surgeon", "arborist", "landscape gardener", "landscaping"],
+      "linkedin_search": ["Tree Surgery Business Owner", "Landscaper"],
+      "hashtags": ["#treesurgeon", "#arborist", "#landscaping"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking"]
+    },
+    {
+      "category": "Vets & Veterinary Services",
+      "status": "GREEN",
+      "verticals": ["Vets", "Veterinary Services"],
+      "instagram_search": ["vet", "veterinary practice", "animal clinic", "vet surgery"],
+      "linkedin_search": ["Veterinary Practice Owner", "Vet"],
+      "hashtags": ["#vet", "#veterinary", "#animalclinic"],
+      "dojo_hook": "card_processing",
+      "reeveos_upsell": ["booking"]
+    }
+  ],
+
+  "prohibited_verticals": [
+    {
+      "category": "Adult Entertainment",
+      "reason": "Prohibited by Dojo",
+      "keywords_to_skip": ["adult entertainment", "strip club", "gentlemen's club", "adult shop", "sex shop"]
+    },
+    {
+      "category": "Airlines & Airports",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["airline", "airport", "air freight"]
+    },
+    {
+      "category": "Banking & Financial Services",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["financial advisor", "insurance broker", "mortgage broker", "forex", "cryptocurrency", "money transfer", "payday lender", "credit union"]
+    },
+    {
+      "category": "Bridal Shop",
+      "reason": "Wedding-related sales prohibited",
+      "keywords_to_skip": ["bridal shop", "wedding dress", "bridal boutique"]
+    },
+    {
+      "category": "Car & Vehicle Hire",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["car hire", "car rental", "van hire", "van rental"]
+    },
+    {
+      "category": "Car Dealerships (Used)",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["used car dealer", "second hand cars", "used car sales"]
+    },
+    {
+      "category": "Charities & Non-Profits",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["charity", "non-profit", "fundraising", "crowdfunding", "church", "mosque", "temple"]
+    },
+    {
+      "category": "Construction (Installations)",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["scaffolding", "bathroom installation", "kitchen installation"]
+    },
+    {
+      "category": "Counselling Services",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["life coach", "therapist", "counsellor", "psychologist", "psychiatrist"]
+    },
+    {
+      "category": "Driving Instructors",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["driving instructor", "driving school", "driving lessons"]
+    },
+    {
+      "category": "Drugs & Pharmaceutical",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["CBD", "cannabis", "marijuana", "hemp shop", "bong"]
+    },
+    {
+      "category": "Equipment Rental",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["equipment hire", "plant hire", "tool hire"]
+    },
+    {
+      "category": "Furniture",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["furniture shop", "sofa store", "bed shop", "mattress store"]
+    },
+    {
+      "category": "Gaming & Gambling",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["bookmaker", "betting shop", "casino", "bingo hall"]
+    },
+    {
+      "category": "Gyms & Fitness",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["gym", "fitness club", "health club", "personal trainer", "yoga studio", "pilates", "boxing gym", "crossfit", "bootcamp"]
+    },
+    {
+      "category": "Home Improvements (Installations)",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["architect", "bathroom fitter", "kitchen fitter", "hot tub", "swimming pool", "solar panel", "double glazing", "roofing", "driveway", "patio", "fencing"]
+    },
+    {
+      "category": "Jewellers",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["jeweller", "jewellery shop", "gold dealer", "diamond dealer", "pawn broker", "watch dealer"]
+    },
+    {
+      "category": "Legal Services",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["solicitor", "law firm", "attorney", "legal services", "conveyancing", "immigration advisor"]
+    },
+    {
+      "category": "Medical Services (Invasive)",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["cosmetic surgery", "hair transplant", "plastic surgery"]
+    },
+    {
+      "category": "Property & Estate Agents",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["estate agent", "letting agent", "property rental", "mortgage advisor", "landlord"]
+    },
+    {
+      "category": "Recruitment",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["recruiter", "recruitment agency", "headhunter", "staffing agency"]
+    },
+    {
+      "category": "Schools & Education",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["school", "college", "university", "training course", "online course", "language school"]
+    },
+    {
+      "category": "Subscription Services",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["subscription box", "subscription service", "membership"]
+    },
+    {
+      "category": "Travel Services",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["travel agent", "holiday company", "tour operator", "cruise"]
+    },
+    {
+      "category": "Weddings",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["wedding venue", "wedding planner", "wedding hire", "wedding reception"]
+    },
+    {
+      "category": "Website Design & SEO",
+      "reason": "Prohibited",
+      "keywords_to_skip": ["web designer", "SEO agency", "web hosting", "digital agency"]
+    }
+  ],
+
+  "outreach_tiers": {
+    "description": "Layered targeting strategy - lead with Dojo cards (widest net), then layer on ReeveOS products",
+    "tier_1_dojo_cards": {
+      "hook": "Save on card processing fees - 0.3% debit, 0.7% credit",
+      "targets": "ALL supported verticals",
+      "message_template": "dojo_card_intro",
+      "priority": "HIGH"
+    },
+    "tier_2_booking": {
+      "hook": "Free booking system that protects against no-shows",
+      "targets": ["Restaurants", "Cafes", "Hair Salons", "Barbers", "Aesthetics", "Dentists", "Physio", "Vets", "Golf", "Hotels", "B&Bs", "Photographers"],
+      "message_template": "booking_intro",
+      "priority": "HIGH"
+    },
+    "tier_3_booking_plus_cards": {
+      "hook": "Booking + card processing bundle - save money and fill tables",
+      "targets": ["Restaurants", "Cafes", "Hair Salons", "Aesthetics", "Barbers"],
+      "message_template": "bundle_intro",
+      "priority": "MEDIUM"
+    },
+    "tier_4_full_stack": {
+      "hook": "EPOS + Booking + Cards + Online Ordering - one platform for everything",
+      "targets": ["Restaurants", "Takeaways", "Pubs", "Cafes"],
+      "message_template": "full_stack_intro",
+      "priority": "FUTURE"
+    }
+  },
+
+  "geographic_targeting": {
+    "phase_1": ["Nottingham", "Sheffield", "Cardiff", "Barry"],
+    "phase_2": ["Birmingham", "Manchester", "Leeds", "Bristol", "Leicester"],
+    "phase_3": "UK-wide",
+    "search_format": "{vertical} in {city}",
+    "instagram_format": "#{city}{vertical}",
+    "linkedin_format": "{vertical} Owner near {city}"
+  }
+}
