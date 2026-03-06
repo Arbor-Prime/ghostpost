@@ -1,0 +1,2 @@
+Analyse this transcript of someone speaking naturally. Extract a structured voice profile as JSON.
+Respond with ONLY valid JSON, no markdown, no explanation.

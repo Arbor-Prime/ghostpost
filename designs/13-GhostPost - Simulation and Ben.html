@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GhostPost - Simulation and Benchmarks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.plot.ly/plotly-3.1.1.min.js"></script>
+    <script>
+        window.FontAwesomeConfig = { autoReplaceSvg: 'nest' };
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#131316',
+                        card: '#1c1d23',
+                        border: '#2a2b32',
+                        primary: '#ffffff',
+                        secondary: '#9ca3af',
+                        accent: '#3b82f6',
+                        accentHover: '#2563eb',
+                        purple: '#8b5cf6',
+                        success: '#22c55e',
+                        danger: '#ef4444',
+                        warning: '#eab308',
+                    },
+                    fontFamily: {
+                        sans: ['DM Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    backgroundImage: {
+                        'gradient-ghost': 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+                        'gradient-card': 'linear-gradient(180deg, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0) 100%)',
+                        'gradient-score': 'conic-gradient(#22c55e 94%, #2a2b32 0)',
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(59, 130, 246, 0.15)',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        body {
+            background-color: #131316;
+            color: #ffffff;
+            font-family: 'DM Sans', sans-serif;
+            overflow: hidden;
+        }
+        .ghost-icon-bg {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #131316; }
+        ::-webkit-scrollbar-thumb { background: #2a2b32; border-radius: 3px; }
+        
+        .heatmap-grid {
+            display: grid;
+            grid-template-columns: repeat(30, 1fr);
+            grid-template-rows: repeat(24, 1fr);
+            gap: 2px;
+            height: 100%;
+        }
+        
+        .score-ring {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(#22c55e 94%, #2a2b32 0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .score-ring::before {
+            content: "";
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #1c1d23;
+        }
+
+        .bar-container {
+            width: 100%;
+            height: 6px;
+            background: #2a2b32;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .bar-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="h-screen w-full flex overflow-hidden bg-background text-white selection:bg-accent selection:text-white">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-[260px] h-full border-r border-border bg-background flex flex-col z-30 shrink-0">
+        <!-- Logo Area -->
+        <div class="px-6 py-6 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full ghost-icon-bg flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.4)]">
+                    <i class="fa-solid fa-ghost text-white text-xs"></i>
+                </div>
+                <span class="text-lg font-bold tracking-tight">GhostPost</span>
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="px-6 mb-6">
+            <div class="bg-card border border-border rounded-lg px-3 py-2 flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-success animate-pulse"></div>
+                <span class="text-xs font-medium text-secondary">System Active</span>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-3 space-y-1 overflow-y-auto">
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-table-columns w-5 group-hover:text-white transition-colors"></i>
+                Dashboard
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-regular fa-compass w-5 group-hover:text-white transition-colors"></i>
+                Browser View
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-check-to-slot w-5 group-hover:text-white transition-colors"></i>
+                    Approvals
+                </div>
+                <span class="bg-card border border-border text-secondary text-[10px] font-bold px-1.5 py-0.5 rounded-md min-w-[20px] text-center group-hover:text-white transition-colors">3</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-users-viewfinder w-5 group-hover:text-white transition-colors"></i>
+                Tracked Profiles
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-masks-theater w-5 group-hover:text-white transition-colors"></i>
+                Personas
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-wand-magic-sparkles w-5 group-hover:text-white transition-colors"></i>
+                AI Composition
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-accent/10 text-accent font-medium transition-colors group">
+                <i class="fa-solid fa-flask w-5"></i>
+                Simulation
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-gear w-5 group-hover:text-white transition-colors"></i>
+                Settings
+            </a>
+        </nav>
+
+        <!-- User Profile -->
+        <div class="p-4 border-t border-border mt-auto">
+            <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-card transition-colors cursor-pointer">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" alt="User" class="w-8 h-8 rounded-full object-cover border border-border">
+                <div class="flex flex-col">
+                    <span class="text-sm font-medium text-white">Alex Founder</span>
+                    <span class="text-xs text-secondary">@alex_builds</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main id="main-simulation" class="flex-1 flex flex-col h-full relative overflow-hidden bg-background">
+        
+        <!-- Header -->
+        <header class="h-16 border-b border-border flex items-center justify-between px-8 bg-background z-20 shrink-0">
+            <div>
+                <h1 class="text-xl font-bold text-white">Simulation & Benchmarks</h1>
+                <p class="text-xs text-secondary mt-0.5">Validating authenticity against human behavior patterns</p>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                 <div class="bg-card border border-border rounded-lg px-4 py-1.5 flex items-center gap-3">
+                    <span class="text-xs text-secondary uppercase font-bold tracking-wider">Last Run</span>
+                    <span class="text-sm font-mono font-bold text-white">Just now</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Scroll Area -->
+        <div class="flex-1 overflow-y-auto p-8 pb-24 custom-scrollbar">
+            <div class="max-w-[1200px] mx-auto space-y-6">
+
+                <!-- Top Section: Authenticity Score & Heatmap -->
+                <div class="grid grid-cols-12 gap-6">
+                    
+                    <!-- Authenticity Score Card -->
+                    <div class="col-span-4 bg-card border border-border rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-10">
+                            <i class="fa-solid fa-fingerprint text-8xl text-white"></i>
+                        </div>
+                        
+                        <div>
+                            <h2 class="text-lg font-bold text-white mb-1">Authenticity Score</h2>
+                            <p class="text-xs text-secondary">Likelihood of passing as human</p>
+                        </div>
+
+                        <div class="flex items-center gap-8 my-4">
+                            <div class="score-ring shadow-[0_0_20px_rgba(34,197,94,0.2)]">
+                                <div class="relative z-10 text-center">
+                                    <span class="text-3xl font-mono font-bold text-white block">94</span>
+                                    <span class="text-[10px] text-secondary uppercase tracking-wider">/100</span>
+                                </div>
+                            </div>
+                            <div class="space-y-3 flex-1">
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span class="text-secondary">Temporal</span>
+                                        <span class="font-mono text-white">96/100</span>
+                                    </div>
+                                    <div class="bar-container"><div class="bar-fill bg-success w-[96%]"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span class="text-secondary">Content</span>
+                                        <span class="font-mono text-white">88/100</span>
+                                    </div>
+                                    <div class="bar-container"><div class="bar-fill bg-success w-[88%]"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span class="text-secondary">Network</span>
+                                        <span class="font-mono text-white">91/100</span>
+                                    </div>
+                                    <div class="bar-container"><div class="bar-fill bg-success w-[91%]"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <span class="px-2 py-1 bg-success/10 border border-success/20 rounded text-[10px] font-bold text-success flex items-center gap-1"><i class="fa-solid fa-check"></i> Browser Fingerprint</span>
+                            <span class="px-2 py-1 bg-success/10 border border-success/20 rounded text-[10px] font-bold text-success flex items-center gap-1"><i class="fa-solid fa-check"></i> IP Reputation</span>
+                            <span class="px-2 py-1 bg-success/10 border border-success/20 rounded text-[10px] font-bold text-success flex items-center gap-1"><i class="fa-solid fa-check"></i> Mouse Movement</span>
+                            <span class="px-2 py-1 bg-success/10 border border-success/20 rounded text-[10px] font-bold text-success flex items-center gap-1"><i class="fa-solid fa-check"></i> Typing cadence</span>
+                        </div>
+                    </div>
+
+                    <!-- 30-Day Activity Heatmap -->
+                    <div class="col-span-8 bg-card border border-border rounded-2xl p-6 flex flex-col">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h2 class="text-lg font-bold text-white">30-Day Activity Simulation</h2>
+                                <p class="text-xs text-secondary">Projected engagement patterns</p>
+                            </div>
+                            <div class="bg-background border border-border rounded-lg p-1 flex text-xs">
+                                <button class="px-3 py-1 bg-card rounded shadow text-white font-medium">Your Simulation</button>
+                                <button class="px-3 py-1 text-secondary hover:text-white transition-colors">Real Human Avg</button>
+                            </div>
+                        </div>
+
+                        <div class="flex-1 relative">
+                            <!-- Heatmap Grid -->
+                            <div class="heatmap-grid" id="heatmap-container">
+                                <!-- Generated via JS below for pattern accuracy -->
+                            </div>
+                            
+                            <!-- Labels -->
+                            <div class="absolute -left-6 top-0 bottom-0 flex flex-col justify-between text-[8px] text-secondary font-mono py-1">
+                                <span>00:00</span>
+                                <span>06:00</span>
+                                <span>12:00</span>
+                                <span>18:00</span>
+                                <span>23:59</span>
+                            </div>
+                            <div class="absolute -bottom-5 left-0 right-0 flex justify-between text-[8px] text-secondary font-mono px-1">
+                                <span>Day 1</span>
+                                <span>Day 15</span>
+                                <span>Day 30</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-4 mt-6 text-[10px] text-secondary">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-[#131316] border border-border rounded-sm"></div> No Activity
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-accent/30 rounded-sm"></div> Low
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-accent/60 rounded-sm"></div> Medium
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-accent rounded-sm"></div> High
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Benchmarks Grid -->
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-sm font-bold text-secondary uppercase tracking-wider">Behavioral Benchmarks</h3>
+                        <div class="flex gap-1">
+                             <div class="h-1.5 w-1.5 rounded-full bg-success"></div>
+                             <div class="h-1.5 w-1.5 rounded-full bg-success"></div>
+                             <div class="h-1.5 w-1.5 rounded-full bg-success"></div>
+                             <div class="h-1.5 w-1.5 rounded-full bg-success"></div>
+                             <div class="h-1.5 w-1.5 rounded-full bg-success"></div>
+                             <div class="h-1.5 w-1.5 rounded-full bg-success"></div>
+                             <div class="h-1.5 w-1.5 rounded-full bg-success"></div>
+                             <div class="h-1.5 w-1.5 rounded-full bg-success"></div>
+                             <div class="h-1.5 w-1.5 rounded-full bg-success"></div>
+                             <div class="h-1.5 w-1.5 rounded-full bg-success"></div>
+                             <div class="h-1.5 w-1.5 rounded-full bg-success"></div>
+                             <div class="h-1.5 w-1.5 rounded-full bg-warning animate-pulse"></div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-4">
+                        <!-- Card 1 -->
+                        <div class="bg-card border border-border rounded-xl p-4 hover:border-border/80 transition-colors">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-xs text-secondary font-medium">Daily Active Time</span>
+                                <span class="bg-success/10 text-success text-[10px] font-bold px-1.5 py-0.5 rounded border border-success/20">PASS</span>
+                            </div>
+                            <div class="flex items-baseline gap-2 mb-1">
+                                <span class="text-xl font-mono font-bold text-white">11.4m</span>
+                                <span class="text-xs text-secondary">vs 11m avg</span>
+                            </div>
+                            <div class="bar-container bg-background"><div class="bar-fill bg-success w-[95%]"></div></div>
+                            <div class="mt-2 text-[9px] text-secondary opacity-60 truncate">Source: Pew Research 2023 Social Media Usage</div>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div class="bg-card border border-border rounded-xl p-4 hover:border-border/80 transition-colors">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-xs text-secondary font-medium">Session Duration</span>
+                                <span class="bg-success/10 text-success text-[10px] font-bold px-1.5 py-0.5 rounded border border-success/20">PASS</span>
+                            </div>
+                            <div class="flex items-baseline gap-2 mb-1">
+                                <span class="text-xl font-mono font-bold text-white">2m 18s</span>
+                                <span class="text-xs text-secondary">vs 2m 11s</span>
+                            </div>
+                            <div class="bar-container bg-background"><div class="bar-fill bg-success w-[92%]"></div></div>
+                            <div class="mt-2 text-[9px] text-secondary opacity-60 truncate">Source: Internal User Data v4.2</div>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="bg-card border border-border rounded-xl p-4 hover:border-border/80 transition-colors">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-xs text-secondary font-medium">Sessions/Day</span>
+                                <span class="bg-success/10 text-success text-[10px] font-bold px-1.5 py-0.5 rounded border border-success/20">PASS</span>
+                            </div>
+                            <div class="flex items-baseline gap-2 mb-1">
+                                <span class="text-xl font-mono font-bold text-white">6.2</span>
+                                <span class="text-xs text-secondary">vs 5-8 range</span>
+                            </div>
+                            <div class="bar-container bg-background"><div class="bar-fill bg-success w-[70%]"></div></div>
+                            <div class="mt-2 text-[9px] text-secondary opacity-60 truncate">Source: Sprout Social Index 2024</div>
+                        </div>
+
+                         <!-- Card 4: WARNING -->
+                         <div class="bg-card border border-warning/30 rounded-xl p-4 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-warning/5 pointer-events-none"></div>
+                            <div class="flex justify-between items-start mb-2 relative z-10">
+                                <span class="text-xs text-warning font-bold">Reply Length</span>
+                                <span class="bg-warning/10 text-warning text-[10px] font-bold px-1.5 py-0.5 rounded border border-warning/20">WARNING</span>
+                            </div>
+                            <div class="flex items-baseline gap-2 mb-1 relative z-10">
+                                <span class="text-xl font-mono font-bold text-white">34 words</span>
+                                <span class="text-xs text-secondary">vs 18-28</span>
+                            </div>
+                            <div class="bar-container bg-background relative z-10"><div class="bar-fill bg-warning w-[100%]"></div></div>
+                            <button class="mt-3 w-full py-1 bg-warning/10 hover:bg-warning/20 text-warning border border-warning/30 rounded text-[10px] font-bold transition-colors relative z-10">
+                                Auto-adjust
+                            </button>
+                        </div>
+
+                        <!-- Card 5 -->
+                        <div class="bg-card border border-border rounded-xl p-4 hover:border-border/80 transition-colors">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-xs text-secondary font-medium">Scroll-Only Ratio</span>
+                                <span class="bg-success/10 text-success text-[10px] font-bold px-1.5 py-0.5 rounded border border-success/20">PASS</span>
+                            </div>
+                            <div class="flex items-baseline gap-2 mb-1">
+                                <span class="text-xl font-mono font-bold text-white">77%</span>
+                                <span class="text-xs text-secondary">vs 70-85%</span>
+                            </div>
+                            <div class="bar-container bg-background"><div class="bar-fill bg-success w-[77%]"></div></div>
+                             <div class="mt-2 text-[9px] text-secondary opacity-60 truncate">Source: Behavioral Analysis Engine</div>
+                        </div>
+
+                        <!-- Card 6 -->
+                        <div class="bg-card border border-border rounded-xl p-4 hover:border-border/80 transition-colors">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-xs text-secondary font-medium">Inter-Action Timing</span>
+                                <span class="bg-success/10 text-success text-[10px] font-bold px-1.5 py-0.5 rounded border border-success/20">PASS</span>
+                            </div>
+                            <div class="flex items-baseline gap-2 mb-1">
+                                <span class="text-xl font-mono font-bold text-white">Gaussian</span>
+                                <span class="text-xs text-secondary">σ=2.4s</span>
+                            </div>
+                            <div class="bar-container bg-background"><div class="bar-fill bg-success w-[98%]"></div></div>
+                            <div class="mt-2 text-[9px] text-secondary opacity-60 truncate">Source: Human Latency Study</div>
+                        </div>
+
+                        <!-- Card 7 -->
+                        <div class="bg-card border border-border rounded-xl p-4 hover:border-border/80 transition-colors">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-xs text-secondary font-medium">Peak Times</span>
+                                <span class="bg-success/10 text-success text-[10px] font-bold px-1.5 py-0.5 rounded border border-success/20">PASS</span>
+                            </div>
+                            <div class="flex items-baseline gap-2 mb-1">
+                                <span class="text-xl font-mono font-bold text-white">Tue-Thu</span>
+                                <span class="text-xs text-secondary">Aligned</span>
+                            </div>
+                            <div class="bar-container bg-background"><div class="bar-fill bg-success w-[100%]"></div></div>
+                            <div class="mt-2 text-[9px] text-secondary opacity-60 truncate">Source: Industry Standard</div>
+                        </div>
+
+                        <!-- Card 8 -->
+                        <div class="bg-card border border-border rounded-xl p-4 hover:border-border/80 transition-colors">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-xs text-secondary font-medium">Weekend Reduction</span>
+                                <span class="bg-success/10 text-success text-[10px] font-bold px-1.5 py-0.5 rounded border border-success/20">PASS</span>
+                            </div>
+                            <div class="flex items-baseline gap-2 mb-1">
+                                <span class="text-xl font-mono font-bold text-white">42% drop</span>
+                                <span class="text-xs text-secondary">vs 35-50%</span>
+                            </div>
+                            <div class="bar-container bg-background"><div class="bar-fill bg-success w-[42%]"></div></div>
+                            <div class="mt-2 text-[9px] text-secondary opacity-60 truncate">Source: User Profile Analysis</div>
+                        </div>
+                        
+                         <!-- Card 9 -->
+                         <div class="bg-card border border-border rounded-xl p-4 hover:border-border/80 transition-colors">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-xs text-secondary font-medium">Dark Days</span>
+                                <span class="bg-success/10 text-success text-[10px] font-bold px-1.5 py-0.5 rounded border border-success/20">PASS</span>
+                            </div>
+                            <div class="flex items-baseline gap-2 mb-1">
+                                <span class="text-xl font-mono font-bold text-white">2 days</span>
+                                <span class="text-xs text-secondary">/30 days</span>
+                            </div>
+                            <div class="bar-container bg-background"><div class="bar-fill bg-success w-[100%]"></div></div>
+                            <div class="mt-2 text-[9px] text-secondary opacity-60 truncate">Source: Digital Detox Patterns</div>
+                        </div>
+
+                         <!-- Card 10 -->
+                         <div class="bg-card border border-border rounded-xl p-4 hover:border-border/80 transition-colors">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-xs text-secondary font-medium">Circadian Tone</span>
+                                <span class="bg-success/10 text-success text-[10px] font-bold px-1.5 py-0.5 rounded border border-success/20">PASS</span>
+                            </div>
+                            <div class="flex items-baseline gap-2 mb-1">
+                                <span class="text-xl font-mono font-bold text-white">Matched</span>
+                                <span class="text-xs text-secondary">Energy cycle</span>
+                            </div>
+                            <div class="bar-container bg-background"><div class="bar-fill bg-success w-[90%]"></div></div>
+                            <div class="mt-2 text-[9px] text-secondary opacity-60 truncate">Source: Voice Profile v1.0</div>
+                        </div>
+
+                         <!-- Card 11 -->
+                         <div class="bg-card border border-border rounded-xl p-4 hover:border-border/80 transition-colors">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-xs text-secondary font-medium">Weekly Variance</span>
+                                <span class="bg-success/10 text-success text-[10px] font-bold px-1.5 py-0.5 rounded border border-success/20">PASS</span>
+                            </div>
+                            <div class="flex items-baseline gap-2 mb-1">
+                                <span class="text-xl font-mono font-bold text-white">0.73</span>
+                                <span class="text-xs text-secondary">Randomness</span>
+                            </div>
+                            <div class="bar-container bg-background"><div class="bar-fill bg-success w-[73%]"></div></div>
+                            <div class="mt-2 text-[9px] text-secondary opacity-60 truncate">Source: Stochastic Model</div>
+                        </div>
+                        
+                        <!-- Card 12 -->
+                        <div class="bg-card border border-border rounded-xl p-4 hover:border-border/80 transition-colors">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-xs text-secondary font-medium">Action Comp.</span>
+                                <span class="bg-success/10 text-success text-[10px] font-bold px-1.5 py-0.5 rounded border border-success/20">PASS</span>
+                            </div>
+                            <div class="flex items-baseline gap-2 mb-1">
+                                <span class="text-xl font-mono font-bold text-white">Balanced</span>
+                                <span class="text-xs text-secondary">L/R/Q/P ratio</span>
+                            </div>
+                            <div class="bar-container bg-background"><div class="bar-fill bg-success w-[85%]"></div></div>
+                            <div class="mt-2 text-[9px] text-secondary opacity-60 truncate">Source: Platform Avg</div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Bottom Action Bar (Specific to this screen) -->
+        <div class="absolute bottom-[40px] left-0 w-full bg-card/95 backdrop-blur-md border-t border-border p-4 z-40">
+            <div class="max-w-[1200px] mx-auto flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                     <button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-secondary hover:text-white hover:bg-background transition-colors text-sm font-medium">
+                        <i class="fa-solid fa-file-export"></i>
+                        Export Report
+                    </button>
+                    <button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-secondary hover:text-white hover:bg-background transition-colors text-sm font-medium">
+                        <i class="fa-solid fa-rotate"></i>
+                        Re-run Simulation
+                    </button>
+                    <button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-secondary hover:text-white hover:bg-background transition-colors text-sm font-medium">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        Auto-tune Personas
+                    </button>
+                </div>
+                
+                <button class="flex items-center gap-2 px-8 py-2.5 rounded-lg bg-success hover:bg-green-600 text-white shadow-[0_0_20px_rgba(34,197,94,0.3)] transition-all text-sm font-bold">
+                    <i class="fa-solid fa-rocket"></i>
+                    Go Live
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Nav Bar -->
+    <footer id="footer" class="fixed bottom-0 left-0 w-full h-[40px] border-t border-border bg-background flex items-center justify-between px-6 z-50">
+        <div class="flex gap-2 ml-[260px]"> <!-- Offset for sidebar -->
+            <!-- Pagination Dots -->
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div> 
+            <div class="w-2 h-2 rounded-full bg-border"></div> 
+            <div class="w-2 h-2 rounded-full bg-white"></div> <!-- Active: Screen 13 -->
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+        </div>
+        
+        <div class="text-xs font-mono text-secondary">
+            Screen 13 of 14: Simulation and Benchmarks
+        </div>
+
+        <div class="flex gap-4">
+            <button class="text-xs text-secondary hover:text-white transition-colors flex items-center gap-1">
+                <i class="fa-solid fa-chevron-left text-[10px]"></i> Previous
+            </button>
+            <button class="text-xs text-secondary hover:text-white transition-colors flex items-center gap-1">
+                Next <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        // Heatmap Generation Script
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('heatmap-container');
+            const totalCells = 30 * 24; // 30 columns (days) * 24 rows (hours)
+            
+            for (let i = 0; i < totalCells; i++) {
+                const cell = document.createElement('div');
+                const col = i % 30; // Day index (0-29)
+                const row = Math.floor(i / 30); // Hour index (0-23)
+                
+                let intensity = 'transparent';
+                
+                // Logic to mimic human patterns
+                
+                // Sleep band (2AM - 6AM) - mostly dark
+                if (row >= 2 && row <= 5) {
+                    if (Math.random() > 0.95) intensity = 'bg-accent/10'; // Occasional sleeplessness
+                } 
+                // Morning ramp up (7AM - 9AM)
+                else if (row >= 6 && row <= 8) {
+                    if (Math.random() > 0.4) intensity = 'bg-accent/30';
+                }
+                // Work day (9AM - 5PM) - Sporadic
+                else if (row >= 9 && row <= 17) {
+                    const rand = Math.random();
+                    if (rand > 0.7) intensity = 'bg-accent/60';
+                    else if (rand > 0.4) intensity = 'bg-accent/30';
+                    else intensity = 'bg-accent/10';
+                }
+                // Evening clusters (7PM - 10PM) - High activity
+                else if (row >= 19 && row <= 22) {
+                     const rand = Math.random();
+                    if (rand > 0.3) intensity = 'bg-accent'; // High
+                    else intensity = 'bg-accent/60';
+                }
+                // Late night wind down
+                else {
+                    if (Math.random() > 0.6) intensity = 'bg-accent/20';
+                }
+
+                // Weekend reduction (Every 7th day roughly)
+                if ((col + 1) % 7 === 0 || (col + 1) % 6 === 0) {
+                     if (Math.random() > 0.5) intensity = 'transparent'; // Reduce activity
+                }
+
+                // Two fully dark days
+                if (col === 12 || col === 25) {
+                    intensity = 'transparent';
+                }
+                
+                cell.className = `w-full h-full rounded-[1px] ${intensity}`;
+                container.appendChild(cell);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GhostPost - Tracked Profiles</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        window.FontAwesomeConfig = { autoReplaceSvg: 'nest' };
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#131316',
+                        card: '#1c1d23',
+                        border: '#2a2b32',
+                        primary: '#ffffff',
+                        secondary: '#9ca3af',
+                        accent: '#3b82f6',
+                        accentHover: '#2563eb',
+                        purple: '#8b5cf6',
+                        success: '#22c55e',
+                        danger: '#ef4444',
+                        warning: '#eab308',
+                        xBlack: '#000000',
+                    },
+                    fontFamily: {
+                        sans: ['DM Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    backgroundImage: {
+                        'gradient-ghost': 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(59, 130, 246, 0.15)',
+                    },
+                    animation: {
+                        'spin-slow': 'spin 3s linear infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        body {
+            background-color: #131316;
+            color: #ffffff;
+            font-family: 'DM Sans', sans-serif;
+            overflow: hidden;
+        }
+        .ghost-icon-bg {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #131316; }
+        ::-webkit-scrollbar-thumb { background: #2a2b32; border-radius: 3px; }
+        
+        .scanning-border {
+            position: relative;
+            overflow: hidden;
+            border-color: #3b82f6;
+        }
+        .scanning-border::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+            animation: scan-line 2s linear infinite;
+        }
+        @keyframes scan-line {
+            0% { transform: translateY(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(300px); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="h-screen w-full flex overflow-hidden bg-background text-white selection:bg-accent selection:text-white">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-[260px] h-full border-r border-border bg-background flex flex-col z-30 shrink-0">
+        <!-- Logo Area -->
+        <div class="px-6 py-6 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full ghost-icon-bg flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.4)]">
+                    <i class="fa-solid fa-ghost text-white text-xs"></i>
+                </div>
+                <span class="text-lg font-bold tracking-tight">GhostPost</span>
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="px-6 mb-6">
+            <div class="bg-card border border-border rounded-lg px-3 py-2 flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-success animate-pulse"></div>
+                <span class="text-xs font-medium text-secondary">System Active</span>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-3 space-y-1 overflow-y-auto">
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-table-columns w-5 group-hover:text-white transition-colors"></i>
+                Dashboard
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-regular fa-compass w-5 group-hover:text-white transition-colors"></i>
+                Browser View
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-check-to-slot w-5 group-hover:text-white transition-colors"></i>
+                    Approvals
+                </div>
+                <span class="bg-card border border-border text-secondary text-[10px] font-bold px-1.5 py-0.5 rounded-md min-w-[20px] text-center group-hover:text-white transition-colors">3</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-accent/10 text-accent font-medium transition-colors group">
+                <i class="fa-solid fa-users-viewfinder w-5"></i>
+                Tracked Profiles
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-masks-theater w-5 group-hover:text-white transition-colors"></i>
+                Personas
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-wand-magic-sparkles w-5 group-hover:text-white transition-colors"></i>
+                AI Composition
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-flask w-5 group-hover:text-white transition-colors"></i>
+                Simulation
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-gear w-5 group-hover:text-white transition-colors"></i>
+                Settings
+            </a>
+        </nav>
+
+        <!-- User Profile -->
+        <div class="p-4 border-t border-border mt-auto">
+            <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-card transition-colors cursor-pointer">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" alt="User" class="w-8 h-8 rounded-full object-cover border border-border">
+                <div class="flex flex-col">
+                    <span class="text-sm font-medium text-white">Alex Founder</span>
+                    <span class="text-xs text-secondary">@alex_builds</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main id="main-tracked-profiles" class="flex-1 flex flex-col h-full relative overflow-hidden bg-background">
+        
+        <!-- Header -->
+        <header class="h-16 border-b border-border flex items-center justify-between px-8 bg-background z-20 shrink-0">
+            <div>
+                <h1 class="text-xl font-bold text-white">Tracked Profiles</h1>
+                <p class="text-xs text-secondary mt-0.5">Monitoring 24 accounts for engagement opportunities</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-sm"></i>
+                    <input type="text" placeholder="Search handles or topics..." class="bg-card border border-border rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder-secondary/50 focus:outline-none focus:border-accent w-64 transition-colors">
+                </div>
+                <button class="bg-accent hover:bg-accentHover text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 shadow-glow">
+                    <i class="fa-solid fa-plus"></i> Add Profile
+                </button>
+            </div>
+        </header>
+
+        <!-- Profiles Grid -->
+        <div class="flex-1 overflow-y-auto p-8">
+            <div class="grid grid-cols-3 gap-6 pb-20 max-w-7xl mx-auto">
+
+                <!-- Card 1: Scanning State -->
+                <div class="bg-card border scanning-border rounded-2xl p-5 flex flex-col gap-4 relative shadow-[0_0_30px_rgba(59,130,246,0.1)]">
+                    <div class="absolute top-3 right-3 flex items-center gap-2 bg-accent/10 border border-accent/20 px-2 py-1 rounded text-[10px] font-bold text-accent">
+                        <i class="fa-solid fa-circle-notch fa-spin"></i> SCANNING
+                    </div>
+                    
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-full border-2 border-accent p-0.5">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-6.jpg" class="w-full h-full rounded-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-lg">Sarah Drasner</h3>
+                            <div class="text-sm text-secondary">@sarah_edo</div>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="w-2 h-2 rounded-full bg-success"></span>
+                                <span class="text-xs text-secondary">High Relevance Match</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 py-2">
+                        <div class="bg-background rounded-lg p-3 border border-border">
+                            <div class="text-xs text-secondary mb-1">Posts/Mo</div>
+                            <div class="text-lg font-mono font-bold text-white">42</div>
+                        </div>
+                        <div class="bg-background rounded-lg p-3 border border-border">
+                            <div class="text-xs text-secondary mb-1">Avg Likes</div>
+                            <div class="text-lg font-mono font-bold text-white">1.2k</div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">Engineering</span>
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">Leadership</span>
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">Vue.js</span>
+                    </div>
+
+                    <button class="w-full mt-auto py-2 rounded-lg border border-accent/30 text-accent bg-accent/5 text-sm font-medium cursor-not-allowed opacity-80">
+                        Processing...
+                    </button>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-card border border-border rounded-2xl p-5 flex flex-col gap-4 hover:border-border/80 transition-colors group">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-full border border-border p-0.5 group-hover:border-secondary/50 transition-colors">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" class="w-full h-full rounded-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-lg">Pieter Levels</h3>
+                            <div class="text-sm text-secondary">@levelsio</div>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="w-2 h-2 rounded-full bg-border"></span>
+                                <span class="text-xs text-secondary">Last scan: 2h ago</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 py-2">
+                        <div class="bg-background rounded-lg p-3 border border-border">
+                            <div class="text-xs text-secondary mb-1">Posts/Mo</div>
+                            <div class="text-lg font-mono font-bold text-white">186</div>
+                        </div>
+                        <div class="bg-background rounded-lg p-3 border border-border">
+                            <div class="text-xs text-secondary mb-1">Avg Likes</div>
+                            <div class="text-lg font-mono font-bold text-white">3.4k</div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">SaaS</span>
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">Indie Hacking</span>
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">Nomad</span>
+                    </div>
+
+                    <button class="w-full mt-auto py-2 rounded-lg border border-border text-white hover:bg-white/5 text-sm font-medium transition-colors">
+                        Scan Profile
+                    </button>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-card border border-border rounded-2xl p-5 flex flex-col gap-4 hover:border-border/80 transition-colors group">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-full border border-border p-0.5 group-hover:border-secondary/50 transition-colors">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-4.jpg" class="w-full h-full rounded-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-lg">Guillermo Rauch</h3>
+                            <div class="text-sm text-secondary">@rauchg</div>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="w-2 h-2 rounded-full bg-border"></span>
+                                <span class="text-xs text-secondary">Last scan: 5h ago</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 py-2">
+                        <div class="bg-background rounded-lg p-3 border border-border">
+                            <div class="text-xs text-secondary mb-1">Posts/Mo</div>
+                            <div class="text-lg font-mono font-bold text-white">28</div>
+                        </div>
+                        <div class="bg-background rounded-lg p-3 border border-border">
+                            <div class="text-xs text-secondary mb-1">Avg Likes</div>
+                            <div class="text-lg font-mono font-bold text-white">890</div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">Vercel</span>
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">React</span>
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">Web</span>
+                    </div>
+
+                    <button class="w-full mt-auto py-2 rounded-lg border border-border text-white hover:bg-white/5 text-sm font-medium transition-colors">
+                        Scan Profile
+                    </button>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="bg-card border border-border rounded-2xl p-5 flex flex-col gap-4 hover:border-border/80 transition-colors group">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-full border border-border p-0.5 group-hover:border-secondary/50 transition-colors">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg" class="w-full h-full rounded-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-lg">Lenny Rachitsky</h3>
+                            <div class="text-sm text-secondary">@lennysan</div>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="w-2 h-2 rounded-full bg-border"></span>
+                                <span class="text-xs text-secondary">Last scan: 1d ago</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 py-2">
+                        <div class="bg-background rounded-lg p-3 border border-border">
+                            <div class="text-xs text-secondary mb-1">Posts/Mo</div>
+                            <div class="text-lg font-mono font-bold text-white">65</div>
+                        </div>
+                        <div class="bg-background rounded-lg p-3 border border-border">
+                            <div class="text-xs text-secondary mb-1">Avg Likes</div>
+                            <div class="text-lg font-mono font-bold text-white">2.1k</div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">Product</span>
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">Growth</span>
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">Strategy</span>
+                    </div>
+
+                    <button class="w-full mt-auto py-2 rounded-lg border border-border text-white hover:bg-white/5 text-sm font-medium transition-colors">
+                        Scan Profile
+                    </button>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="bg-card border border-border rounded-2xl p-5 flex flex-col gap-4 hover:border-border/80 transition-colors group">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-full border border-border p-0.5 group-hover:border-secondary/50 transition-colors">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg" class="w-full h-full rounded-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-lg">Sahil Lavingia</h3>
+                            <div class="text-sm text-secondary">@shl</div>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="w-2 h-2 rounded-full bg-border"></span>
+                                <span class="text-xs text-secondary">Last scan: 3h ago</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 py-2">
+                        <div class="bg-background rounded-lg p-3 border border-border">
+                            <div class="text-xs text-secondary mb-1">Posts/Mo</div>
+                            <div class="text-lg font-mono font-bold text-white">92</div>
+                        </div>
+                        <div class="bg-background rounded-lg p-3 border border-border">
+                            <div class="text-xs text-secondary mb-1">Avg Likes</div>
+                            <div class="text-lg font-mono font-bold text-white">1.8k</div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">Design</span>
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">Writing</span>
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">Gumroad</span>
+                    </div>
+
+                    <button class="w-full mt-auto py-2 rounded-lg border border-border text-white hover:bg-white/5 text-sm font-medium transition-colors">
+                        Scan Profile
+                    </button>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="bg-card border border-border rounded-2xl p-5 flex flex-col gap-4 hover:border-border/80 transition-colors group">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-full border border-border p-0.5 group-hover:border-secondary/50 transition-colors">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-8.jpg" class="w-full h-full rounded-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-lg">Paul Graham</h3>
+                            <div class="text-sm text-secondary">@paulg</div>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="w-2 h-2 rounded-full bg-border"></span>
+                                <span class="text-xs text-secondary">Last scan: 12h ago</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 py-2">
+                        <div class="bg-background rounded-lg p-3 border border-border">
+                            <div class="text-xs text-secondary mb-1">Posts/Mo</div>
+                            <div class="text-lg font-mono font-bold text-white">15</div>
+                        </div>
+                        <div class="bg-background rounded-lg p-3 border border-border">
+                            <div class="text-xs text-secondary mb-1">Avg Likes</div>
+                            <div class="text-lg font-mono font-bold text-white">5.6k</div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">Startups</span>
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">YC</span>
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">Essays</span>
+                    </div>
+
+                    <button class="w-full mt-auto py-2 rounded-lg border border-border text-white hover:bg-white/5 text-sm font-medium transition-colors">
+                        Scan Profile
+                    </button>
+                </div>
+                
+                 <!-- Card 7 -->
+                <div class="bg-card border border-border rounded-2xl p-5 flex flex-col gap-4 hover:border-border/80 transition-colors group">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-full border border-border p-0.5 group-hover:border-secondary/50 transition-colors">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-7.jpg" class="w-full h-full rounded-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-lg">Steph Smith</h3>
+                            <div class="text-sm text-secondary">@stephsmithio</div>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="w-2 h-2 rounded-full bg-border"></span>
+                                <span class="text-xs text-secondary">Last scan: 45m ago</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 py-2">
+                        <div class="bg-background rounded-lg p-3 border border-border">
+                            <div class="text-xs text-secondary mb-1">Posts/Mo</div>
+                            <div class="text-lg font-mono font-bold text-white">54</div>
+                        </div>
+                        <div class="bg-background rounded-lg p-3 border border-border">
+                            <div class="text-xs text-secondary mb-1">Avg Likes</div>
+                            <div class="text-lg font-mono font-bold text-white">450</div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">Content</span>
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">Trends</span>
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">Podcasting</span>
+                    </div>
+
+                    <button class="w-full mt-auto py-2 rounded-lg border border-border text-white hover:bg-white/5 text-sm font-medium transition-colors">
+                        Scan Profile
+                    </button>
+                </div>
+
+                <!-- Card 8 -->
+                <div class="bg-card border border-border rounded-2xl p-5 flex flex-col gap-4 hover:border-border/80 transition-colors group">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-full border border-border p-0.5 group-hover:border-secondary/50 transition-colors">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-9.jpg" class="w-full h-full rounded-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-lg">Greg Isenberg</h3>
+                            <div class="text-sm text-secondary">@gregisenberg</div>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="w-2 h-2 rounded-full bg-border"></span>
+                                <span class="text-xs text-secondary">Last scan: 6h ago</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 py-2">
+                        <div class="bg-background rounded-lg p-3 border border-border">
+                            <div class="text-xs text-secondary mb-1">Posts/Mo</div>
+                            <div class="text-lg font-mono font-bold text-white">78</div>
+                        </div>
+                        <div class="bg-background rounded-lg p-3 border border-border">
+                            <div class="text-xs text-secondary mb-1">Avg Likes</div>
+                            <div class="text-lg font-mono font-bold text-white">920</div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">Communities</span>
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">Design</span>
+                        <span class="px-2 py-1 rounded bg-border/50 text-[10px] text-secondary font-mono uppercase tracking-wide border border-border">Agency</span>
+                    </div>
+
+                    <button class="w-full mt-auto py-2 rounded-lg border border-border text-white hover:bg-white/5 text-sm font-medium transition-colors">
+                        Scan Profile
+                    </button>
+                </div>
+
+                <!-- Card 9 -->
+                <div class="bg-card border border-border rounded-2xl p-5 flex flex-col gap-4 hover:border-border/80 transition-colors group border-dashed opacity-60 hover:opacity-100 hover:border-solid cursor-pointer flex items-center justify-center min-h-[300px]">
+                    <div class="flex flex-col items-center gap-3">
+                        <div class="w-16 h-16 rounded-full bg-background border border-border flex items-center justify-center group-hover:bg-accent/10 group-hover:border-accent/30 transition-colors">
+                            <i class="fa-solid fa-plus text-secondary group-hover:text-accent text-xl"></i>
+                        </div>
+                        <span class="text-secondary font-medium group-hover:text-white transition-colors">Add New Profile</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Nav Bar -->
+    <footer id="footer" class="fixed bottom-0 left-0 w-full h-[40px] border-t border-border bg-background flex items-center justify-between px-6 z-50">
+        <div class="flex gap-2 ml-[260px]"> <!-- Offset for sidebar -->
+            <!-- Pagination Dots -->
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-white"></div> <!-- Active: Screen 10 -->
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+        </div>
+        
+        <div class="text-xs font-mono text-secondary">
+            Screen 10 of 14: Tracked Profiles
+        </div>
+
+        <div class="flex gap-4">
+            <button class="text-xs text-secondary hover:text-white transition-colors flex items-center gap-1">
+                <i class="fa-solid fa-chevron-left text-[10px]"></i> Previous
+            </button>
+            <button class="text-xs text-secondary hover:text-white transition-colors flex items-center gap-1">
+                Next <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            </button>
+        </div>
+    </footer>
+
+</body>
+</html>

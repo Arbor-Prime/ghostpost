@@ -1,0 +1,1 @@
+Score this tweet as a reply opportunity. Respond as JSON only with: score (0-100), reasoning, suggested_angle, tone, max_length, skip_reason.

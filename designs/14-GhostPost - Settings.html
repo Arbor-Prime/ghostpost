@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GhostPost - Settings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.plot.ly/plotly-3.1.1.min.js"></script>
+    <script>
+        window.FontAwesomeConfig = { autoReplaceSvg: 'nest' };
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#131316',
+                        card: '#1c1d23',
+                        border: '#2a2b32',
+                        primary: '#ffffff',
+                        secondary: '#9ca3af',
+                        accent: '#3b82f6',
+                        accentHover: '#2563eb',
+                        purple: '#8b5cf6',
+                        success: '#22c55e',
+                        danger: '#ef4444',
+                        warning: '#eab308',
+                    },
+                    fontFamily: {
+                        sans: ['DM Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    backgroundImage: {
+                        'gradient-ghost': 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+                        'gradient-card': 'linear-gradient(180deg, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0) 100%)',
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(59, 130, 246, 0.15)',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        body {
+            background-color: #131316;
+            color: #ffffff;
+            font-family: 'DM Sans', sans-serif;
+            overflow: hidden;
+        }
+        .ghost-icon-bg {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #131316; }
+        ::-webkit-scrollbar-thumb { background: #2a2b32; border-radius: 3px; }
+        
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #3b82f6;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #3b82f6;
+        }
+        .nav-item-active {
+            background-color: #1c1d23;
+            border-left: 2px solid #3b82f6;
+            color: #ffffff;
+        }
+        .nav-item-inactive {
+            border-left: 2px solid transparent;
+            color: #9ca3af;
+        }
+        .nav-item-inactive:hover {
+            background-color: #1c1d23;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body class="h-screen w-full flex overflow-hidden bg-background text-white selection:bg-accent selection:text-white">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-[260px] h-full border-r border-border bg-background flex flex-col z-30 shrink-0">
+        <!-- Logo Area -->
+        <div class="px-6 py-6 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full ghost-icon-bg flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.4)]">
+                    <i class="fa-solid fa-ghost text-white text-xs"></i>
+                </div>
+                <span class="text-lg font-bold tracking-tight">GhostPost</span>
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="px-6 mb-6">
+            <div class="bg-card border border-border rounded-lg px-3 py-2 flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-success animate-pulse"></div>
+                <span class="text-xs font-medium text-secondary">System Active</span>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-3 space-y-1 overflow-y-auto">
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-table-columns w-5 group-hover:text-white transition-colors"></i>
+                Dashboard
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-regular fa-compass w-5 group-hover:text-white transition-colors"></i>
+                Browser View
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-check-to-slot w-5 group-hover:text-white transition-colors"></i>
+                    Approvals
+                </div>
+                <span class="bg-card border border-border text-secondary text-[10px] font-bold px-1.5 py-0.5 rounded-md min-w-[20px] text-center group-hover:text-white transition-colors">3</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-users-viewfinder w-5 group-hover:text-white transition-colors"></i>
+                Tracked Profiles
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-masks-theater w-5 group-hover:text-white transition-colors"></i>
+                Personas
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-wand-magic-sparkles w-5 group-hover:text-white transition-colors"></i>
+                AI Composition
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-flask w-5 group-hover:text-white transition-colors"></i>
+                Simulation
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-accent/10 text-accent font-medium transition-colors group">
+                <i class="fa-solid fa-gear w-5"></i>
+                Settings
+            </a>
+        </nav>
+
+        <!-- User Profile -->
+        <div class="p-4 border-t border-border mt-auto">
+            <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-card transition-colors cursor-pointer">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" alt="User" class="w-8 h-8 rounded-full object-cover border border-border">
+                <div class="flex flex-col">
+                    <span class="text-sm font-medium text-white">Alex Founder</span>
+                    <span class="text-xs text-secondary">@alex_builds</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main id="main-settings" class="flex-1 flex flex-col h-full relative overflow-hidden bg-background">
+        
+        <!-- Header -->
+        <header class="h-16 border-b border-border flex items-center justify-between px-8 bg-background z-20 shrink-0">
+            <div>
+                <h1 class="text-xl font-bold text-white">Settings</h1>
+                <p class="text-xs text-secondary mt-0.5">Manage your account, preferences, and system configuration</p>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                 <button class="px-4 py-2 text-xs font-medium text-secondary hover:text-white transition-colors">
+                    Documentation
+                 </button>
+                 <button class="px-4 py-2 bg-card border border-border rounded-lg text-xs font-medium text-white hover:bg-border transition-colors">
+                    Sign Out
+                 </button>
+            </div>
+        </header>
+
+        <!-- Settings Content Grid -->
+        <div class="flex-1 overflow-hidden flex">
+            
+            <!-- Left Pane: Category Navigation -->
+            <div class="w-64 border-r border-border bg-background/50 flex flex-col py-6 overflow-y-auto custom-scrollbar">
+                <div class="px-4 mb-2">
+                    <span class="text-[10px] uppercase font-bold text-secondary tracking-wider pl-3">Account</span>
+                </div>
+                <nav class="space-y-0.5 mb-6">
+                    <a href="#general" class="flex items-center justify-between px-6 py-3 nav-item-active text-sm font-medium transition-colors">
+                        <span>General</span>
+                        <i class="fa-solid fa-chevron-right text-[10px] opacity-50"></i>
+                    </a>
+                    <a href="#notifications" class="flex items-center justify-between px-6 py-3 nav-item-inactive text-sm font-medium transition-colors">
+                        <span>Notifications</span>
+                    </a>
+                </nav>
+
+                <div class="px-4 mb-2">
+                    <span class="text-[10px] uppercase font-bold text-secondary tracking-wider pl-3">AI Configuration</span>
+                </div>
+                <nav class="space-y-0.5 mb-6">
+                    <a href="#voice-profile" class="flex items-center justify-between px-6 py-3 nav-item-inactive text-sm font-medium transition-colors">
+                        <span>Voice Profile</span>
+                    </a>
+                    <a href="#personas" class="flex items-center justify-between px-6 py-3 nav-item-inactive text-sm font-medium transition-colors">
+                        <span>Personas</span>
+                    </a>
+                    <a href="#privacy" class="flex items-center justify-between px-6 py-3 nav-item-inactive text-sm font-medium transition-colors">
+                        <span>Privacy & Data</span>
+                    </a>
+                </nav>
+
+                <div class="px-4 mb-2">
+                    <span class="text-[10px] uppercase font-bold text-secondary tracking-wider pl-3">System</span>
+                </div>
+                <nav class="space-y-0.5">
+                    <a href="#integrations" class="flex items-center justify-between px-6 py-3 nav-item-inactive text-sm font-medium transition-colors">
+                        <span>Integrations</span>
+                    </a>
+                    <a href="#billing" class="flex items-center justify-between px-6 py-3 nav-item-inactive text-sm font-medium transition-colors">
+                        <span>Billing</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Right Pane: Tab Content -->
+            <div class="flex-1 overflow-y-auto p-8 pb-24 custom-scrollbar bg-background">
+                <div class="max-w-3xl space-y-8">
+                    
+                    <!-- Section: General -->
+                    <section id="general-section" class="space-y-6">
+                        <div class="flex items-center justify-between border-b border-border pb-4">
+                            <h2 class="text-lg font-bold text-white">General Settings</h2>
+                        </div>
+
+                        <!-- Profile Card -->
+                        <div class="bg-card border border-border rounded-xl p-6">
+                            <div class="flex items-start gap-6">
+                                <div class="relative group">
+                                    <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" alt="Profile" class="w-20 h-20 rounded-full object-cover border-2 border-border">
+                                    <button class="absolute bottom-0 right-0 bg-accent text-white p-1.5 rounded-full text-xs shadow-lg hover:bg-accentHover transition-colors">
+                                        <i class="fa-solid fa-camera"></i>
+                                    </button>
+                                </div>
+                                <div class="flex-1 space-y-4">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="space-y-1.5">
+                                            <label class="text-xs font-medium text-secondary">Display Name</label>
+                                            <input type="text" value="Alex Founder" class="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent transition-colors">
+                                        </div>
+                                        <div class="space-y-1.5">
+                                            <label class="text-xs font-medium text-secondary">Email Address</label>
+                                            <input type="email" value="alex@founder.io" class="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent transition-colors">
+                                        </div>
+                                    </div>
+                                    <div class="space-y-1.5">
+                                        <label class="text-xs font-medium text-secondary">Connected X Handle</label>
+                                        <div class="flex gap-2">
+                                            <div class="relative flex-1">
+                                                <i class="fa-brands fa-x-twitter absolute left-3 top-2.5 text-secondary text-xs"></i>
+                                                <input type="text" value="@alex_builds" disabled class="w-full bg-background/50 border border-border rounded-lg pl-8 pr-3 py-2 text-sm text-secondary cursor-not-allowed">
+                                            </div>
+                                            <button class="px-3 py-2 border border-border rounded-lg text-xs font-medium text-white hover:bg-card transition-colors">
+                                                Change
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notification Toggles -->
+                        <div class="bg-card border border-border rounded-xl overflow-hidden">
+                            <div class="px-6 py-4 border-b border-border bg-card/50">
+                                <h3 class="text-sm font-bold text-white">Notifications</h3>
+                            </div>
+                            <div class="divide-y divide-border">
+                                <div class="px-6 py-4 flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-white">Approval Requests</p>
+                                        <p class="text-xs text-secondary mt-0.5">Notify when AI generates a high-confidence draft</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" checked class="sr-only peer">
+                                        <div class="w-9 h-5 bg-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-accent"></div>
+                                    </label>
+                                </div>
+                                <div class="px-6 py-4 flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-white">System Alerts</p>
+                                        <p class="text-xs text-secondary mt-0.5">Critical updates about connection status or errors</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" checked class="sr-only peer">
+                                        <div class="w-9 h-5 bg-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-accent"></div>
+                                    </label>
+                                </div>
+                                <div class="px-6 py-4 flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-white">Weekly Performance Report</p>
+                                        <p class="text-xs text-secondary mt-0.5">Summary of engagement metrics and growth</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer">
+                                        <div class="w-9 h-5 bg-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-accent"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Section: Voice Profile -->
+                    <section id="voice-profile-section" class="space-y-6 pt-6 border-t border-border">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h2 class="text-lg font-bold text-white">Voice Profile</h2>
+                                <p class="text-xs text-secondary mt-1">Manage how the AI interprets your communication style</p>
+                            </div>
+                            <button class="px-4 py-2 bg-background border border-border rounded-lg text-xs font-medium text-white hover:bg-card transition-colors flex items-center gap-2">
+                                <i class="fa-solid fa-microphone text-accent"></i>
+                                Record More Audio
+                            </button>
+                        </div>
+
+                        <div class="bg-card border border-border rounded-xl p-6 relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 p-3 opacity-5">
+                                <i class="fa-solid fa-wave-square text-6xl text-white"></i>
+                            </div>
+                            
+                            <div class="flex gap-4 items-start mb-6">
+                                <div class="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center shrink-0 border border-accent/20">
+                                    <i class="fa-solid fa-fingerprint text-accent text-lg"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-bold text-white">Current Voice Summary</h3>
+                                    <p class="text-sm text-secondary mt-2 leading-relaxed">
+                                        "You sound like a straight-talking British founder who builds things at night and cares about good design. You lead with passion and humour, favoring short sentences and occasional emphasis caps."
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-4">
+                                <div class="bg-background border border-border rounded-lg p-3">
+                                    <span class="text-[10px] text-secondary uppercase font-bold tracking-wider">Tone</span>
+                                    <div class="mt-1 flex items-center gap-2">
+                                        <div class="h-1.5 w-1.5 rounded-full bg-purple"></div>
+                                        <span class="text-sm font-medium text-white">Casual & Direct</span>
+                                    </div>
+                                </div>
+                                <div class="bg-background border border-border rounded-lg p-3">
+                                    <span class="text-[10px] text-secondary uppercase font-bold tracking-wider">Emoji Usage</span>
+                                    <div class="mt-1 flex items-center gap-2">
+                                        <div class="h-1.5 w-1.5 rounded-full bg-accent"></div>
+                                        <span class="text-sm font-medium text-white">Moderate</span>
+                                    </div>
+                                </div>
+                                <div class="bg-background border border-border rounded-lg p-3">
+                                    <span class="text-[10px] text-secondary uppercase font-bold tracking-wider">Vocabulary</span>
+                                    <div class="mt-1 flex items-center gap-2">
+                                        <div class="h-1.5 w-1.5 rounded-full bg-success"></div>
+                                        <span class="text-sm font-medium text-white">Tech-Native</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Section: Personas -->
+                    <section id="personas-section" class="space-y-6 pt-6 border-t border-border">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-lg font-bold text-white">Personas Configuration</h2>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-secondary font-medium">Auto-Tune</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" checked class="sr-only peer">
+                                    <div class="w-8 h-4 bg-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-success"></div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="bg-card border border-border rounded-xl overflow-hidden">
+                            <div class="p-4 flex items-center justify-between border-b border-border hover:bg-white/5 transition-colors cursor-pointer group">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-8 h-8 rounded-full bg-purple/20 border border-purple/30 flex items-center justify-center text-purple">
+                                        <i class="fa-solid fa-moon text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-medium text-white group-hover:text-accent transition-colors">Manage Schedule</h4>
+                                        <p class="text-xs text-secondary">Adjust time windows for your 8 active personas</p>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-chevron-right text-secondary text-xs"></i>
+                            </div>
+                            <div class="p-4 flex items-center justify-between hover:bg-white/5 transition-colors cursor-pointer group">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-8 h-8 rounded-full bg-accent/20 border border-accent/30 flex items-center justify-center text-accent">
+                                        <i class="fa-solid fa-sliders text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-medium text-white group-hover:text-accent transition-colors">Edit Persona Behaviors</h4>
+                                        <p class="text-xs text-secondary">Fine-tune energy levels and interaction styles</p>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-chevron-right text-secondary text-xs"></i>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Section: Integrations -->
+                    <section id="integrations-section" class="space-y-6 pt-6 border-t border-border">
+                        <h2 class="text-lg font-bold text-white">Integrations</h2>
+
+                        <div class="bg-card border border-border rounded-xl p-6 flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-black border border-border flex items-center justify-center">
+                                    <i class="fa-brands fa-x-twitter text-white text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-bold text-white">X (Twitter)</h3>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-success"></div>
+                                        <span class="text-xs text-success font-medium">Connected</span>
+                                        <span class="text-xs text-secondary">• Last synced 2m ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="px-4 py-2 border border-danger/30 text-danger hover:bg-danger/10 rounded-lg text-xs font-medium transition-colors">
+                                Disconnect
+                            </button>
+                        </div>
+                    </section>
+
+                     <!-- Section: Privacy -->
+                     <section id="privacy-section" class="space-y-6 pt-6 border-t border-border">
+                        <h2 class="text-lg font-bold text-white">Privacy & Data Control</h2>
+
+                        <div class="bg-card border border-border rounded-xl p-6">
+                            <div class="flex items-start gap-4 mb-6">
+                                <i class="fa-solid fa-shield-halved text-success text-xl mt-1"></i>
+                                <div>
+                                    <h3 class="text-sm font-bold text-white">Local-First Architecture</h3>
+                                    <p class="text-sm text-secondary mt-1 max-w-lg">
+                                        Your voice recordings and raw behavioral data are processed locally on your machine. Only anonymized vectors are used for cloud synchronization.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <button class="flex items-center justify-center gap-2 px-4 py-3 border border-border bg-background hover:bg-card rounded-lg text-xs font-medium text-white transition-colors">
+                                    <i class="fa-solid fa-download text-secondary"></i>
+                                    Export All Data
+                                </button>
+                                <button class="flex items-center justify-center gap-2 px-4 py-3 border border-danger/30 bg-background hover:bg-danger/5 rounded-lg text-xs font-medium text-danger transition-colors">
+                                    <i class="fa-solid fa-trash text-danger/70"></i>
+                                    Delete Account
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Action Bar (Contextual Save) -->
+        <div class="absolute bottom-[40px] left-[260px] right-0 bg-card/95 backdrop-blur-md border-t border-border p-4 z-40 flex justify-end px-8">
+             <div class="flex items-center gap-3">
+                <button class="px-4 py-2 text-sm font-medium text-secondary hover:text-white transition-colors">
+                    Discard Changes
+                </button>
+                <button class="px-6 py-2 bg-primary text-black hover:bg-gray-200 rounded-lg text-sm font-bold transition-colors shadow-lg">
+                    Save Changes
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Nav Bar -->
+    <footer id="footer" class="fixed bottom-0 left-0 w-full h-[40px] border-t border-border bg-background flex items-center justify-between px-6 z-50">
+        <div class="flex gap-2 ml-[260px]"> <!-- Offset for sidebar -->
+            <!-- Pagination Dots -->
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div> 
+            <div class="w-2 h-2 rounded-full bg-border"></div> 
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-white"></div> <!-- Active: Screen 14 -->
+        </div>
+        
+        <div class="text-xs font-mono text-secondary">
+            Screen 14 of 14: Settings
+        </div>
+
+        <div class="flex gap-4">
+            <button class="text-xs text-secondary hover:text-white transition-colors flex items-center gap-1">
+                <i class="fa-solid fa-chevron-left text-[10px]"></i> Previous
+            </button>
+            <button class="text-xs text-secondary hover:text-white transition-colors flex items-center gap-1 opacity-50 cursor-not-allowed">
+                Next <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            </button>
+        </div>
+    </footer>
+
+</body>
+</html>

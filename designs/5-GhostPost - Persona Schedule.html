@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GhostPost - Persona Schedule</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        window.FontAwesomeConfig = { autoReplaceSvg: 'nest' };
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#131316',
+                        card: '#1c1d23',
+                        border: '#2a2b32',
+                        primary: '#ffffff',
+                        secondary: '#9ca3af',
+                        accent: '#3b82f6',
+                        accentHover: '#2563eb',
+                        purple: '#8b5cf6',
+                        success: '#22c55e',
+                        danger: '#ef4444',
+                        warning: '#eab308',
+                        persona1: '#f472b6', // Pink
+                        persona2: '#3b82f6', // Blue
+                        persona3: '#22c55e', // Green
+                        persona4: '#eab308', // Yellow
+                        persona5: '#a855f7', // Purple
+                        persona6: '#64748b', // Slate
+                        persona7: '#f97316', // Orange
+                        persona8: '#ef4444', // Red
+                    },
+                    fontFamily: {
+                        sans: ['DM Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    backgroundImage: {
+                        'gradient-ghost': 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(59, 130, 246, 0.15)',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        body {
+            background-color: #131316;
+            color: #ffffff;
+            font-family: 'DM Sans', sans-serif;
+            overflow-x: hidden;
+        }
+        .ghost-icon-bg {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #131316; }
+        ::-webkit-scrollbar-thumb { background: #2a2b32; border-radius: 3px; }
+
+        /* Toggle Switch */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #22c55e;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #22c55e;
+        }
+        
+        .card-hover:hover {
+            border-color: #3b82f6;
+            transition: border-color 0.3s ease;
+        }
+
+        /* Timeline Gradient for Sleep */
+        .sleep-pattern {
+            background: repeating-linear-gradient(
+                45deg,
+                #0f0f11,
+                #0f0f11 4px,
+                #16161a 4px,
+                #16161a 8px
+            );
+        }
+    </style>
+</head>
+<body class="min-h-screen w-full flex flex-col items-center relative selection:bg-accent selection:text-white pb-24">
+
+    <!-- Top Navigation / Logo Area -->
+    <header id="header" class="w-full flex justify-center pt-8 pb-4 z-10">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full ghost-icon-bg flex items-center justify-center shadow-[0_0_20px_rgba(59,130,246,0.3)]">
+                <i class="fa-solid fa-ghost text-white text-lg"></i>
+            </div>
+            <span class="text-2xl font-bold tracking-tight">GhostPost</span>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="w-full max-w-[680px] flex flex-col items-center px-6 relative z-10 mb-8">
+        
+        <!-- Headline -->
+        <h1 class="text-3xl font-bold text-white mb-6 text-center tracking-tight">Now let’s map your day.</h1>
+
+        <!-- 24-Hour Timeline Bar -->
+        <div id="timeline-container" class="w-full mb-8">
+            <div class="flex justify-between text-[10px] font-mono text-secondary mb-2 uppercase tracking-wider">
+                <span>00:00</span>
+                <span>06:00</span>
+                <span>12:00</span>
+                <span>18:00</span>
+                <span>24:00</span>
+            </div>
+            
+            <div class="w-full h-12 bg-[#0f0f11] rounded-lg border border-border relative overflow-hidden flex items-center">
+                <!-- Grid Lines -->
+                <div class="absolute inset-0 flex w-full h-full pointer-events-none z-0">
+                    <div class="w-1/4 border-r border-border/30 h-full"></div>
+                    <div class="w-1/4 border-r border-border/30 h-full"></div>
+                    <div class="w-1/4 border-r border-border/30 h-full"></div>
+                </div>
+
+                <!-- Sleep Band (2-6 AM) - Approx 16.6% width, positioned at 8.3% left -->
+                <div class="absolute top-0 bottom-0 left-[8.33%] w-[16.66%] sleep-pattern z-0 border-x border-border/20">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <i class="fa-solid fa-moon text-secondary/20 text-xs"></i>
+                    </div>
+                </div>
+
+                <!-- Segments -->
+                <!-- 1. Early Bird 06:00-08:30 (~10.4%) at 25% -->
+                <div class="absolute h-6 top-3 bg-persona1/20 border border-persona1/50 rounded left-[25%] w-[10.4%] hover:h-8 hover:top-2 transition-all cursor-pointer z-10"></div>
+                
+                <!-- 2. Commute 08:30-09:30 (~4.16%) at 35.4% -->
+                <div class="absolute h-6 top-3 bg-persona2/20 border border-persona2/50 rounded left-[35.4%] w-[4.16%] hover:h-8 hover:top-2 transition-all cursor-pointer z-10"></div>
+                
+                <!-- 3. Work Break 10:00-12:00 (~8.33%) at 41.6% -->
+                <div class="absolute h-6 top-3 bg-persona3/20 border border-persona3/50 rounded left-[41.6%] w-[8.33%] hover:h-8 hover:top-2 transition-all cursor-pointer z-10"></div>
+                
+                <!-- 4. Lunch Scroll 12:00-13:30 (~6.25%) at 50% -->
+                <div class="absolute h-6 top-3 bg-persona4/20 border border-persona4/50 rounded left-[50%] w-[6.25%] hover:h-8 hover:top-2 transition-all cursor-pointer z-10"></div>
+                
+                <!-- 5. Afternoon Lull 14:00-17:00 (~12.5%) at 58.3% -->
+                <div class="absolute h-6 top-3 bg-persona5/20 border border-persona5/50 rounded left-[58.3%] w-[12.5%] hover:h-8 hover:top-2 transition-all cursor-pointer z-10"></div>
+                
+                <!-- 6. School Run 15:00-17:30 (Overlap visualised by slight offset) -> Let's treat as separate visual block for simplicity or stacked. 
+                     Instruction says "segments with gaps". Let's place it sequentially based on start time but handle overlap visually or assume distinct blocks for UI clarity.
+                     Actually, 15:00 overlaps with 14:00-17:00. Let's adjust visual to show distinct blocks as per list order, maybe slightly shifted vertically or just placed.
+                     Let's place strictly by time. 
+                     School Run 15:00-17:30 overlaps Afternoon Lull. I will render School Run slightly lower or higher z-index.
+                     Let's render School Run at 62.5% width 10.4% -->
+                <div class="absolute h-3 bottom-1.5 bg-persona6/20 border border-persona6/50 rounded left-[62.5%] w-[10.4%] z-20 hover:h-4 transition-all cursor-pointer"></div>
+
+                <!-- 7. Evening Wind-Down 19:30-21:00 (~6.25%) at 81.25% -->
+                <div class="absolute h-6 top-3 bg-persona7/20 border border-persona7/50 rounded left-[81.25%] w-[6.25%] hover:h-8 hover:top-2 transition-all cursor-pointer z-10"></div>
+
+                <!-- 8. Late Night Builder 22:00-02:00 (~16.6%) at 91.6% wrapping to start. 
+                     Visualizing wrapping is hard on linear bar. Let's show 22:00-24:00 at end and 00:00-02:00 at start.
+                     End part: 22:00 (91.6%) to 24:00 (100%) -> 8.33% width.
+                     Start part: 00:00 (0%) to 02:00 (8.33%) -> 8.33% width. -->
+                <div class="absolute h-6 top-3 bg-persona8/20 border-l border-y border-persona8/50 rounded-l left-[91.66%] right-0 hover:h-8 hover:top-2 transition-all cursor-pointer z-10"></div>
+                <div class="absolute h-6 top-3 bg-persona8/20 border-r border-y border-persona8/50 rounded-r left-0 w-[8.33%] hover:h-8 hover:top-2 transition-all cursor-pointer z-10"></div>
+            </div>
+        </div>
+
+        <!-- Quick Adjust Pills -->
+        <div class="flex flex-wrap justify-center gap-3 mb-8 w-full">
+            <button class="px-3 py-1.5 rounded-full bg-card border border-border text-xs text-secondary hover:text-white hover:border-accent transition-colors">
+                <i class="fa-regular fa-clock mr-1.5"></i> I work 9-5
+            </button>
+            <button class="px-3 py-1.5 rounded-full bg-card border border-border text-xs text-secondary hover:text-white hover:border-accent transition-colors">
+                <i class="fa-solid fa-moon mr-1.5"></i> I’m a night owl
+            </button>
+            <button class="px-3 py-1.5 rounded-full bg-card border border-border text-xs text-secondary hover:text-white hover:border-accent transition-colors">
+                <i class="fa-solid fa-ban mr-1.5"></i> I don’t have kids
+            </button>
+        </div>
+
+        <!-- Persona List -->
+        <div class="w-full space-y-3 mb-8">
+            
+            <!-- Persona 1 -->
+            <div id="persona-1" class="bg-card border border-border rounded-[16px] p-4 flex items-center justify-between group hover:border-border/80 transition-all">
+                <div class="flex items-center gap-4 flex-1">
+                    <div class="w-3 h-3 rounded-full bg-persona1 shadow-[0_0_8px_rgba(244,114,182,0.6)]"></div>
+                    <div class="flex flex-col">
+                        <div class="flex items-baseline gap-2">
+                            <h3 class="font-semibold text-white">Early Bird</h3>
+                            <span class="font-mono text-xs text-secondary bg-[#2a2b32] px-1.5 rounded">06:00–08:30</span>
+                        </div>
+                        <p class="text-sm text-secondary mt-0.5">"Scrolling in bed"</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-6 mr-4">
+                    <div class="flex flex-col items-end text-xs text-right hidden sm:flex">
+                        <span class="text-secondary">Energy: <span class="text-white">Low</span></span>
+                        <span class="text-secondary opacity-70">Relaxed, Warm, Brief</span>
+                    </div>
+                </div>
+
+                <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                    <input type="checkbox" name="toggle" id="toggle1" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-[#2a2b32] checked:border-success transition-all duration-300" checked/>
+                    <label for="toggle1" class="toggle-label block overflow-hidden h-5 rounded-full bg-[#2a2b32] cursor-pointer border border-[#2a2b32] transition-colors duration-300"></label>
+                </div>
+            </div>
+
+            <!-- Persona 2 -->
+            <div id="persona-2" class="bg-card border border-border rounded-[16px] p-4 flex items-center justify-between group hover:border-border/80 transition-all">
+                <div class="flex items-center gap-4 flex-1">
+                    <div class="w-3 h-3 rounded-full bg-persona2 shadow-[0_0_8px_rgba(59,130,246,0.6)]"></div>
+                    <div class="flex flex-col">
+                        <div class="flex items-baseline gap-2">
+                            <h3 class="font-semibold text-white">Morning Commute</h3>
+                            <span class="font-mono text-xs text-secondary bg-[#2a2b32] px-1.5 rounded">08:30–09:30</span>
+                        </div>
+                        <p class="text-sm text-secondary mt-0.5">"On the train"</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-6 mr-4">
+                    <div class="flex flex-col items-end text-xs text-right hidden sm:flex">
+                        <span class="text-secondary">Energy: <span class="text-white">Medium</span></span>
+                        <span class="text-secondary opacity-70">Engaged, Catching up</span>
+                    </div>
+                </div>
+
+                <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                    <input type="checkbox" name="toggle" id="toggle2" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-[#2a2b32] checked:border-success transition-all duration-300" checked/>
+                    <label for="toggle2" class="toggle-label block overflow-hidden h-5 rounded-full bg-[#2a2b32] cursor-pointer border border-[#2a2b32] transition-colors duration-300"></label>
+                </div>
+            </div>
+
+            <!-- Persona 3 -->
+            <div id="persona-3" class="bg-card border border-border rounded-[16px] p-4 flex items-center justify-between group hover:border-border/80 transition-all">
+                <div class="flex items-center gap-4 flex-1">
+                    <div class="w-3 h-3 rounded-full bg-persona3 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
+                    <div class="flex flex-col">
+                        <div class="flex items-baseline gap-2">
+                            <h3 class="font-semibold text-white">Work Break</h3>
+                            <span class="font-mono text-xs text-secondary bg-[#2a2b32] px-1.5 rounded">10:00–12:00</span>
+                        </div>
+                        <p class="text-sm text-secondary mt-0.5">"Between tasks"</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-6 mr-4">
+                    <div class="flex flex-col items-end text-xs text-right hidden sm:flex">
+                        <span class="text-secondary">Energy: <span class="text-white">Medium</span></span>
+                        <span class="text-secondary opacity-70">Direct, Efficient, Punchy</span>
+                    </div>
+                </div>
+
+                <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                    <input type="checkbox" name="toggle" id="toggle3" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-[#2a2b32] checked:border-success transition-all duration-300" checked/>
+                    <label for="toggle3" class="toggle-label block overflow-hidden h-5 rounded-full bg-[#2a2b32] cursor-pointer border border-[#2a2b32] transition-colors duration-300"></label>
+                </div>
+            </div>
+
+            <!-- Persona 4 -->
+            <div id="persona-4" class="bg-card border border-border rounded-[16px] p-4 flex items-center justify-between group hover:border-border/80 transition-all">
+                <div class="flex items-center gap-4 flex-1">
+                    <div class="w-3 h-3 rounded-full bg-persona4 shadow-[0_0_8px_rgba(234,179,8,0.6)]"></div>
+                    <div class="flex flex-col">
+                        <div class="flex items-baseline gap-2">
+                            <h3 class="font-semibold text-white">Lunch Scroll</h3>
+                            <span class="font-mono text-xs text-secondary bg-[#2a2b32] px-1.5 rounded">12:00–13:30</span>
+                        </div>
+                        <p class="text-sm text-secondary mt-0.5">"Eating, relaxed"</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-6 mr-4">
+                    <div class="flex flex-col items-end text-xs text-right hidden sm:flex">
+                        <span class="text-secondary">Energy: <span class="text-white">High</span></span>
+                        <span class="text-secondary opacity-70">Conversational, Anecdotal</span>
+                    </div>
+                </div>
+
+                <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                    <input type="checkbox" name="toggle" id="toggle4" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-[#2a2b32] checked:border-success transition-all duration-300" checked/>
+                    <label for="toggle4" class="toggle-label block overflow-hidden h-5 rounded-full bg-[#2a2b32] cursor-pointer border border-[#2a2b32] transition-colors duration-300"></label>
+                </div>
+            </div>
+
+            <!-- Persona 5 -->
+            <div id="persona-5" class="bg-card border border-border rounded-[16px] p-4 flex items-center justify-between group hover:border-border/80 transition-all">
+                <div class="flex items-center gap-4 flex-1">
+                    <div class="w-3 h-3 rounded-full bg-persona5 shadow-[0_0_8px_rgba(168,85,247,0.6)]"></div>
+                    <div class="flex flex-col">
+                        <div class="flex items-baseline gap-2">
+                            <h3 class="font-semibold text-white">Afternoon Lull</h3>
+                            <span class="font-mono text-xs text-secondary bg-[#2a2b32] px-1.5 rounded">14:00–17:00</span>
+                        </div>
+                        <p class="text-sm text-secondary mt-0.5">"Post-lunch dip"</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-6 mr-4">
+                    <div class="flex flex-col items-end text-xs text-right hidden sm:flex">
+                        <span class="text-secondary">Energy: <span class="text-white">Low</span></span>
+                        <span class="text-secondary opacity-70">Reactive, Likes only</span>
+                    </div>
+                </div>
+
+                <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                    <input type="checkbox" name="toggle" id="toggle5" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-[#2a2b32] checked:border-success transition-all duration-300" checked/>
+                    <label for="toggle5" class="toggle-label block overflow-hidden h-5 rounded-full bg-[#2a2b32] cursor-pointer border border-[#2a2b32] transition-colors duration-300"></label>
+                </div>
+            </div>
+
+            <!-- Persona 6 -->
+            <div id="persona-6" class="bg-card border border-border rounded-[16px] p-4 flex items-center justify-between group hover:border-border/80 transition-all opacity-60">
+                <div class="flex items-center gap-4 flex-1">
+                    <div class="w-3 h-3 rounded-full bg-persona6 shadow-[0_0_8px_rgba(100,116,139,0.6)]"></div>
+                    <div class="flex flex-col">
+                        <div class="flex items-baseline gap-2">
+                            <h3 class="font-semibold text-white">School Run</h3>
+                            <span class="font-mono text-xs text-secondary bg-[#2a2b32] px-1.5 rounded">15:00–17:30</span>
+                        </div>
+                        <p class="text-sm text-secondary mt-0.5">"Mostly offline"</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-6 mr-4">
+                    <div class="flex flex-col items-end text-xs text-right hidden sm:flex">
+                        <span class="text-secondary">Energy: <span class="text-white">None</span></span>
+                        <span class="text-secondary opacity-70">Brief if anything</span>
+                    </div>
+                </div>
+
+                <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                    <input type="checkbox" name="toggle" id="toggle6" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-[#2a2b32] checked:border-success transition-all duration-300" />
+                    <label for="toggle6" class="toggle-label block overflow-hidden h-5 rounded-full bg-[#2a2b32] cursor-pointer border border-[#2a2b32] transition-colors duration-300"></label>
+                </div>
+            </div>
+
+            <!-- Persona 7 -->
+            <div id="persona-7" class="bg-card border border-border rounded-[16px] p-4 flex items-center justify-between group hover:border-border/80 transition-all">
+                <div class="flex items-center gap-4 flex-1">
+                    <div class="w-3 h-3 rounded-full bg-persona7 shadow-[0_0_8px_rgba(249,115,22,0.6)]"></div>
+                    <div class="flex flex-col">
+                        <div class="flex items-baseline gap-2">
+                            <h3 class="font-semibold text-white">Evening Wind-Down</h3>
+                            <span class="font-mono text-xs text-secondary bg-[#2a2b32] px-1.5 rounded">19:30–21:00</span>
+                        </div>
+                        <p class="text-sm text-secondary mt-0.5">"Your time"</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-6 mr-4">
+                    <div class="flex flex-col items-end text-xs text-right hidden sm:flex">
+                        <span class="text-secondary">Energy: <span class="text-white">High</span></span>
+                        <span class="text-secondary opacity-70">Relaxed, Opinionated, Humour</span>
+                    </div>
+                </div>
+
+                <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                    <input type="checkbox" name="toggle" id="toggle7" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-[#2a2b32] checked:border-success transition-all duration-300" checked/>
+                    <label for="toggle7" class="toggle-label block overflow-hidden h-5 rounded-full bg-[#2a2b32] cursor-pointer border border-[#2a2b32] transition-colors duration-300"></label>
+                </div>
+            </div>
+
+            <!-- Persona 8 -->
+            <div id="persona-8" class="bg-card border border-border rounded-[16px] p-4 flex items-center justify-between group hover:border-border/80 transition-all">
+                <div class="flex items-center gap-4 flex-1">
+                    <div class="w-3 h-3 rounded-full bg-persona8 shadow-[0_0_8px_rgba(239,68,68,0.6)]"></div>
+                    <div class="flex flex-col">
+                        <div class="flex items-baseline gap-2">
+                            <h3 class="font-semibold text-white">Late Night Builder</h3>
+                            <span class="font-mono text-xs text-secondary bg-[#2a2b32] px-1.5 rounded">22:00–02:00</span>
+                        </div>
+                        <p class="text-sm text-secondary mt-0.5">"Deep work"</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-6 mr-4">
+                    <div class="flex flex-col items-end text-xs text-right hidden sm:flex">
+                        <span class="text-secondary">Energy: <span class="text-white">Variable</span></span>
+                        <span class="text-secondary opacity-70">Sharp, Intense, Passionate</span>
+                    </div>
+                </div>
+
+                <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                    <input type="checkbox" name="toggle" id="toggle8" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-[#2a2b32] checked:border-success transition-all duration-300" checked/>
+                    <label for="toggle8" class="toggle-label block overflow-hidden h-5 rounded-full bg-[#2a2b32] cursor-pointer border border-[#2a2b32] transition-colors duration-300"></label>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- Primary CTA -->
+        <button class="w-full max-w-sm px-8 py-3.5 rounded-lg bg-accent text-white font-bold hover:bg-accentHover transition-all shadow-[0_0_20px_rgba(59,130,246,0.4)] focus:outline-none focus:ring-2 focus:ring-accent/50 mb-8">
+            Continue to connect X <i class="fa-brands fa-x-twitter ml-2"></i>
+        </button>
+
+    </main>
+
+    <!-- Background Decoration -->
+    <div class="fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden">
+        <!-- Center Glow -->
+        <div class="absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-accent/5 rounded-full blur-[120px]"></div>
+    </div>
+
+    <!-- Bottom Nav Bar -->
+    <div class="fixed bottom-0 w-full h-[40px] border-t border-[#2a2b32] bg-[#131316] flex items-center justify-between px-6 z-50">
+        <div class="flex gap-2">
+            <!-- Pagination Dots -->
+            <div class="w-2 h-2 rounded-full bg-[#2a2b32]"></div>
+            <div class="w-2 h-2 rounded-full bg-[#2a2b32]"></div>
+            <div class="w-2 h-2 rounded-full bg-[#2a2b32]"></div>
+            <div class="w-2 h-2 rounded-full bg-[#2a2b32]"></div>
+            <div class="w-2 h-2 rounded-full bg-white"></div>
+            <div class="w-2 h-2 rounded-full bg-[#2a2b32]"></div>
+        </div>
+        
+        <div class="text-xs font-mono text-secondary">
+            Screen 5 of 14: Persona Schedule
+        </div>
+
+        <div class="flex gap-4">
+            <button class="text-xs text-secondary hover:text-white">
+                <i class="fa-solid fa-chevron-left mr-1"></i> Previous
+            </button>
+            <button class="text-xs text-secondary hover:text-white">
+                Next <i class="fa-solid fa-chevron-right ml-1"></i>
+            </button>
+        </div>
+    </div>
+
+</body>
+</html>

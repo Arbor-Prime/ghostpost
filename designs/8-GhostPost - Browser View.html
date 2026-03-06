@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GhostPost - Browser View</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        window.FontAwesomeConfig = { autoReplaceSvg: 'nest' };
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#131316',
+                        card: '#1c1d23',
+                        border: '#2a2b32',
+                        primary: '#ffffff',
+                        secondary: '#9ca3af',
+                        accent: '#3b82f6',
+                        accentHover: '#2563eb',
+                        purple: '#8b5cf6',
+                        success: '#22c55e',
+                        danger: '#ef4444',
+                        warning: '#eab308',
+                        xBlack: '#000000',
+                    },
+                    fontFamily: {
+                        sans: ['DM Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    backgroundImage: {
+                        'gradient-ghost': 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(59, 130, 246, 0.15)',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        body {
+            background-color: #131316;
+            color: #ffffff;
+            font-family: 'DM Sans', sans-serif;
+            overflow: hidden;
+        }
+        .ghost-icon-bg {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #131316; }
+        ::-webkit-scrollbar-thumb { background: #2a2b32; border-radius: 3px; }
+        
+        /* Pulse animation for live scanning */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+        .pulse-ring::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            background-color: #3b82f6;
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body class="h-screen w-full flex overflow-hidden bg-background text-white selection:bg-accent selection:text-white">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-[260px] h-full border-r border-border bg-background flex flex-col z-30 shrink-0">
+        <!-- Logo Area -->
+        <div class="px-6 py-6 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full ghost-icon-bg flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.4)]">
+                    <i class="fa-solid fa-ghost text-white text-xs"></i>
+                </div>
+                <span class="text-lg font-bold tracking-tight">GhostPost</span>
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="px-6 mb-6">
+            <div class="bg-card border border-border rounded-lg px-3 py-2 flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-success animate-pulse"></div>
+                <span class="text-xs font-medium text-secondary">System Active</span>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-3 space-y-1 overflow-y-auto">
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-table-columns w-5 group-hover:text-white transition-colors"></i>
+                Dashboard
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-accent/10 text-accent font-medium transition-colors">
+                <i class="fa-regular fa-compass w-5"></i>
+                Browser View
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-check-to-slot w-5 group-hover:text-white transition-colors"></i>
+                    Approvals
+                </div>
+                <span class="bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md min-w-[20px] text-center">3</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-users-viewfinder w-5 group-hover:text-white transition-colors"></i>
+                Tracked Profiles
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-masks-theater w-5 group-hover:text-white transition-colors"></i>
+                Personas
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-wand-magic-sparkles w-5 group-hover:text-white transition-colors"></i>
+                AI Composition
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-flask w-5 group-hover:text-white transition-colors"></i>
+                Simulation
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-gear w-5 group-hover:text-white transition-colors"></i>
+                Settings
+            </a>
+        </nav>
+
+        <!-- User Profile -->
+        <div class="p-4 border-t border-border mt-auto">
+            <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-card transition-colors cursor-pointer">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" alt="User" class="w-8 h-8 rounded-full object-cover border border-border">
+                <div class="flex flex-col">
+                    <span class="text-sm font-medium text-white">Alex Founder</span>
+                    <span class="text-xs text-secondary">@alex_builds</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main id="main-browser-view" class="flex-1 flex flex-col h-full relative overflow-hidden bg-black">
+        
+        <!-- Browser Chrome / Header -->
+        <header class="h-14 border-b border-border bg-card flex items-center px-4 z-20 gap-4 shrink-0">
+            <!-- Traffic Lights -->
+            <div class="flex gap-2">
+                <div class="w-3 h-3 rounded-full bg-[#FF5F57]"></div>
+                <div class="w-3 h-3 rounded-full bg-[#FEBC2E]"></div>
+                <div class="w-3 h-3 rounded-full bg-[#28C840]"></div>
+            </div>
+            
+            <!-- URL Bar -->
+            <div class="flex-1 max-w-3xl mx-auto bg-background border border-border rounded-lg h-9 flex items-center px-3 gap-3 text-sm text-secondary">
+                <i class="fa-solid fa-lock text-xs text-success"></i>
+                <span class="text-white">x.com</span>
+                <span class="text-secondary/50">/home</span>
+            </div>
+
+            <!-- Browser Actions -->
+            <div class="flex items-center gap-3 text-secondary">
+                <i class="fa-solid fa-rotate-right hover:text-white cursor-pointer"></i>
+                <i class="fa-solid fa-bars hover:text-white cursor-pointer"></i>
+            </div>
+        </header>
+
+        <!-- Embedded X Feed Mockup -->
+        <div class="flex-1 overflow-y-auto relative bg-black" id="x-feed-container">
+            
+            <!-- X Sidebar (Mockup) -->
+            <div class="w-[275px] fixed top-14 left-[260px] h-[calc(100%-96px)] border-r border-[#2f3336] p-4 hidden xl:flex flex-col gap-6 z-0 bg-black">
+                <div class="w-8 h-8 text-white text-2xl ml-2"><i class="fa-brands fa-x-twitter"></i></div>
+                <div class="space-y-6 text-xl font-bold text-[#e7e9ea] ml-2">
+                    <div class="flex items-center gap-4"><i class="fa-solid fa-house"></i> Home</div>
+                    <div class="flex items-center gap-4 text-[#71767b]"><i class="fa-solid fa-magnifying-glass"></i> Explore</div>
+                    <div class="flex items-center gap-4 text-[#71767b]"><i class="fa-regular fa-bell"></i> Notifications</div>
+                    <div class="flex items-center gap-4 text-[#71767b]"><i class="fa-regular fa-envelope"></i> Messages</div>
+                    <div class="flex items-center gap-4 text-[#71767b]"><i class="fa-regular fa-user"></i> Profile</div>
+                </div>
+                <div class="w-[90%] h-12 bg-[#1d9bf0] rounded-full flex items-center justify-center font-bold text-white mt-4">Post</div>
+            </div>
+
+            <!-- X Feed Content -->
+            <div class="w-full max-w-[600px] mx-auto xl:ml-[290px] border-x border-[#2f3336] min-h-full pb-20 bg-black relative">
+                
+                <!-- Feed Header -->
+                <div class="h-[53px] border-b border-[#2f3336] sticky top-0 bg-black/60 backdrop-blur-md z-10 flex">
+                    <div class="flex-1 flex items-center justify-center hover:bg-[#181818] cursor-pointer relative">
+                        <span class="font-bold text-[#e7e9ea]">For you</span>
+                        <div class="absolute bottom-0 h-1 w-14 bg-[#1d9bf0] rounded-full"></div>
+                    </div>
+                    <div class="flex-1 flex items-center justify-center text-[#71767b] font-medium hover:bg-[#181818] cursor-pointer">Following</div>
+                    <div class="absolute top-0 right-0 p-3"><i class="fa-solid fa-gear text-[#e7e9ea]"></i></div>
+                </div>
+
+                <!-- Compose Box -->
+                <div class="border-b border-[#2f3336] p-4 flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-[#71767b] shrink-0">
+                        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" class="w-full h-full rounded-full object-cover">
+                    </div>
+                    <div class="flex-1 pt-2">
+                        <div class="text-xl text-[#71767b]">What is happening?!</div>
+                        <div class="flex justify-between items-center mt-4 border-t border-[#2f3336] pt-3">
+                            <div class="flex gap-4 text-[#1d9bf0]">
+                                <i class="fa-regular fa-image"></i>
+                                <i class="fa-solid fa-gift"></i>
+                                <i class="fa-solid fa-list-ul"></i>
+                                <i class="fa-regular fa-face-smile"></i>
+                                <i class="fa-regular fa-calendar"></i>
+                            </div>
+                            <button class="bg-[#1d9bf0] text-white px-4 py-1.5 rounded-full font-bold opacity-50">Post</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Post 1: Tracked Profile (Normal) -->
+                <div class="border-b border-[#2f3336] p-4 hover:bg-[#080808] transition-colors relative group">
+                    <!-- GhostPost Tracked Badge -->
+                    <div class="absolute top-3 right-3 bg-card border border-border rounded-full px-2 py-0.5 flex items-center gap-1.5 z-10 shadow-lg">
+                        <div class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></div>
+                        <span class="text-[10px] font-mono text-secondary">GhostPost Tracked</span>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <div class="w-10 h-10 rounded-full shrink-0">
+                             <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" class="w-full h-full rounded-full object-cover">
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-1 text-[#e7e9ea]">
+                                <span class="font-bold hover:underline">Pieter Levels</span>
+                                <i class="fa-solid fa-certificate text-[#1d9bf0] text-sm"></i>
+                                <span class="text-[#71767b]">@levelsio · 2h</span>
+                            </div>
+                            <div class="mt-1 text-[#e7e9ea] text-[15px] leading-normal">
+                                Shipping new features is the only marketing strategy that matters in 2024. <br><br>
+                                If you're not pushing code, you're invisible.
+                            </div>
+                            <!-- Interaction Bar -->
+                            <div class="flex justify-between mt-3 text-[#71767b] max-w-[425px]">
+                                <div class="flex items-center gap-2 group cursor-pointer hover:text-[#1d9bf0]"><i class="fa-regular fa-comment"></i> 48</div>
+                                <div class="flex items-center gap-2 group cursor-pointer hover:text-[#00ba7c]"><i class="fa-solid fa-retweet"></i> 12</div>
+                                <div class="flex items-center gap-2 group cursor-pointer hover:text-[#f91880]"><i class="fa-regular fa-heart"></i> 243</div>
+                                <div class="flex items-center gap-2 group cursor-pointer hover:text-[#1d9bf0]"><i class="fa-solid fa-chart-simple"></i> 12K</div>
+                                <div class="flex items-center gap-2 group cursor-pointer hover:text-[#1d9bf0]"><i class="fa-solid fa-arrow-up-from-bracket"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Post 2: HIGH OPPORTUNITY (With Overlay) -->
+                <div class="border-b border-[#2f3336] p-4 bg-[#0d1016] relative transition-colors">
+                    
+                    <!-- HIGH OPPORTUNITY OVERLAY -->
+                    <div class="absolute -right-[280px] top-4 w-[260px] bg-[#131316]/95 backdrop-blur-xl border border-accent rounded-xl p-4 shadow-[0_0_40px_rgba(59,130,246,0.3)] z-20 flex flex-col gap-3 animate-in fade-in slide-in-from-left-4 duration-500">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="relative w-2 h-2">
+                                    <div class="absolute inset-0 bg-accent rounded-full animate-ping opacity-75"></div>
+                                    <div class="relative w-2 h-2 bg-accent rounded-full"></div>
+                                </div>
+                                <span class="text-xs font-bold text-accent tracking-wider">HIGH OPPORTUNITY</span>
+                            </div>
+                            <span class="text-lg font-mono font-bold text-white">94%</span>
+                        </div>
+                        
+                        <p class="text-xs text-secondary leading-relaxed">
+                            Topic match: <span class="text-white">Design Systems</span><br>
+                            Engagement velocity: <span class="text-success">High</span><br>
+                            Perfect for: <span class="text-white">Evening Persona</span>
+                        </p>
+
+                        <div class="flex gap-2 mt-1">
+                            <button class="flex-1 bg-transparent border border-border hover:bg-card text-secondary text-xs font-medium py-2 rounded-lg transition-colors">
+                                Skip
+                            </button>
+                            <button class="flex-1 bg-accent hover:bg-accentHover text-white text-xs font-bold py-2 rounded-lg shadow-glow transition-all flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-pen-nib"></i> Draft
+                            </button>
+                        </div>
+
+                        <!-- Connector Line -->
+                        <div class="absolute top-8 -left-3 w-3 h-[1px] bg-accent"></div>
+                        <div class="absolute top-8 -left-3 w-1 h-1 bg-accent rounded-full -translate-x-[2px] -translate-y-[1.5px]"></div>
+                    </div>
+
+                    <!-- Post Content (Highlighted Border) -->
+                    <div class="absolute inset-0 border-l-2 border-accent bg-accent/5 pointer-events-none"></div>
+
+                    <div class="flex gap-3 relative z-10">
+                        <div class="w-10 h-10 rounded-full shrink-0">
+                             <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg" class="w-full h-full rounded-full object-cover">
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-1 text-[#e7e9ea]">
+                                <span class="font-bold hover:underline">Brett</span>
+                                <span class="text-[#71767b]">@designjoy · 14m</span>
+                            </div>
+                            <div class="mt-1 text-[#e7e9ea] text-[15px] leading-normal">
+                                Unpopular opinion: Design systems are overrated for early stage startups. <br><br>
+                                You spend more time maintaining components than building the actual product. Speed > Consistency.
+                            </div>
+                            <div class="mt-3 rounded-2xl overflow-hidden border border-[#2f3336]">
+                                <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000&auto=format&fit=crop" class="w-full h-64 object-cover">
+                            </div>
+                            <!-- Interaction Bar -->
+                            <div class="flex justify-between mt-3 text-[#71767b] max-w-[425px]">
+                                <div class="flex items-center gap-2 group cursor-pointer hover:text-[#1d9bf0]"><i class="fa-regular fa-comment"></i> 156</div>
+                                <div class="flex items-center gap-2 group cursor-pointer hover:text-[#00ba7c]"><i class="fa-solid fa-retweet"></i> 42</div>
+                                <div class="flex items-center gap-2 group cursor-pointer hover:text-[#f91880]"><i class="fa-regular fa-heart"></i> 892</div>
+                                <div class="flex items-center gap-2 group cursor-pointer hover:text-[#1d9bf0]"><i class="fa-solid fa-chart-simple"></i> 45K</div>
+                                <div class="flex items-center gap-2 group cursor-pointer hover:text-[#1d9bf0]"><i class="fa-solid fa-arrow-up-from-bracket"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Post 3: Promoted (Ignored) -->
+                <div class="border-b border-[#2f3336] p-4 hover:bg-[#080808] transition-colors opacity-60 grayscale-[0.5]">
+                    <div class="flex items-center gap-2 text-[#71767b] text-xs font-bold mb-1 ml-12">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Ad
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="w-10 h-10 rounded-full shrink-0 bg-[#e7e9ea]">
+                            <i class="fa-solid fa-rocket text-black w-full h-full flex items-center justify-center"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-1 text-[#e7e9ea]">
+                                <span class="font-bold hover:underline">CloudScale</span>
+                                <i class="fa-solid fa-certificate text-[#eab308] text-sm"></i>
+                                <span class="text-[#71767b]">@cloudscale</span>
+                            </div>
+                            <div class="mt-1 text-[#e7e9ea] text-[15px] leading-normal">
+                                Scale your database without the headaches. 99.99% uptime guaranteed.
+                            </div>
+                             <!-- Interaction Bar -->
+                             <div class="flex justify-between mt-3 text-[#71767b] max-w-[425px]">
+                                <div class="flex items-center gap-2"><i class="fa-regular fa-comment"></i> 12</div>
+                                <div class="flex items-center gap-2"><i class="fa-solid fa-retweet"></i> 4</div>
+                                <div class="flex items-center gap-2"><i class="fa-regular fa-heart"></i> 56</div>
+                                <div class="flex items-center gap-2"><i class="fa-solid fa-chart-simple"></i> 1.2K</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- Post 4: Another Tracked Profile -->
+                 <div class="border-b border-[#2f3336] p-4 hover:bg-[#080808] transition-colors relative group">
+                    <!-- GhostPost Tracked Badge -->
+                    <div class="absolute top-3 right-3 bg-card border border-border rounded-full px-2 py-0.5 flex items-center gap-1.5 z-10 shadow-lg">
+                        <div class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></div>
+                        <span class="text-[10px] font-mono text-secondary">GhostPost Tracked</span>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <div class="w-10 h-10 rounded-full shrink-0">
+                             <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-6.jpg" class="w-full h-full rounded-full object-cover">
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-1 text-[#e7e9ea]">
+                                <span class="font-bold hover:underline">Sarah Drasner</span>
+                                <span class="text-[#71767b]">@sarah_edo · 45m</span>
+                            </div>
+                            <div class="mt-1 text-[#e7e9ea] text-[15px] leading-normal">
+                                The best engineering teams I've worked with prioritize psychological safety above almost everything else. 
+                            </div>
+                             <!-- Interaction Bar -->
+                             <div class="flex justify-between mt-3 text-[#71767b] max-w-[425px]">
+                                <div class="flex items-center gap-2"><i class="fa-regular fa-comment"></i> 32</div>
+                                <div class="flex items-center gap-2"><i class="fa-solid fa-retweet"></i> 89</div>
+                                <div class="flex items-center gap-2"><i class="fa-regular fa-heart"></i> 512</div>
+                                <div class="flex items-center gap-2"><i class="fa-solid fa-chart-simple"></i> 22K</div>
+                                <div class="flex items-center gap-2"><i class="fa-solid fa-arrow-up-from-bracket"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Side Trends (Mockup) -->
+            <div class="w-[350px] fixed top-14 right-4 h-full hidden 2xl:block p-4 pl-8">
+                <div class="bg-[#16181c] rounded-2xl w-full p-4 mb-4">
+                    <h2 class="font-bold text-xl mb-4 text-[#e7e9ea]">Trends for you</h2>
+                    <div class="py-3 cursor-pointer">
+                        <div class="text-xs text-[#71767b] flex justify-between">
+                            <span>Technology · Trending</span>
+                            <i class="fa-solid fa-ellipsis"></i>
+                        </div>
+                        <div class="font-bold text-[#e7e9ea] mt-0.5">#UX Pilot AI</div>
+                        <div class="text-xs text-[#71767b] mt-0.5">145K posts</div>
+                    </div>
+                    <div class="py-3 cursor-pointer">
+                        <div class="text-xs text-[#71767b] flex justify-between">
+                            <span>Business · Trending</span>
+                            <i class="fa-solid fa-ellipsis"></i>
+                        </div>
+                        <div class="font-bold text-[#e7e9ea] mt-0.5">SaaS</div>
+                        <div class="text-xs text-[#71767b] mt-0.5">52.4K posts</div>
+                    </div>
+                     <div class="py-3 cursor-pointer">
+                        <div class="text-xs text-[#71767b] flex justify-between">
+                            <span>Design · Trending</span>
+                            <i class="fa-solid fa-ellipsis"></i>
+                        </div>
+                        <div class="font-bold text-[#e7e9ea] mt-0.5">Figma</div>
+                        <div class="text-xs text-[#71767b] mt-0.5">12.1K posts</div>
+                    </div>
+                    <div class="text-[#1d9bf0] text-sm mt-2 cursor-pointer">Show more</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Floating Live Scan Panel -->
+        <div id="live-scan-panel" class="absolute bottom-20 right-8 w-[340px] bg-card border border-border rounded-xl shadow-2xl overflow-hidden z-30 animate-in slide-in-from-bottom-10 duration-700">
+            <!-- Header -->
+            <div class="bg-gradient-ghost p-0.5">
+                <div class="bg-card px-4 py-3 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="relative w-2 h-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
+                        </div>
+                        <span class="font-bold font-mono tracking-tight text-white">LIVE SCAN</span>
+                    </div>
+                    <div class="flex gap-2">
+                         <button class="text-secondary hover:text-white transition-colors"><i class="fa-solid fa-minus"></i></button>
+                         <button class="text-secondary hover:text-white transition-colors"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-5 space-y-5">
+                <!-- Stats Row -->
+                <div class="flex justify-between items-end">
+                    <div>
+                        <div class="text-xs text-secondary mb-1">Posts Scanned</div>
+                        <div class="text-2xl font-mono font-bold text-white">142</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs text-secondary mb-1">Candidates</div>
+                        <div class="text-2xl font-mono font-bold text-accent">12</div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="space-y-2">
+                    <div class="flex justify-between text-[10px] text-secondary uppercase tracking-wider">
+                        <span>Current Batch</span>
+                        <span>Scanning...</span>
+                    </div>
+                    <div class="h-1.5 w-full bg-background rounded-full overflow-hidden relative">
+                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-accent/50 to-transparent w-1/2 animate-[shimmer_1.5s_infinite] translate-x-[-100%]"></div>
+                        <div class="h-full bg-accent w-[65%] rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
+                    </div>
+                </div>
+                
+                <!-- Log -->
+                <div class="h-24 overflow-hidden relative font-mono text-[10px] leading-relaxed text-secondary border-t border-border pt-2 mt-2">
+                    <div class="space-y-1">
+                        <div class="flex gap-2"><span class="text-secondary/50">10:42:15</span> <span>Analyzing tweet ID #99281...</span></div>
+                        <div class="flex gap-2"><span class="text-secondary/50">10:42:16</span> <span class="text-success">Match found (94%) - @designjoy</span></div>
+                        <div class="flex gap-2"><span class="text-secondary/50">10:42:18</span> <span>Skipped promoted content</span></div>
+                        <div class="flex gap-2"><span class="text-secondary/50">10:42:19</span> <span>Parsing context for reply...</span></div>
+                        <div class="flex gap-2"><span class="text-secondary/50">10:42:21</span> <span>Queueing for approval</span></div>
+                    </div>
+                    <!-- Fade out bottom -->
+                    <div class="absolute bottom-0 left-0 w-full h-8 bg-gradient-to-t from-card to-transparent pointer-events-none"></div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Nav Bar -->
+    <footer id="footer" class="fixed bottom-0 left-0 w-full h-[40px] border-t border-border bg-background flex items-center justify-between px-6 z-50">
+        <div class="flex gap-2 ml-[260px]"> <!-- Offset for sidebar -->
+            <!-- Pagination Dots -->
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-white"></div> <!-- Active: Screen 8 -->
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+        </div>
+        
+        <div class="text-xs font-mono text-secondary">
+            Screen 8 of 14: Browser View
+        </div>
+
+        <div class="flex gap-4">
+            <button class="text-xs text-secondary hover:text-white transition-colors flex items-center gap-1">
+                <i class="fa-solid fa-chevron-left text-[10px]"></i> Previous
+            </button>
+            <button class="text-xs text-secondary hover:text-white transition-colors flex items-center gap-1">
+                Next <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        // Simple script to simulate the log scrolling
+        window.addEventListener('load', function() {
+            // Add shimmer animation definition
+            const style = document.createElement('style');
+            style.innerHTML = `
+                @keyframes shimmer {
+                    100% { transform: translateX(200%); }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>

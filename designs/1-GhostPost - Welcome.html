@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GhostPost - Welcome</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        window.FontAwesomeConfig = { autoReplaceSvg: 'nest' };
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#131316',
+                        card: '#1c1d23',
+                        border: '#2a2b32',
+                        primary: '#ffffff',
+                        secondary: '#9ca3af',
+                        accent: '#3b82f6',
+                        accentHover: '#2563eb',
+                        purple: '#8b5cf6',
+                        success: '#22c55e',
+                    },
+                    fontFamily: {
+                        sans: ['DM Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    backgroundImage: {
+                        'gradient-ghost': 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        body {
+            background-color: #131316;
+            color: #ffffff;
+            font-family: 'DM Sans', sans-serif;
+            overflow: hidden; /* Prevent scroll for fixed desktop view */
+        }
+        .ghost-gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .ghost-icon-bg {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        /* Custom scrollbar just in case content overflows slightly */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #131316;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a2b32;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="h-screen w-full flex flex-col justify-between items-center relative selection:bg-accent selection:text-white">
+
+    <!-- Top Navigation / Logo Area -->
+    <header id="header" class="w-full flex justify-center pt-12 pb-6 z-10">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full ghost-icon-bg flex items-center justify-center shadow-[0_0_20px_rgba(59,130,246,0.3)]">
+                <i class="fa-solid fa-ghost text-white text-lg"></i>
+            </div>
+            <span class="text-2xl font-bold tracking-tight">GhostPost</span>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="flex-1 w-full max-w-[520px] flex flex-col items-center justify-center px-6 relative z-10">
+        
+        <!-- Hero Text -->
+        <div class="text-center mb-10 space-y-4">
+            <h1 class="text-4xl md:text-5xl font-bold leading-tight tracking-tight text-white">
+                Before we set anything up, I need to <span class="ghost-gradient-text">get to know you.</span>
+            </h1>
+            <p class="text-lg text-secondary leading-relaxed max-w-md mx-auto">
+                GhostPost learns directly from your voice. I'll ask you to talk for about 2 minutes so I can analyze your tone, vocabulary, and personality.
+            </p>
+        </div>
+
+        <!-- Suggestion Card -->
+        <div id="suggestion-card" class="w-full bg-card border border-border rounded-2xl p-8 mb-10 transition-all duration-300 hover:border-gray-700">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-8 h-8 rounded-full bg-[#2a2b32] flex items-center justify-center text-secondary">
+                    <i class="fa-solid fa-microphone-lines"></i>
+                </div>
+                <h3 class="text-lg font-medium text-white">What we'll talk about</h3>
+            </div>
+            
+            <ul class="space-y-5">
+                <li class="flex items-start gap-4 group">
+                    <div class="mt-1 w-5 h-5 rounded-full border border-gray-600 flex items-center justify-center group-hover:border-accent transition-colors">
+                        <div class="w-2 h-2 rounded-full bg-accent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </div>
+                    <div>
+                        <span class="block text-white font-medium mb-1">What you do</span>
+                        <span class="text-sm text-secondary">Your work, your side projects, or your craft.</span>
+                    </div>
+                </li>
+                <li class="flex items-start gap-4 group">
+                    <div class="mt-1 w-5 h-5 rounded-full border border-gray-600 flex items-center justify-center group-hover:border-accent transition-colors">
+                        <div class="w-2 h-2 rounded-full bg-accent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </div>
+                    <div>
+                        <span class="block text-white font-medium mb-1">What you care about</span>
+                        <span class="text-sm text-secondary">Topics that get you excited or frustrated.</span>
+                    </div>
+                </li>
+                <li class="flex items-start gap-4 group">
+                    <div class="mt-1 w-5 h-5 rounded-full border border-gray-600 flex items-center justify-center group-hover:border-accent transition-colors">
+                        <div class="w-2 h-2 rounded-full bg-accent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </div>
+                    <div>
+                        <span class="block text-white font-medium mb-1">How you communicate</span>
+                        <span class="text-sm text-secondary">Are you direct? Sarcastic? Enthusiastic?</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Primary CTA -->
+        <button class="w-full bg-accent hover:bg-accentHover text-white text-lg font-semibold py-4 rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] flex items-center justify-center gap-3 group">
+            <span>I'm ready</span>
+            <i class="fa-solid fa-arrow-right text-sm transition-transform group-hover:translate-x-1"></i>
+        </button>
+
+    </main>
+
+    <!-- Footer Security Note -->
+    <footer id="footer" class="w-full py-8 text-center relative z-10">
+        <div class="flex items-center justify-center gap-2 text-sm text-[#4b5563]">
+            <i class="fa-solid fa-lock text-xs"></i>
+            <span>Your recording stays on your machine and is never uploaded.</span>
+        </div>
+        
+        <!-- Subtle Version Number -->
+        <div class="absolute bottom-4 right-6 text-[10px] text-[#2a2b32] font-mono">
+            v1.0.4-beta
+        </div>
+    </footer>
+
+    <!-- Background Decoration (Subtle Glows) -->
+    <div class="fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden">
+        <!-- Top Center Glow -->
+        <div class="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-accent/5 rounded-full blur-[120px]"></div>
+        <!-- Bottom Glow -->
+        <div class="absolute bottom-[-20%] left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-purple/5 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Bottom Nav Bar (Contextual for Onboarding) -->
+    <div class="fixed bottom-0 w-full h-[40px] border-t border-[#2a2b32] bg-[#131316] flex items-center justify-between px-6 z-50">
+        <div class="flex gap-2">
+            <!-- Pagination Dots -->
+            <div class="w-2 h-2 rounded-full bg-white"></div>
+            <div class="w-2 h-2 rounded-full bg-[#2a2b32]"></div>
+            <div class="w-2 h-2 rounded-full bg-[#2a2b32]"></div>
+            <div class="w-2 h-2 rounded-full bg-[#2a2b32]"></div>
+            <div class="w-2 h-2 rounded-full bg-[#2a2b32]"></div>
+            <div class="w-2 h-2 rounded-full bg-[#2a2b32]"></div>
+        </div>
+        
+        <div class="text-xs font-mono text-secondary">
+            Screen 1 of 14: Welcome
+        </div>
+
+        <div class="flex gap-4">
+            <button class="text-xs text-secondary hover:text-white disabled:opacity-30 cursor-not-allowed" disabled>
+                <i class="fa-solid fa-chevron-left mr-1"></i> Previous
+            </button>
+            <button class="text-xs text-secondary hover:text-white">
+                Next <i class="fa-solid fa-chevron-right ml-1"></i>
+            </button>
+        </div>
+    </div>
+
+</body>
+</html>

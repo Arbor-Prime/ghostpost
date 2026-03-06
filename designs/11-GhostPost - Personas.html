@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GhostPost - Personas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        window.FontAwesomeConfig = { autoReplaceSvg: 'nest' };
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#131316',
+                        card: '#1c1d23',
+                        border: '#2a2b32',
+                        primary: '#ffffff',
+                        secondary: '#9ca3af',
+                        accent: '#3b82f6',
+                        accentHover: '#2563eb',
+                        purple: '#8b5cf6',
+                        success: '#22c55e',
+                        danger: '#ef4444',
+                        warning: '#eab308',
+                        xBlack: '#000000',
+                    },
+                    fontFamily: {
+                        sans: ['DM Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    backgroundImage: {
+                        'gradient-ghost': 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+                        'gradient-card': 'linear-gradient(180deg, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0) 100%)',
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(59, 130, 246, 0.15)',
+                        'glow-active': '0 0 30px rgba(59, 130, 246, 0.25)',
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        body {
+            background-color: #131316;
+            color: #ffffff;
+            font-family: 'DM Sans', sans-serif;
+            overflow: hidden;
+        }
+        .ghost-icon-bg {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #131316; }
+        ::-webkit-scrollbar-thumb { background: #2a2b32; border-radius: 3px; }
+
+        .active-border-glow {
+            border-color: #3b82f6;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+        }
+        
+        /* Auto-tune pulse animation */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+        .pulse-badge {
+            animation: pulse-ring 2s infinite;
+        }
+    </style>
+</head>
+<body class="h-screen w-full flex overflow-hidden bg-background text-white selection:bg-accent selection:text-white">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-[260px] h-full border-r border-border bg-background flex flex-col z-30 shrink-0">
+        <!-- Logo Area -->
+        <div class="px-6 py-6 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full ghost-icon-bg flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.4)]">
+                    <i class="fa-solid fa-ghost text-white text-xs"></i>
+                </div>
+                <span class="text-lg font-bold tracking-tight">GhostPost</span>
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="px-6 mb-6">
+            <div class="bg-card border border-border rounded-lg px-3 py-2 flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-success animate-pulse"></div>
+                <span class="text-xs font-medium text-secondary">System Active</span>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-3 space-y-1 overflow-y-auto">
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-table-columns w-5 group-hover:text-white transition-colors"></i>
+                Dashboard
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-regular fa-compass w-5 group-hover:text-white transition-colors"></i>
+                Browser View
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-check-to-slot w-5 group-hover:text-white transition-colors"></i>
+                    Approvals
+                </div>
+                <span class="bg-card border border-border text-secondary text-[10px] font-bold px-1.5 py-0.5 rounded-md min-w-[20px] text-center group-hover:text-white transition-colors">3</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-users-viewfinder w-5 group-hover:text-white transition-colors"></i>
+                Tracked Profiles
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-accent/10 text-accent font-medium transition-colors group">
+                <i class="fa-solid fa-masks-theater w-5"></i>
+                Personas
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-wand-magic-sparkles w-5 group-hover:text-white transition-colors"></i>
+                AI Composition
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-flask w-5 group-hover:text-white transition-colors"></i>
+                Simulation
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-gear w-5 group-hover:text-white transition-colors"></i>
+                Settings
+            </a>
+        </nav>
+
+        <!-- User Profile -->
+        <div class="p-4 border-t border-border mt-auto">
+            <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-card transition-colors cursor-pointer">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" alt="User" class="w-8 h-8 rounded-full object-cover border border-border">
+                <div class="flex flex-col">
+                    <span class="text-sm font-medium text-white">Alex Founder</span>
+                    <span class="text-xs text-secondary">@alex_builds</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main id="main-personas" class="flex-1 flex flex-col h-full relative overflow-hidden bg-background">
+        
+        <!-- Header -->
+        <header class="h-16 border-b border-border flex items-center justify-between px-8 bg-background z-20 shrink-0">
+            <div>
+                <h1 class="text-xl font-bold text-white">Personas — Behavioral Archetypes</h1>
+                <p class="text-xs text-secondary mt-0.5">Automated personality shifting based on time of day</p>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                 <div class="bg-card border border-border rounded-lg px-4 py-1.5 flex items-center gap-3">
+                    <span class="text-xs text-secondary uppercase font-bold tracking-wider">Current Time</span>
+                    <span class="text-lg font-mono font-bold text-white" id="clock">19:42</span>
+                </div>
+                <button class="bg-card hover:bg-card/80 border border-border text-secondary hover:text-white px-3 py-2 rounded-lg text-sm transition-colors">
+                    <i class="fa-solid fa-sliders mr-2"></i> Configure Global Rules
+                </button>
+            </div>
+        </header>
+
+        <!-- Personas Grid -->
+        <div class="flex-1 overflow-y-auto p-8">
+            <div class="grid grid-cols-4 gap-6 max-w-[1600px] mx-auto pb-20">
+
+                <!-- Persona 1: Early Bird -->
+                <div class="bg-card border border-border rounded-2xl p-6 flex flex-col gap-4 hover:border-border/80 transition-all group relative overflow-hidden h-[340px]">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center border border-orange-500/20 text-orange-400">
+                            <i class="fa-solid fa-mug-hot text-xl"></i>
+                        </div>
+                        <div class="bg-card border border-border px-2 py-1 rounded text-xs font-mono text-secondary">
+                            06:00 - 08:30
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Early Bird</h3>
+                        <p class="text-sm text-secondary mt-1">"Scrolling in bed"</p>
+                    </div>
+
+                    <div class="space-y-3 mt-1">
+                        <div>
+                            <div class="flex justify-between text-[10px] uppercase font-bold text-secondary mb-1">
+                                <span>Energy Level</span>
+                                <span class="text-orange-400">Low</span>
+                            </div>
+                            <div class="h-1.5 w-full bg-background rounded-full overflow-hidden">
+                                <div class="h-full bg-orange-400 w-[30%] rounded-full"></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-background rounded-lg p-3 border border-border">
+                            <div class="text-[10px] uppercase font-bold text-secondary mb-1">Tone Profile</div>
+                            <div class="text-sm text-white leading-snug">Relaxed, warm, brief. Avoids complex debates.</div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <span class="text-xs text-secondary">Avg Activity</span>
+                            <span class="text-sm font-mono font-bold text-white">12 replies/hr</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Persona 2: Morning Commute -->
+                <div class="bg-card border border-border rounded-2xl p-6 flex flex-col gap-4 hover:border-border/80 transition-all group relative overflow-hidden h-[340px]">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20 text-blue-400">
+                            <i class="fa-solid fa-train-subway text-xl"></i>
+                        </div>
+                        <div class="bg-card border border-border px-2 py-1 rounded text-xs font-mono text-secondary">
+                            08:30 - 09:30
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Morning Commute</h3>
+                        <p class="text-sm text-secondary mt-1">"On the train"</p>
+                    </div>
+
+                    <div class="space-y-3 mt-1">
+                        <div>
+                            <div class="flex justify-between text-[10px] uppercase font-bold text-secondary mb-1">
+                                <span>Energy Level</span>
+                                <span class="text-blue-400">Medium</span>
+                            </div>
+                            <div class="h-1.5 w-full bg-background rounded-full overflow-hidden">
+                                <div class="h-full bg-blue-400 w-[60%] rounded-full"></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-background rounded-lg p-3 border border-border">
+                            <div class="text-[10px] uppercase font-bold text-secondary mb-1">Tone Profile</div>
+                            <div class="text-sm text-white leading-snug">Engaged, catching up on news. Curious tone.</div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <span class="text-xs text-secondary">Avg Activity</span>
+                            <span class="text-sm font-mono font-bold text-white">45 replies/hr</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Persona 3: Work Break -->
+                <div class="bg-card border border-border rounded-2xl p-6 flex flex-col gap-4 hover:border-border/80 transition-all group relative overflow-hidden h-[340px]">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 text-emerald-400">
+                            <i class="fa-solid fa-briefcase text-xl"></i>
+                        </div>
+                        <div class="bg-card border border-border px-2 py-1 rounded text-xs font-mono text-secondary">
+                            10:00 - 12:00
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Work Break</h3>
+                        <p class="text-sm text-secondary mt-1">"Between tasks"</p>
+                    </div>
+
+                    <div class="space-y-3 mt-1">
+                        <div>
+                            <div class="flex justify-between text-[10px] uppercase font-bold text-secondary mb-1">
+                                <span>Energy Level</span>
+                                <span class="text-emerald-400">Medium</span>
+                            </div>
+                            <div class="h-1.5 w-full bg-background rounded-full overflow-hidden">
+                                <div class="h-full bg-emerald-400 w-[50%] rounded-full"></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-background rounded-lg p-3 border border-border">
+                            <div class="text-[10px] uppercase font-bold text-secondary mb-1">Tone Profile</div>
+                            <div class="text-sm text-white leading-snug">Direct, efficient, punchy. Professional focus.</div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <span class="text-xs text-secondary">Avg Activity</span>
+                            <span class="text-sm font-mono font-bold text-white">8 replies/hr</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Persona 4: Lunch Scroll -->
+                <div class="bg-card border border-border rounded-2xl p-6 flex flex-col gap-4 hover:border-border/80 transition-all group relative overflow-hidden h-[340px]">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="w-12 h-12 rounded-xl bg-yellow-500/10 flex items-center justify-center border border-yellow-500/20 text-yellow-400">
+                            <i class="fa-solid fa-burger text-xl"></i>
+                        </div>
+                        <div class="bg-card border border-border px-2 py-1 rounded text-xs font-mono text-secondary">
+                            12:00 - 13:30
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Lunch Scroll</h3>
+                        <p class="text-sm text-secondary mt-1">"Eating, relaxed"</p>
+                    </div>
+
+                    <div class="space-y-3 mt-1">
+                        <div>
+                            <div class="flex justify-between text-[10px] uppercase font-bold text-secondary mb-1">
+                                <span>Energy Level</span>
+                                <span class="text-yellow-400">High</span>
+                            </div>
+                            <div class="h-1.5 w-full bg-background rounded-full overflow-hidden">
+                                <div class="h-full bg-yellow-400 w-[85%] rounded-full"></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-background rounded-lg p-3 border border-border">
+                            <div class="text-[10px] uppercase font-bold text-secondary mb-1">Tone Profile</div>
+                            <div class="text-sm text-white leading-snug">Conversational, anecdotal, funny. High emojis.</div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <span class="text-xs text-secondary">Avg Activity</span>
+                            <span class="text-sm font-mono font-bold text-white">62 replies/hr</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Persona 5: Afternoon Lull -->
+                <div class="bg-card border border-border rounded-2xl p-6 flex flex-col gap-4 hover:border-border/80 transition-all group relative overflow-hidden h-[340px]">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="w-12 h-12 rounded-xl bg-slate-500/10 flex items-center justify-center border border-slate-500/20 text-slate-400">
+                            <i class="fa-solid fa-cloud text-xl"></i>
+                        </div>
+                        <div class="bg-card border border-border px-2 py-1 rounded text-xs font-mono text-secondary">
+                            14:00 - 17:00
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Afternoon Lull</h3>
+                        <p class="text-sm text-secondary mt-1">"Post-lunch dip"</p>
+                    </div>
+
+                    <div class="space-y-3 mt-1">
+                        <div>
+                            <div class="flex justify-between text-[10px] uppercase font-bold text-secondary mb-1">
+                                <span>Energy Level</span>
+                                <span class="text-slate-400">Low</span>
+                            </div>
+                            <div class="h-1.5 w-full bg-background rounded-full overflow-hidden">
+                                <div class="h-full bg-slate-400 w-[20%] rounded-full"></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-background rounded-lg p-3 border border-border">
+                            <div class="text-[10px] uppercase font-bold text-secondary mb-1">Tone Profile</div>
+                            <div class="text-sm text-white leading-snug">Reactive, likes mostly. Short replies.</div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <span class="text-xs text-secondary">Avg Activity</span>
+                            <span class="text-sm font-mono font-bold text-white">5 replies/hr</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Persona 6: School Run -->
+                <div class="bg-card border border-border rounded-2xl p-6 flex flex-col gap-4 hover:border-border/80 transition-all group relative overflow-hidden h-[340px] opacity-75">
+                     <!-- Inactive Overlay -->
+                     <div class="absolute inset-0 bg-background/50 z-10 pointer-events-none"></div>
+
+                    <div class="flex justify-between items-start mb-2 relative z-0">
+                        <div class="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center border border-red-500/20 text-red-400">
+                            <i class="fa-solid fa-car-side text-xl"></i>
+                        </div>
+                        <div class="bg-card border border-border px-2 py-1 rounded text-xs font-mono text-secondary">
+                            15:00 - 17:30
+                        </div>
+                    </div>
+                    
+                    <div class="relative z-0">
+                        <h3 class="text-lg font-bold text-white">School Run</h3>
+                        <p class="text-sm text-secondary mt-1">"Mostly offline"</p>
+                    </div>
+
+                    <div class="space-y-3 mt-1 relative z-0">
+                        <div>
+                            <div class="flex justify-between text-[10px] uppercase font-bold text-secondary mb-1">
+                                <span>Energy Level</span>
+                                <span class="text-red-400">None</span>
+                            </div>
+                            <div class="h-1.5 w-full bg-background rounded-full overflow-hidden">
+                                <div class="h-full bg-red-400 w-[5%] rounded-full"></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-background rounded-lg p-3 border border-border">
+                            <div class="text-[10px] uppercase font-bold text-secondary mb-1">Tone Profile</div>
+                            <div class="text-sm text-white leading-snug">Brief if anything. Distracted.</div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <span class="text-xs text-secondary">Avg Activity</span>
+                            <span class="text-sm font-mono font-bold text-white">1 reply/hr</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Persona 7: Evening Wind-Down (ACTIVE) -->
+                <div class="bg-card active-border-glow border-2 rounded-2xl p-6 flex flex-col gap-4 relative overflow-hidden h-[340px] bg-gradient-card">
+                    <!-- Active Badge -->
+                    <div class="absolute top-4 right-4 flex items-center gap-2 bg-success/10 border border-success/30 px-2.5 py-1 rounded text-[10px] font-bold text-success shadow-[0_0_10px_rgba(34,197,94,0.2)]">
+                        <div class="w-1.5 h-1.5 rounded-full bg-success pulse-badge"></div>
+                        AUTO-TUNE: ON
+                    </div>
+
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center border border-purple-500/40 text-purple-300 shadow-[0_0_15px_rgba(139,92,246,0.2)]">
+                            <i class="fa-solid fa-couch text-xl"></i>
+                        </div>
+                        <div class="bg-accent/10 border border-accent/30 px-2 py-1 rounded text-xs font-mono text-accent font-bold mt-1">
+                            19:30 - 21:00
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Evening Wind-Down</h3>
+                        <p class="text-sm text-secondary mt-1">"Your time"</p>
+                    </div>
+
+                    <div class="space-y-3 mt-1">
+                        <div>
+                            <div class="flex justify-between text-[10px] uppercase font-bold text-secondary mb-1">
+                                <span>Energy Level</span>
+                                <span class="text-purple-400">High</span>
+                            </div>
+                            <div class="h-1.5 w-full bg-background rounded-full overflow-hidden">
+                                <div class="h-full bg-purple-400 w-[80%] rounded-full shadow-[0_0_8px_rgba(168,85,247,0.5)]"></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-background/80 rounded-lg p-3 border border-accent/20">
+                            <div class="text-[10px] uppercase font-bold text-accent mb-1">Current Active Tone</div>
+                            <div class="text-sm text-white leading-snug">Relaxed, opinionated, humour. Willing to debate.</div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <span class="text-xs text-secondary">Avg Activity</span>
+                            <span class="text-sm font-mono font-bold text-white">55 replies/hr</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Persona 8: Late Night Builder -->
+                <div class="bg-card border border-border rounded-2xl p-6 flex flex-col gap-4 hover:border-border/80 transition-all group relative overflow-hidden h-[340px]">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20 text-indigo-400">
+                            <i class="fa-solid fa-code text-xl"></i>
+                        </div>
+                        <div class="bg-card border border-border px-2 py-1 rounded text-xs font-mono text-secondary">
+                            22:00 - 02:00
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Late Night Builder</h3>
+                        <p class="text-sm text-secondary mt-1">"Deep work"</p>
+                    </div>
+
+                    <div class="space-y-3 mt-1">
+                        <div>
+                            <div class="flex justify-between text-[10px] uppercase font-bold text-secondary mb-1">
+                                <span>Energy Level</span>
+                                <span class="text-indigo-400">Variable</span>
+                            </div>
+                            <div class="h-1.5 w-full bg-background rounded-full overflow-hidden">
+                                <div class="h-full bg-indigo-400 w-[70%] rounded-full"></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-background rounded-lg p-3 border border-border">
+                            <div class="text-[10px] uppercase font-bold text-secondary mb-1">Tone Profile</div>
+                            <div class="text-sm text-white leading-snug">Sharp, intense, passionate. Technical focus.</div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <span class="text-xs text-secondary">Avg Activity</span>
+                            <span class="text-sm font-mono font-bold text-white">28 replies/hr</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Nav Bar -->
+    <footer id="footer" class="fixed bottom-0 left-0 w-full h-[40px] border-t border-border bg-background flex items-center justify-between px-6 z-50">
+        <div class="flex gap-2 ml-[260px]"> <!-- Offset for sidebar -->
+            <!-- Pagination Dots -->
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-white"></div> <!-- Active: Screen 11 -->
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+        </div>
+        
+        <div class="text-xs font-mono text-secondary">
+            Screen 11 of 14: Personas
+        </div>
+
+        <div class="flex gap-4">
+            <button class="text-xs text-secondary hover:text-white transition-colors flex items-center gap-1">
+                <i class="fa-solid fa-chevron-left text-[10px]"></i> Previous
+            </button>
+            <button class="text-xs text-secondary hover:text-white transition-colors flex items-center gap-1">
+                Next <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        // Simple clock script for realism
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('clock').textContent = `${hours}:${minutes}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+</html>

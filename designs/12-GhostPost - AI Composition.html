@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GhostPost - AI Composition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.plot.ly/plotly-3.1.1.min.js"></script>
+    <script>
+        window.FontAwesomeConfig = { autoReplaceSvg: 'nest' };
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#131316',
+                        card: '#1c1d23',
+                        border: '#2a2b32',
+                        primary: '#ffffff',
+                        secondary: '#9ca3af',
+                        accent: '#3b82f6',
+                        accentHover: '#2563eb',
+                        purple: '#8b5cf6',
+                        success: '#22c55e',
+                        danger: '#ef4444',
+                        warning: '#eab308',
+                        xBlack: '#000000',
+                    },
+                    fontFamily: {
+                        sans: ['DM Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    backgroundImage: {
+                        'gradient-ghost': 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+                        'gradient-card': 'linear-gradient(180deg, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0) 100%)',
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(59, 130, 246, 0.15)',
+                        'glow-active': '0 0 30px rgba(59, 130, 246, 0.25)',
+                    },
+                    animation: {
+                        'cursor-blink': 'blink 1s step-end infinite',
+                        'fade-in-char': 'fadeIn 0.1s ease-out forwards',
+                    },
+                    keyframes: {
+                        blink: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(2px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        body {
+            background-color: #131316;
+            color: #ffffff;
+            font-family: 'DM Sans', sans-serif;
+            overflow: hidden;
+        }
+        .ghost-icon-bg {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #131316; }
+        ::-webkit-scrollbar-thumb { background: #2a2b32; border-radius: 3px; }
+
+        .active-border-glow {
+            border-color: #3b82f6;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+        }
+        
+        .typewriter-text span {
+            display: inline-block;
+            opacity: 0;
+            animation: fadeIn 0.05s forwards;
+        }
+    </style>
+</head>
+<body class="h-screen w-full flex overflow-hidden bg-background text-white selection:bg-accent selection:text-white">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-[260px] h-full border-r border-border bg-background flex flex-col z-30 shrink-0">
+        <!-- Logo Area -->
+        <div class="px-6 py-6 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full ghost-icon-bg flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.4)]">
+                    <i class="fa-solid fa-ghost text-white text-xs"></i>
+                </div>
+                <span class="text-lg font-bold tracking-tight">GhostPost</span>
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="px-6 mb-6">
+            <div class="bg-card border border-border rounded-lg px-3 py-2 flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-success animate-pulse"></div>
+                <span class="text-xs font-medium text-secondary">System Active</span>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-3 space-y-1 overflow-y-auto">
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-table-columns w-5 group-hover:text-white transition-colors"></i>
+                Dashboard
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-regular fa-compass w-5 group-hover:text-white transition-colors"></i>
+                Browser View
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-check-to-slot w-5 group-hover:text-white transition-colors"></i>
+                    Approvals
+                </div>
+                <span class="bg-card border border-border text-secondary text-[10px] font-bold px-1.5 py-0.5 rounded-md min-w-[20px] text-center group-hover:text-white transition-colors">3</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-users-viewfinder w-5 group-hover:text-white transition-colors"></i>
+                Tracked Profiles
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-masks-theater w-5 group-hover:text-white transition-colors"></i>
+                Personas
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-accent/10 text-accent font-medium transition-colors group">
+                <i class="fa-solid fa-wand-magic-sparkles w-5"></i>
+                AI Composition
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-flask w-5 group-hover:text-white transition-colors"></i>
+                Simulation
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-gear w-5 group-hover:text-white transition-colors"></i>
+                Settings
+            </a>
+        </nav>
+
+        <!-- User Profile -->
+        <div class="p-4 border-t border-border mt-auto">
+            <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-card transition-colors cursor-pointer">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" alt="User" class="w-8 h-8 rounded-full object-cover border border-border">
+                <div class="flex flex-col">
+                    <span class="text-sm font-medium text-white">Alex Founder</span>
+                    <span class="text-xs text-secondary">@alex_builds</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main id="main-composition" class="flex-1 flex flex-col h-full relative overflow-hidden bg-background">
+        
+        <!-- Header -->
+        <header class="h-16 border-b border-border flex items-center justify-between px-8 bg-background z-20 shrink-0">
+            <div>
+                <h1 class="text-xl font-bold text-white">AI Composition Engine</h1>
+                <p class="text-xs text-secondary mt-0.5">Real-time context analysis and draft generation</p>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                 <div class="bg-card border border-border rounded-lg px-4 py-1.5 flex items-center gap-3">
+                    <span class="text-xs text-secondary uppercase font-bold tracking-wider">Current Time</span>
+                    <span class="text-lg font-mono font-bold text-white" id="clock">19:42</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Split Layout Content -->
+        <div class="flex-1 flex overflow-hidden">
+            
+            <!-- LEFT PANEL: Profile Context -->
+            <aside class="w-[340px] border-r border-border bg-background flex flex-col overflow-y-auto custom-scrollbar">
+                
+                <!-- Profile Header -->
+                <div class="p-6 border-b border-border">
+                    <div class="flex items-start gap-4">
+                        <div class="relative">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="David" class="w-14 h-14 rounded-full border-2 border-border object-cover">
+                            <div class="absolute -bottom-1 -right-1 bg-background p-0.5 rounded-full">
+                                <div class="bg-blue-500 text-white text-[8px] p-1 rounded-full w-5 h-5 flex items-center justify-center">
+                                    <i class="fa-brands fa-twitter"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-white">David Tech</h2>
+                            <p class="text-sm text-secondary">@david_builds</p>
+                            <div class="flex items-center gap-3 mt-2">
+                                <div class="flex items-center gap-1.5 text-xs text-secondary">
+                                    <i class="fa-solid fa-users text-[10px]"></i>
+                                    <span class="font-mono text-white">12.4K</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 text-xs text-secondary">
+                                    <i class="fa-regular fa-clock text-[10px]"></i>
+                                    <span class="font-mono text-white">2h ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Themes Chart -->
+                <div class="p-6 border-b border-border">
+                    <h3 class="text-xs font-bold text-secondary uppercase tracking-wider mb-4">Content Themes</h3>
+                    <div id="themes-chart" class="h-[160px] w-full"></div>
+                </div>
+
+                <!-- Activity Heatmap -->
+                <div class="p-6 border-b border-border">
+                    <h3 class="text-xs font-bold text-secondary uppercase tracking-wider mb-4">Activity Heatmap</h3>
+                    <!-- 7 Columns (Days) x 4 Rows (Time Blocks) Grid -->
+                    <div class="grid grid-cols-7 gap-1">
+                        <!-- Header Row (Days) -->
+                        <div class="text-[8px] text-center text-secondary">M</div>
+                        <div class="text-[8px] text-center text-secondary">T</div>
+                        <div class="text-[8px] text-center text-secondary">W</div>
+                        <div class="text-[8px] text-center text-secondary">T</div>
+                        <div class="text-[8px] text-center text-secondary">F</div>
+                        <div class="text-[8px] text-center text-secondary">S</div>
+                        <div class="text-[8px] text-center text-secondary">S</div>
+
+                        <!-- Rows generated via script for visual density -->
+                        <!-- Row 1: Morning -->
+                        <div class="h-6 rounded bg-accent/20"></div>
+                        <div class="h-6 rounded bg-accent/40"></div>
+                        <div class="h-6 rounded bg-accent/60"></div>
+                        <div class="h-6 rounded bg-accent/80"></div>
+                        <div class="h-6 rounded bg-accent/30"></div>
+                        <div class="h-6 rounded bg-accent/10"></div>
+                        <div class="h-6 rounded bg-accent/5"></div>
+                        
+                        <!-- Row 2: Midday -->
+                        <div class="h-6 rounded bg-accent/30"></div>
+                        <div class="h-6 rounded bg-accent/50"></div>
+                        <div class="h-6 rounded bg-accent/90 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
+                        <div class="h-6 rounded bg-accent/70"></div>
+                        <div class="h-6 rounded bg-accent/40"></div>
+                        <div class="h-6 rounded bg-accent/20"></div>
+                        <div class="h-6 rounded bg-accent/10"></div>
+
+                        <!-- Row 3: Evening -->
+                        <div class="h-6 rounded bg-accent/10"></div>
+                        <div class="h-6 rounded bg-accent/20"></div>
+                        <div class="h-6 rounded bg-accent/30"></div>
+                        <div class="h-6 rounded bg-accent/50"></div>
+                        <div class="h-6 rounded bg-accent/20"></div>
+                        <div class="h-6 rounded bg-accent/5"></div>
+                        <div class="h-6 rounded bg-accent/5"></div>
+
+                        <!-- Row 4: Night -->
+                        <div class="h-6 rounded bg-accent/5"></div>
+                        <div class="h-6 rounded bg-accent/10"></div>
+                        <div class="h-6 rounded bg-accent/20"></div>
+                        <div class="h-6 rounded bg-accent/10"></div>
+                        <div class="h-6 rounded bg-accent/5"></div>
+                        <div class="h-6 rounded bg-accent/0 border border-border/50"></div>
+                        <div class="h-6 rounded bg-accent/0 border border-border/50"></div>
+                    </div>
+                </div>
+
+                <!-- Past Interactions -->
+                <div class="p-6">
+                    <h3 class="text-xs font-bold text-secondary uppercase tracking-wider mb-4">Past Interactions</h3>
+                    <div class="space-y-4">
+                        <div class="bg-card border border-border rounded-lg p-3">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-[10px] text-secondary font-mono">2 days ago</span>
+                                <i class="fa-solid fa-reply text-[10px] text-accent"></i>
+                            </div>
+                            <p class="text-xs text-secondary line-clamp-2">"Totally agree with the rendering approach here. WebGL is underrated for this specific use case."</p>
+                        </div>
+                         <div class="bg-card border border-border rounded-lg p-3">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-[10px] text-secondary font-mono">1 week ago</span>
+                                <i class="fa-solid fa-heart text-[10px] text-pink-500"></i>
+                            </div>
+                            <p class="text-xs text-secondary italic">Liked post about Vercel updates.</p>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- RIGHT PANEL: Composition Area -->
+            <div class="flex-1 flex flex-col bg-[#0f0f12] relative">
+                
+                <!-- Scrollable Content Container -->
+                <div class="flex-1 overflow-y-auto p-8 pb-32">
+                    <div class="max-w-3xl mx-auto space-y-8">
+                        
+                        <!-- Original Post Card -->
+                        <div class="bg-card border border-border rounded-2xl p-6 relative z-10">
+                            <div class="flex gap-4">
+                                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" class="w-12 h-12 rounded-full object-cover">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="font-bold text-white">David Tech</span>
+                                        <span class="text-secondary text-sm">@david_builds</span>
+                                        <span class="text-secondary text-xs">• 24m</span>
+                                    </div>
+                                    <p class="text-white text-lg leading-relaxed mb-3">
+                                        Just shipped the new render engine for our dashboard. Went from 450ms load times to sub-50ms. 
+                                        <br><br>
+                                        The trick was moving all the heavy lifting to a Rust-based worker and just letting the main thread handle the DOM updates. 🦀⚡️
+                                    </p>
+                                    <div class="h-64 w-full bg-black/50 rounded-xl border border-border overflow-hidden mb-4 flex items-center justify-center relative group cursor-pointer">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                                        <i class="fa-solid fa-chart-line text-4xl text-white/20 group-hover:text-white/40 transition-colors"></i>
+                                        <span class="absolute bottom-4 left-4 font-mono text-xs text-white/80 bg-black/40 px-2 py-1 rounded">perf_chart_v2.png</span>
+                                    </div>
+                                    <div class="flex items-center gap-6 text-secondary text-sm">
+                                        <div class="flex items-center gap-2 hover:text-accent transition-colors cursor-pointer"><i class="fa-regular fa-comment"></i> 14</div>
+                                        <div class="flex items-center gap-2 hover:text-green-500 transition-colors cursor-pointer"><i class="fa-solid fa-retweet"></i> 4</div>
+                                        <div class="flex items-center gap-2 hover:text-pink-500 transition-colors cursor-pointer"><i class="fa-regular fa-heart"></i> 82</div>
+                                        <div class="flex items-center gap-2 hover:text-accent transition-colors cursor-pointer"><i class="fa-solid fa-chart-simple"></i> 2.1k</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thread Connector -->
+                        <div class="h-12 border-l-2 border-dashed border-border ml-[3.25rem] -my-4 relative z-0"></div>
+
+                        <!-- AI Draft Reply Card -->
+                        <div class="bg-card active-border-glow border-2 rounded-2xl p-6 relative z-10 bg-gradient-card">
+                            <!-- Ghost Avatar Floating -->
+                            <div class="absolute -left-3 -top-3 w-8 h-8 rounded-full ghost-icon-bg flex items-center justify-center shadow-lg border-2 border-background z-20">
+                                <i class="fa-solid fa-ghost text-white text-[10px]"></i>
+                            </div>
+
+                            <div class="flex gap-4">
+                                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" class="w-12 h-12 rounded-full object-cover border border-border opacity-80">
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="flex items-center gap-2">
+                                            <span class="font-bold text-white">Alex Founder</span>
+                                            <span class="text-secondary text-sm">@alex_builds</span>
+                                            <span class="bg-accent/10 text-accent text-[10px] font-bold px-2 py-0.5 rounded border border-accent/20">DRAFTING</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[10px] font-mono text-secondary">114/280</span>
+                                            <div class="w-4 h-4 rounded-full border border-secondary/30 flex items-center justify-center">
+                                                <div class="w-2 h-2 rounded-full bg-secondary/50"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Typing Area -->
+                                    <div class="min-h-[80px] text-lg text-white leading-relaxed font-normal relative">
+                                        <span id="typewriter-content">That performance gain is insane. Rust for the heavy lifting is absolutely the play here. Have you noticed any memory overhead on the worker side with large datasets?</span><span class="w-0.5 h-5 bg-accent inline-block ml-0.5 align-middle animate-cursor-blink"></span>
+                                    </div>
+
+                                    <!-- Behaviour Log Console -->
+                                    <div class="mt-6 bg-[#0f0f12] rounded-lg border border-border p-3 font-mono text-[10px] leading-relaxed text-secondary overflow-hidden">
+                                        <div class="flex items-center gap-2 mb-2 border-b border-border/50 pb-1">
+                                            <i class="fa-solid fa-terminal text-accent text-xs"></i>
+                                            <span class="font-bold text-white">BEHAVIOUR SIMULATION ENGINE v2.1</span>
+                                        </div>
+                                        <div class="space-y-1 opacity-80">
+                                            <div class="flex gap-2"><span class="text-green-500">➜</span> <span>Context analyzed (450 tokens) - Theme: Engineering/Performance</span></div>
+                                            <div class="flex gap-2"><span class="text-green-500">➜</span> <span>Pre-read delay simulated (1.2s)</span></div>
+                                            <div class="flex gap-2"><span class="text-green-500">➜</span> <span>Typing speed: 19 WPM with Gaussian variance (σ=2.4)</span></div>
+                                            <div class="flex gap-2"><span class="text-yellow-500">➜</span> <span>Simulated backspace correction (1 instance) at char 42</span></div>
+                                            <div class="flex gap-2"><span class="text-blue-500 animate-pulse">➜</span> <span class="text-white">Generating response...</span></div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Bottom Action Bar -->
+                <div class="absolute bottom-0 left-0 w-full bg-card/95 backdrop-blur-md border-t border-border p-4 z-30">
+                    <div class="max-w-3xl mx-auto flex items-center justify-between gap-4">
+                        
+                        <!-- Left Controls -->
+                        <div class="flex items-center gap-4">
+                            <!-- Tone Selector -->
+                            <div class="relative group">
+                                <button class="flex items-center gap-2 bg-background border border-border hover:border-secondary/50 px-3 py-2 rounded-lg text-sm text-secondary hover:text-white transition-colors">
+                                    <i class="fa-solid fa-sliders"></i>
+                                    <span>Tone: Technical & Curious</span>
+                                    <i class="fa-solid fa-chevron-up text-[10px] ml-1"></i>
+                                </button>
+                                <!-- Tooltip/Dropdown hint -->
+                                <div class="absolute bottom-full mb-2 left-0 w-48 bg-card border border-border rounded-lg shadow-xl p-2 hidden group-hover:block">
+                                    <div class="text-[10px] text-secondary uppercase font-bold mb-1 px-2">Select Tone</div>
+                                    <div class="px-2 py-1.5 hover:bg-accent/10 hover:text-accent rounded text-xs cursor-pointer text-white bg-accent/5">Technical & Curious</div>
+                                    <div class="px-2 py-1.5 hover:bg-accent/10 hover:text-accent rounded text-xs cursor-pointer text-secondary">Casual & Supportive</div>
+                                    <div class="px-2 py-1.5 hover:bg-accent/10 hover:text-accent rounded text-xs cursor-pointer text-secondary">Short & Punchy</div>
+                                </div>
+                            </div>
+
+                            <div class="h-8 w-[1px] bg-border"></div>
+
+                            <!-- Model Info -->
+                            <div class="flex items-center gap-2 text-xs text-secondary">
+                                <i class="fa-solid fa-microchip"></i>
+                                <span>Model: Gemini 2.5 Flash</span>
+                            </div>
+                        </div>
+
+                        <!-- Right Actions -->
+                        <div class="flex items-center gap-3">
+                            <button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-secondary hover:text-white hover:bg-background transition-colors text-sm font-medium">
+                                <i class="fa-solid fa-rotate-right"></i>
+                                Regenerate
+                            </button>
+                            <button class="flex items-center gap-2 px-6 py-2 rounded-lg bg-accent hover:bg-accentHover text-white shadow-[0_0_15px_rgba(59,130,246,0.4)] transition-all text-sm font-bold">
+                                <i class="fa-solid fa-paper-plane"></i>
+                                Post Reply
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Bottom Nav Bar -->
+    <footer id="footer" class="fixed bottom-0 left-0 w-full h-[40px] border-t border-border bg-background flex items-center justify-between px-6 z-50">
+        <div class="flex gap-2 ml-[260px]"> <!-- Offset for sidebar -->
+            <!-- Pagination Dots -->
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div> <!-- Screen 11 (Personas) -->
+            <div class="w-2 h-2 rounded-full bg-white"></div> <!-- Active: Screen 12 -->
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+        </div>
+        
+        <div class="text-xs font-mono text-secondary">
+            Screen 12 of 14: AI Composition
+        </div>
+
+        <div class="flex gap-4">
+            <button class="text-xs text-secondary hover:text-white transition-colors flex items-center gap-1">
+                <i class="fa-solid fa-chevron-left text-[10px]"></i> Previous
+            </button>
+            <button class="text-xs text-secondary hover:text-white transition-colors flex items-center gap-1">
+                Next <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        // Simple clock script
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('clock').textContent = `${hours}:${minutes}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Plotly Chart for Content Themes
+        window.addEventListener('load', function() {
+            try {
+                const data = [{
+                    type: 'bar',
+                    x: [40, 30, 15, 15],
+                    y: ['AI   ', 'Dev Tools   ', 'Web3   ', 'Design   '],
+                    orientation: 'h',
+                    marker: {
+                        color: ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b']
+                    },
+                    text: ['40%', '30%', '15%', '15%'],
+                    textposition: 'auto',
+                    hoverinfo: 'none'
+                }];
+
+                const layout = {
+                    margin: { t: 0, r: 20, b: 0, l: 80 },
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)',
+                    height: 160,
+                    xaxis: { showgrid: false, showticklabels: false, zeroline: false },
+                    yaxis: { 
+                        showgrid: false, 
+                        tickfont: { family: 'DM Sans', size: 11, color: '#9ca3af' }
+                    },
+                    bargap: 0.4
+                };
+
+                const config = { responsive: true, displayModeBar: false };
+                Plotly.newPlot('themes-chart', data, layout, config);
+            } catch(e) {
+                console.error("Chart error:", e);
+            }
+        });
+    </script>
+</body>
+</html>

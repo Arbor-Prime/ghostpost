@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GhostPost - Approvals</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        window.FontAwesomeConfig = { autoReplaceSvg: 'nest' };
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#131316',
+                        card: '#1c1d23',
+                        border: '#2a2b32',
+                        primary: '#ffffff',
+                        secondary: '#9ca3af',
+                        accent: '#3b82f6',
+                        accentHover: '#2563eb',
+                        purple: '#8b5cf6',
+                        success: '#22c55e',
+                        danger: '#ef4444',
+                        warning: '#eab308',
+                        xBlack: '#000000',
+                    },
+                    fontFamily: {
+                        sans: ['DM Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    backgroundImage: {
+                        'gradient-ghost': 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(59, 130, 246, 0.15)',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        body {
+            background-color: #131316;
+            color: #ffffff;
+            font-family: 'DM Sans', sans-serif;
+            overflow: hidden;
+        }
+        .ghost-icon-bg {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #131316; }
+        ::-webkit-scrollbar-thumb { background: #2a2b32; border-radius: 3px; }
+        
+        .dashed-connector {
+            background-image: linear-gradient(#2a2b32 50%, rgba(255,255,255,0) 0%);
+            background-position: right;
+            background-size: 2px 10px;
+            background-repeat: repeat-y;
+        }
+    </style>
+</head>
+<body class="h-screen w-full flex overflow-hidden bg-background text-white selection:bg-accent selection:text-white">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-[260px] h-full border-r border-border bg-background flex flex-col z-30 shrink-0">
+        <!-- Logo Area -->
+        <div class="px-6 py-6 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full ghost-icon-bg flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.4)]">
+                    <i class="fa-solid fa-ghost text-white text-xs"></i>
+                </div>
+                <span class="text-lg font-bold tracking-tight">GhostPost</span>
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="px-6 mb-6">
+            <div class="bg-card border border-border rounded-lg px-3 py-2 flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-success animate-pulse"></div>
+                <span class="text-xs font-medium text-secondary">System Active</span>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-3 space-y-1 overflow-y-auto">
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-table-columns w-5 group-hover:text-white transition-colors"></i>
+                Dashboard
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-regular fa-compass w-5 group-hover:text-white transition-colors"></i>
+                Browser View
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-accent/10 text-accent font-medium transition-colors justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-check-to-slot w-5"></i>
+                    Approvals
+                </div>
+                <span class="bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md min-w-[20px] text-center">3</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-users-viewfinder w-5 group-hover:text-white transition-colors"></i>
+                Tracked Profiles
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-masks-theater w-5 group-hover:text-white transition-colors"></i>
+                Personas
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-wand-magic-sparkles w-5 group-hover:text-white transition-colors"></i>
+                AI Composition
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-flask w-5 group-hover:text-white transition-colors"></i>
+                Simulation
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-secondary hover:text-white hover:bg-card transition-colors group">
+                <i class="fa-solid fa-gear w-5 group-hover:text-white transition-colors"></i>
+                Settings
+            </a>
+        </nav>
+
+        <!-- User Profile -->
+        <div class="p-4 border-t border-border mt-auto">
+            <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-card transition-colors cursor-pointer">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" alt="User" class="w-8 h-8 rounded-full object-cover border border-border">
+                <div class="flex flex-col">
+                    <span class="text-sm font-medium text-white">Alex Founder</span>
+                    <span class="text-xs text-secondary">@alex_builds</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main id="main-approvals" class="flex-1 flex flex-col h-full relative overflow-hidden bg-background">
+        
+        <!-- Header -->
+        <header class="h-16 border-b border-border flex items-center justify-between px-8 bg-background z-20">
+            <div>
+                <h1 class="text-xl font-bold text-white">Approvals Queue</h1>
+                <p class="text-xs text-secondary mt-0.5">Review pending drafts before they are posted</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="text-xs text-secondary">Queue Status:</span>
+                <span class="text-xs font-mono text-accent bg-accent/10 px-2 py-1 rounded border border-accent/20">3 Pending</span>
+                <div class="h-4 w-[1px] bg-border mx-2"></div>
+                <button class="text-secondary hover:text-white transition-colors"><i class="fa-solid fa-rotate text-sm"></i></button>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <div class="flex-1 overflow-y-auto p-8 flex justify-center">
+            
+            <div class="w-full max-w-4xl flex flex-col items-center pb-20">
+                
+                <!-- Original Post Card -->
+                <div class="w-full bg-card border border-border rounded-2xl p-6 relative z-10">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex gap-3">
+                            <div class="w-12 h-12 rounded-full overflow-hidden border border-border shrink-0">
+                                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-bold text-white text-lg">Pieter Levels</span>
+                                    <i class="fa-solid fa-certificate text-accent text-sm"></i>
+                                    <span class="text-secondary">@levelsio</span>
+                                    <span class="text-secondary text-sm mx-1">·</span>
+                                    <span class="text-secondary text-sm font-mono">2h ago</span>
+                                </div>
+                                <div class="mt-1 flex gap-2">
+                                    <span class="text-[10px] font-mono bg-border/50 text-secondary px-2 py-0.5 rounded uppercase tracking-wider">SaaS</span>
+                                    <span class="text-[10px] font-mono bg-border/50 text-secondary px-2 py-0.5 rounded uppercase tracking-wider">Indie Hacking</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 text-secondary text-sm font-mono">
+                            <div class="flex items-center gap-1.5"><i class="fa-regular fa-heart"></i> 1.2K</div>
+                            <div class="flex items-center gap-1.5"><i class="fa-solid fa-retweet"></i> 84</div>
+                            <div class="flex items-center gap-1.5"><i class="fa-regular fa-comment"></i> 142</div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-xl leading-relaxed text-[#e7e9ea] pl-[60px]">
+                        The hardest part of building a startup is not the coding.<br>
+                        It's not even the marketing.<br><br>
+                        It's the mental game of waking up every day and pushing the boulder up the hill when nobody cares yet.<br><br>
+                        Consistency > Intensity.
+                    </div>
+                </div>
+
+                <!-- Connector -->
+                <div class="h-12 w-[2px] dashed-connector opacity-40"></div>
+
+                <!-- AI Draft Card -->
+                <div class="w-full bg-card border border-accent/40 rounded-2xl p-0 relative z-10 shadow-[0_0_40px_rgba(59,130,246,0.1)] overflow-hidden">
+                    <!-- Glow effect -->
+                    <div class="absolute inset-0 border-2 border-accent/20 rounded-2xl pointer-events-none"></div>
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-accent to-transparent opacity-50"></div>
+
+                    <!-- Header -->
+                    <div class="px-6 py-4 border-b border-border bg-[#1c1d23] flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="flex items-center gap-2 bg-purple/10 border border-purple/20 px-3 py-1.5 rounded-full">
+                                <i class="fa-solid fa-moon text-purple text-xs"></i>
+                                <span class="text-xs font-bold text-purple uppercase tracking-wider">Evening Wind-Down</span>
+                            </div>
+                            <span class="text-xs text-secondary font-mono">Drafted 2m ago</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                             <div class="w-2 h-2 rounded-full bg-accent animate-pulse"></div>
+                             <span class="text-xs font-mono text-accent">AI Confidence: 94%</span>
+                        </div>
+                    </div>
+
+                    <div class="flex">
+                        <!-- Left: Editor -->
+                        <div class="flex-1 p-6 border-r border-border relative group">
+                            <div class="flex gap-4">
+                                <div class="w-10 h-10 rounded-full overflow-hidden border border-border shrink-0 opacity-80">
+                                    <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" class="w-full h-full object-cover">
+                                </div>
+                                <div class="flex-1">
+                                    <div class="relative">
+                                        <textarea class="w-full bg-transparent text-lg text-white resize-none outline-none min-h-[140px] leading-relaxed font-sans placeholder-secondary/30 selection:bg-accent/30" spellcheck="false">100%. The code is the easy part. The grind when you have 0 users and no feedback loop is where most people quit. 
+
+That first bit of traction feels like magic though.</textarea>
+                                        <!-- Edit Indicator -->
+                                        <div class="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                                            <i class="fa-solid fa-pen text-secondary text-xs"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex justify-between items-center mt-4 pt-4 border-t border-border/50">
+                                        <div class="text-xs font-mono text-secondary flex items-center gap-2">
+                                            <i class="fa-regular fa-keyboard"></i>
+                                            <span>Typing speed: ~19 WPM</span>
+                                        </div>
+                                        <div class="text-xs font-mono text-secondary">
+                                            <span class="text-white">184</span>/280
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Context Analysis -->
+                        <div class="w-[300px] bg-[#16171b] p-6 flex flex-col gap-6">
+                            <div>
+                                <h3 class="text-xs font-bold text-secondary uppercase tracking-wider mb-3">Analysis</h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <div class="flex justify-between text-xs mb-1">
+                                            <span class="text-white">Tone Match</span>
+                                            <span class="text-success font-mono">98%</span>
+                                        </div>
+                                        <div class="h-1.5 w-full bg-border rounded-full overflow-hidden">
+                                            <div class="h-full bg-success w-[98%] rounded-full"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between text-xs mb-1">
+                                            <span class="text-white">Relevance</span>
+                                            <span class="text-accent font-mono">92%</span>
+                                        </div>
+                                        <div class="h-1.5 w-full bg-border rounded-full overflow-hidden">
+                                            <div class="h-full bg-accent w-[92%] rounded-full"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between text-xs mb-1">
+                                            <span class="text-white">Engagement Prediction</span>
+                                            <span class="text-warning font-mono">High</span>
+                                        </div>
+                                        <div class="h-1.5 w-full bg-border rounded-full overflow-hidden">
+                                            <div class="h-full bg-warning w-[75%] rounded-full"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="pt-4 border-t border-border">
+                                <h3 class="text-xs font-bold text-secondary uppercase tracking-wider mb-2">Strategy</h3>
+                                <p class="text-xs text-secondary leading-relaxed">
+                                    Validating the struggle (empathy) + reinforcing the payoff (optimism). Matches your "Evening Wind-Down" supportive founder persona.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Bar -->
+                    <div class="px-6 py-4 bg-[#16171b] border-t border-border flex justify-between items-center">
+                        <div class="flex gap-3">
+                            <button class="px-4 py-2 rounded-lg border border-danger/30 text-danger hover:bg-danger/10 text-sm font-medium transition-colors flex items-center gap-2">
+                                <i class="fa-solid fa-xmark"></i> Reject
+                            </button>
+                            <button class="px-4 py-2 rounded-lg border border-border text-white hover:bg-card hover:border-secondary text-sm font-medium transition-colors flex items-center gap-2">
+                                <i class="fa-solid fa-pen"></i> Edit Draft
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="flex items-center gap-2 text-xs text-secondary">
+                                <input type="checkbox" id="schedule" class="rounded border-border bg-card text-accent focus:ring-0">
+                                <label for="schedule">Schedule for later</label>
+                            </div>
+                            <button class="px-6 py-2.5 rounded-lg bg-accent hover:bg-accentHover text-white text-sm font-bold shadow-glow transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-paper-plane"></i> Approve & Send
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Next in Queue Preview (Faded) -->
+                <div class="mt-8 w-full opacity-40 scale-95 blur-[1px] pointer-events-none select-none">
+                    <div class="w-full bg-card border border-border rounded-2xl p-6 flex justify-between items-center">
+                        <div class="flex gap-4 items-center">
+                             <div class="w-10 h-10 rounded-full overflow-hidden border border-border shrink-0">
+                                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-6.jpg" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <div class="font-bold text-white">Sarah Drasner</div>
+                                <div class="text-sm text-secondary truncate w-64">The best engineering teams I've worked with...</div>
+                            </div>
+                        </div>
+                        <div class="bg-card border border-border px-3 py-1 rounded text-xs text-secondary font-mono">
+                            QUEUE #2
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Nav Bar -->
+    <footer id="footer" class="fixed bottom-0 left-0 w-full h-[40px] border-t border-border bg-background flex items-center justify-between px-6 z-50">
+        <div class="flex gap-2 ml-[260px]"> <!-- Offset for sidebar -->
+            <!-- Pagination Dots -->
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-white"></div> <!-- Active: Screen 9 -->
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+            <div class="w-2 h-2 rounded-full bg-border"></div>
+        </div>
+        
+        <div class="text-xs font-mono text-secondary">
+            Screen 9 of 14: Approvals
+        </div>
+
+        <div class="flex gap-4">
+            <button class="text-xs text-secondary hover:text-white transition-colors flex items-center gap-1">
+                <i class="fa-solid fa-chevron-left text-[10px]"></i> Previous
+            </button>
+            <button class="text-xs text-secondary hover:text-white transition-colors flex items-center gap-1">
+                Next <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            </button>
+        </div>
+    </footer>
+
+</body>
+</html>

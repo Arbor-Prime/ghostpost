@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GhostPost - Processing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        window.FontAwesomeConfig = { autoReplaceSvg: 'nest' };
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#131316',
+                        card: '#1c1d23',
+                        border: '#2a2b32',
+                        primary: '#ffffff',
+                        secondary: '#9ca3af',
+                        accent: '#3b82f6',
+                        accentHover: '#2563eb',
+                        purple: '#8b5cf6',
+                        success: '#22c55e',
+                        danger: '#ef4444',
+                    },
+                    fontFamily: {
+                        sans: ['DM Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    backgroundImage: {
+                        'gradient-ghost': 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+                    },
+                    animation: {
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'progress': 'progress 6s ease-in-out forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '0.6', transform: 'scale(1)' },
+                            '50%': { opacity: '0.3', transform: 'scale(1.1)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(5px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        progress: {
+                            '0%': { width: '0%' },
+                            '100%': { width: '100%' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        body {
+            background-color: #131316;
+            color: #ffffff;
+            font-family: 'DM Sans', sans-serif;
+            overflow: hidden;
+        }
+        .ghost-icon-bg {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        
+        /* Step Animation Delays */
+        .step-item { opacity: 0; animation: fadeIn 0.5s ease-out forwards; }
+        .step-item:nth-child(1) { animation-delay: 0.2s; }
+        .step-item:nth-child(2) { animation-delay: 1.2s; }
+        .step-item:nth-child(3) { animation-delay: 2.2s; }
+        .step-item:nth-child(4) { animation-delay: 3.2s; }
+        .step-item:nth-child(5) { animation-delay: 4.2s; }
+        .step-item:nth-child(6) { animation-delay: 5.2s; }
+
+        /* Icon state classes */
+        .step-icon-pending { color: #2a2b32; }
+        .step-icon-active { color: #3b82f6; animation: spin 1s linear infinite; }
+        .step-icon-complete { color: #22c55e; }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #131316; }
+        ::-webkit-scrollbar-thumb { background: #2a2b32; border-radius: 3px; }
+    </style>
+</head>
+<body class="h-screen w-full flex flex-col justify-between items-center relative selection:bg-accent selection:text-white">
+
+    <!-- Top Navigation / Logo Area -->
+    <header id="header" class="w-full flex justify-center pt-12 pb-6 z-10">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full ghost-icon-bg flex items-center justify-center shadow-[0_0_20px_rgba(59,130,246,0.3)]">
+                <i class="fa-solid fa-ghost text-white text-lg"></i>
+            </div>
+            <span class="text-2xl font-bold tracking-tight">GhostPost</span>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="flex-1 w-full max-w-[520px] flex flex-col items-center justify-center px-6 relative z-10">
+        
+        <!-- Floating Ghost Logo -->
+        <div class="mb-8 relative">
+            <div class="absolute inset-0 bg-accent/20 rounded-full blur-xl animate-pulse-glow"></div>
+            <div class="w-24 h-24 rounded-full ghost-icon-bg flex items-center justify-center shadow-[0_0_40px_rgba(59,130,246,0.4)] animate-float relative z-10">
+                <i class="fa-solid fa-ghost text-white text-4xl"></i>
+            </div>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="text-3xl font-bold text-white mb-10 text-center tracking-tight">Getting to know you...</h1>
+
+        <!-- Processing Steps List -->
+        <div class="w-full space-y-4 mb-12 pl-4">
+            
+            <!-- Step 1 -->
+            <div class="step-item flex items-center gap-4 group">
+                <div class="w-6 h-6 flex items-center justify-center rounded-full bg-[#2a2b32]/30 border border-[#2a2b32]" id="icon-1">
+                    <i class="fa-solid fa-check text-xs text-success opacity-0 transition-opacity duration-300"></i>
+                </div>
+                <span class="text-lg text-secondary group-[.active]:text-white transition-colors duration-300" id="text-1">Transcribing your voice</span>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step-item flex items-center gap-4 group">
+                <div class="w-6 h-6 flex items-center justify-center rounded-full bg-[#2a2b32]/30 border border-[#2a2b32]" id="icon-2">
+                    <i class="fa-solid fa-check text-xs text-success opacity-0 transition-opacity duration-300"></i>
+                </div>
+                <span class="text-lg text-secondary group-[.active]:text-white transition-colors duration-300" id="text-2">Analysing vocabulary and patterns</span>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step-item flex items-center gap-4 group">
+                <div class="w-6 h-6 flex items-center justify-center rounded-full bg-[#2a2b32]/30 border border-[#2a2b32]" id="icon-3">
+                    <i class="fa-solid fa-check text-xs text-success opacity-0 transition-opacity duration-300"></i>
+                </div>
+                <span class="text-lg text-secondary group-[.active]:text-white transition-colors duration-300" id="text-3">Identifying topics and interests</span>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="step-item flex items-center gap-4 group">
+                <div class="w-6 h-6 flex items-center justify-center rounded-full bg-[#2a2b32]/30 border border-[#2a2b32]" id="icon-4">
+                    <i class="fa-solid fa-check text-xs text-success opacity-0 transition-opacity duration-300"></i>
+                </div>
+                <span class="text-lg text-secondary group-[.active]:text-white transition-colors duration-300" id="text-4">Mapping communication style</span>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="step-item flex items-center gap-4 group">
+                <div class="w-6 h-6 flex items-center justify-center rounded-full bg-[#2a2b32]/30 border border-[#2a2b32]" id="icon-5">
+                    <i class="fa-solid fa-check text-xs text-success opacity-0 transition-opacity duration-300"></i>
+                </div>
+                <span class="text-lg text-secondary group-[.active]:text-white transition-colors duration-300" id="text-5">Reading emotional range</span>
+            </div>
+
+            <!-- Step 6 -->
+            <div class="step-item flex items-center gap-4 group">
+                <div class="w-6 h-6 flex items-center justify-center rounded-full bg-[#2a2b32]/30 border border-[#2a2b32]" id="icon-6">
+                    <i class="fa-solid fa-check text-xs text-success opacity-0 transition-opacity duration-300"></i>
+                </div>
+                <span class="text-lg text-secondary group-[.active]:text-white transition-colors duration-300" id="text-6">Building your voice profile</span>
+            </div>
+
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="w-full max-w-[400px]">
+            <div class="h-1 w-full bg-[#2a2b32] rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-accent to-purple rounded-full animate-progress"></div>
+            </div>
+            <div class="flex justify-between mt-2">
+                <span class="text-xs text-secondary font-mono">Processing audio data...</span>
+                <span class="text-xs text-white font-mono" id="percent-text">0%</span>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer Empty Spacer to balance layout -->
+    <footer id="footer" class="w-full py-8 relative z-10 h-16">
+    </footer>
+
+    <!-- Background Decoration -->
+    <div class="fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden">
+        <!-- Center Glow behind ghost -->
+        <div class="absolute top-[30%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[120px]"></div>
+        <!-- Bottom Left Glow -->
+        <div class="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple/5 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Bottom Nav Bar -->
+    <div class="fixed bottom-0 w-full h-[40px] border-t border-[#2a2b32] bg-[#131316] flex items-center justify-between px-6 z-50">
+        <div class="flex gap-2">
+            <!-- Pagination Dots -->
+            <div class="w-2 h-2 rounded-full bg-[#2a2b32]"></div>
+            <div class="w-2 h-2 rounded-full bg-[#2a2b32]"></div>
+            <div class="w-2 h-2 rounded-full bg-white"></div>
+            <div class="w-2 h-2 rounded-full bg-[#2a2b32]"></div>
+            <div class="w-2 h-2 rounded-full bg-[#2a2b32]"></div>
+            <div class="w-2 h-2 rounded-full bg-[#2a2b32]"></div>
+        </div>
+        
+        <div class="text-xs font-mono text-secondary">
+            Screen 3 of 14: Processing
+        </div>
+
+        <div class="flex gap-4">
+            <button class="text-xs text-secondary hover:text-white">
+                <i class="fa-solid fa-chevron-left mr-1"></i> Previous
+            </button>
+            <button class="text-xs text-secondary hover:text-white opacity-50 cursor-not-allowed">
+                Next <i class="fa-solid fa-chevron-right ml-1"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Simulation Script for Checkmarks and Colors -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const steps = 6;
+            const durationPerStep = 1000; // ms
+            const percentDisplay = document.getElementById('percent-text');
+            
+            // Animate percentage
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 1;
+                if(progress <= 100) {
+                    percentDisplay.innerText = `${progress}%`;
+                } else {
+                    clearInterval(interval);
+                    percentDisplay.innerText = `100%`;
+                    // Redirect or enable next button could happen here
+                }
+            }, 60); // 60ms * 100 = 6000ms = 6s total
+
+            // Animate steps
+            for (let i = 1; i <= steps; i++) {
+                setTimeout(() => {
+                    const iconContainer = document.getElementById(`icon-${i}`);
+                    const checkIcon = iconContainer.querySelector('i');
+                    const text = document.getElementById(`text-${i}`);
+                    
+                    // Set active state
+                    text.classList.remove('text-secondary');
+                    text.classList.add('text-white', 'font-medium');
+                    
+                    // Show checkmark
+                    checkIcon.classList.remove('opacity-0');
+                    
+                    // Add glow to icon container
+                    iconContainer.classList.remove('bg-[#2a2b32]/30');
+                    iconContainer.classList.add('bg-success/10', 'border-success/30');
+
+                }, i * durationPerStep - 200); // Slight offset to sync with fade in
+            }
+        });
+    </script>
+</body>
+</html>

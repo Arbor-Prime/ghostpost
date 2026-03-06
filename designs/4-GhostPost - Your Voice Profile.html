@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GhostPost - Your Voice Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        window.FontAwesomeConfig = { autoReplaceSvg: 'nest' };
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#131316',
+                        card: '#1c1d23',
+                        border: '#2a2b32',
+                        primary: '#ffffff',
+                        secondary: '#9ca3af',
+                        accent: '#3b82f6',
+                        accentHover: '#2563eb',
+                        purple: '#8b5cf6',
+                        success: '#22c55e',
+                        danger: '#ef4444',
+                        warning: '#eab308',
+                    },
+                    fontFamily: {
+                        sans: ['DM Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    backgroundImage: {
+                        'gradient-ghost': 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(59, 130, 246, 0.15)',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        body {
+            background-color: #131316;
+            color: #ffffff;
+            font-family: 'DM Sans', sans-serif;
+            overflow-x: hidden;
+        }
+        .ghost-icon-bg {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #131316; }
+        ::-webkit-scrollbar-thumb { background: #2a2b32; border-radius: 3px; }
+
+        /* Range Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 12px;
+            width: 12px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            margin-top: -4px;
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #2a2b32;
+            border-radius: 2px;
+        }
+        /* Fill track hack for webkit */
+        .range-formal::-webkit-slider-runnable-track { background: linear-gradient(to right, #3b82f6 0%, #3b82f6 80%, #2a2b32 80%, #2a2b32 100%); }
+        .range-expressive::-webkit-slider-runnable-track { background: linear-gradient(to right, #3b82f6 0%, #3b82f6 65%, #2a2b32 65%, #2a2b32 100%); }
+        .range-direct::-webkit-slider-runnable-track { background: linear-gradient(to right, #3b82f6 0%, #3b82f6 75%, #2a2b32 75%, #2a2b32 100%); }
+
+        .card-hover:hover {
+            border-color: #3b82f6;
+            transition: border-color 0.3s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen w-full flex flex-col items-center relative selection:bg-accent selection:text-white pb-20">
+
+    <!-- Top Navigation / Logo Area -->
+    <header id="header" class="w-full flex justify-center pt-8 pb-6 z-10">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full ghost-icon-bg flex items-center justify-center shadow-[0_0_20px_rgba(59,130,246,0.3)]">
+                <i class="fa-solid fa-ghost text-white text-lg"></i>
+            </div>
+            <span class="text-2xl font-bold tracking-tight">GhostPost</span>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="w-full max-w-[640px] flex flex-col items-center px-6 relative z-10 mb-12">
+        
+        <!-- Headline -->
+        <h1 class="text-3xl font-bold text-white mb-8 text-center tracking-tight">Here’s what I learned about you.</h1>
+
+        <!-- 2-Column Grid -->
+        <div class="grid grid-cols-2 gap-4 w-full mb-8">
+            
+            <!-- Card 1: How You Talk -->
+            <div id="card-talk-style" class="bg-card border border-border rounded-[16px] p-5 flex flex-col justify-between card-hover">
+                <div class="flex items-center gap-2 mb-4">
+                    <i class="fa-solid fa-microphone-lines text-secondary text-sm"></i>
+                    <h3 class="text-sm font-semibold text-white uppercase tracking-wide">How You Talk</h3>
+                </div>
+                
+                <div class="space-y-4">
+                    <!-- Slider 1 -->
+                    <div>
+                        <div class="flex justify-between text-xs text-secondary mb-1">
+                            <span>Formal</span>
+                            <span>Casual</span>
+                        </div>
+                        <div class="relative h-2 bg-[#2a2b32] rounded-full overflow-hidden">
+                            <div class="absolute top-0 left-0 h-full bg-accent w-[80%]"></div>
+                        </div>
+                    </div>
+                    <!-- Slider 2 -->
+                    <div>
+                        <div class="flex justify-between text-xs text-secondary mb-1">
+                            <span>Reserved</span>
+                            <span>Expressive</span>
+                        </div>
+                        <div class="relative h-2 bg-[#2a2b32] rounded-full overflow-hidden">
+                            <div class="absolute top-0 left-0 h-full bg-accent w-[65%]"></div>
+                        </div>
+                    </div>
+                    <!-- Slider 3 -->
+                    <div>
+                        <div class="flex justify-between text-xs text-secondary mb-1">
+                            <span>Cautious</span>
+                            <span>Direct</span>
+                        </div>
+                        <div class="relative h-2 bg-[#2a2b32] rounded-full overflow-hidden">
+                            <div class="absolute top-0 left-0 h-full bg-accent w-[75%]"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-border">
+                    <p class="text-sm text-white leading-snug">"You're direct and casual, with natural warmth."</p>
+                </div>
+            </div>
+
+            <!-- Card 2: What You Talk About -->
+            <div id="card-topics" class="bg-card border border-border rounded-[16px] p-5 card-hover">
+                <div class="flex items-center gap-2 mb-4">
+                    <i class="fa-solid fa-hashtag text-secondary text-sm"></i>
+                    <h3 class="text-sm font-semibold text-white uppercase tracking-wide">What You Talk About</h3>
+                </div>
+                
+                <div class="flex flex-wrap gap-2 content-start h-full">
+                    <!-- Large -->
+                    <span class="px-3 py-1.5 bg-[#2a2b32] text-white rounded-full text-sm font-medium border border-transparent hover:border-accent transition-colors cursor-default">SaaS</span>
+                    <span class="px-3 py-1.5 bg-[#2a2b32] text-white rounded-full text-sm font-medium border border-transparent hover:border-accent transition-colors cursor-default">AI Tools</span>
+                    <span class="px-3 py-1.5 bg-[#2a2b32] text-white rounded-full text-sm font-medium border border-transparent hover:border-accent transition-colors cursor-default">Building Products</span>
+                    
+                    <!-- Medium -->
+                    <span class="px-2.5 py-1 bg-[#2a2b32]/60 text-secondary text-xs rounded-full border border-transparent hover:border-accent transition-colors cursor-default">Design</span>
+                    <span class="px-2.5 py-1 bg-[#2a2b32]/60 text-secondary text-xs rounded-full border border-transparent hover:border-accent transition-colors cursor-default">Startups</span>
+                    <span class="px-2.5 py-1 bg-[#2a2b32]/60 text-secondary text-xs rounded-full border border-transparent hover:border-accent transition-colors cursor-default">Automation</span>
+
+                    <!-- Small -->
+                    <span class="px-2 py-0.5 bg-[#2a2b32]/30 text-secondary/70 text-[10px] rounded-full border border-transparent hover:border-accent transition-colors cursor-default">Family</span>
+                    <span class="px-2 py-0.5 bg-[#2a2b32]/30 text-secondary/70 text-[10px] rounded-full border border-transparent hover:border-accent transition-colors cursor-default">Late Nights</span>
+                </div>
+            </div>
+
+            <!-- Card 3: Words You Reach For -->
+            <div id="card-vocab" class="bg-card border border-border rounded-[16px] p-5 card-hover">
+                <div class="flex items-center gap-2 mb-4">
+                    <i class="fa-solid fa-quote-left text-secondary text-sm"></i>
+                    <h3 class="text-sm font-semibold text-white uppercase tracking-wide">Words You Reach For</h3>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex flex-wrap gap-1.5">
+                        <span class="px-2 py-0.5 bg-success/10 text-success text-xs rounded border border-success/20">honestly</span>
+                        <span class="px-2 py-0.5 bg-success/10 text-success text-xs rounded border border-success/20">mate</span>
+                        <span class="px-2 py-0.5 bg-success/10 text-success text-xs rounded border border-success/20">ship it</span>
+                        <span class="px-2 py-0.5 bg-success/10 text-success text-xs rounded border border-success/20">solid</span>
+                        <span class="px-2 py-0.5 bg-success/10 text-success text-xs rounded border border-success/20">bang on</span>
+                        <span class="px-2 py-0.5 bg-success/10 text-success text-xs rounded border border-success/20">reckon</span>
+                    </div>
+                    <div class="h-px bg-border w-full"></div>
+                    <div class="flex flex-wrap gap-1.5 opacity-60">
+                         <span class="px-2 py-0.5 bg-danger/10 text-danger text-xs rounded border border-danger/20 line-through decoration-danger">synergy</span>
+                         <span class="px-2 py-0.5 bg-danger/10 text-danger text-xs rounded border border-danger/20 line-through decoration-danger">leverage</span>
+                         <span class="px-2 py-0.5 bg-danger/10 text-danger text-xs rounded border border-danger/20 line-through decoration-danger">circle back</span>
+                         <span class="px-2 py-0.5 bg-danger/10 text-danger text-xs rounded border border-danger/20 line-through decoration-danger">deep dive</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Emotional Range -->
+            <div id="card-emotions" class="bg-card border border-border rounded-[16px] p-5 card-hover flex flex-col justify-between">
+                <div class="flex items-center gap-2 mb-4">
+                    <i class="fa-solid fa-heart-pulse text-secondary text-sm"></i>
+                    <h3 class="text-sm font-semibold text-white uppercase tracking-wide">Emotional Range</h3>
+                </div>
+                
+                <div class="space-y-2 flex-grow">
+                    <!-- Humour -->
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="w-20 text-secondary">Humour</span>
+                        <div class="flex-1 h-1.5 bg-[#2a2b32] rounded-full overflow-hidden">
+                            <div class="h-full bg-purple w-[72%]"></div>
+                        </div>
+                        <span class="w-8 text-right font-mono text-secondary">72%</span>
+                    </div>
+                    <!-- Passion -->
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="w-20 text-white font-medium">Passion</span>
+                        <div class="flex-1 h-1.5 bg-[#2a2b32] rounded-full overflow-hidden">
+                            <div class="h-full bg-purple w-[85%] shadow-[0_0_10px_rgba(139,92,246,0.5)]"></div>
+                        </div>
+                        <span class="w-8 text-right font-mono text-white">85%</span>
+                    </div>
+                    <!-- Supportive -->
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="w-20 text-secondary">Supportive</span>
+                        <div class="flex-1 h-1.5 bg-[#2a2b32] rounded-full overflow-hidden">
+                            <div class="h-full bg-purple w-[60%]"></div>
+                        </div>
+                        <span class="w-8 text-right font-mono text-secondary">60%</span>
+                    </div>
+                    <!-- Sarcasm -->
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="w-20 text-secondary">Sarcasm</span>
+                        <div class="flex-1 h-1.5 bg-[#2a2b32] rounded-full overflow-hidden">
+                            <div class="h-full bg-purple w-[45%]"></div>
+                        </div>
+                        <span class="w-8 text-right font-mono text-secondary">45%</span>
+                    </div>
+                     <!-- Vulnerability -->
+                     <div class="flex items-center gap-2 text-xs">
+                        <span class="w-20 text-secondary">Vulnerability</span>
+                        <div class="flex-1 h-1.5 bg-[#2a2b32] rounded-full overflow-hidden">
+                            <div class="h-full bg-purple w-[30%]"></div>
+                        </div>
+                        <span class="w-8 text-right font-mono text-secondary">30%</span>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-border">
+                    <p class="text-xs text-secondary italic">"You lead with passion and humour."</p>
+                </div>
+            </div>
+
+            <!-- Card 5: How You Format -->
+            <div id="card-format" class="bg-card border border-border rounded-[16px] p-5 card-hover">
+                <div class="flex items-center gap-2 mb-4">
+                    <i class="fa-solid fa-align-left text-secondary text-sm"></i>
+                    <h3 class="text-sm font-semibold text-white uppercase tracking-wide">How You Format</h3>
+                </div>
+                
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between items-center border-b border-border/50 pb-1.5">
+                        <span class="text-secondary">Line breaks</span>
+                        <span class="text-white font-medium">Frequent</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-border/50 pb-1.5">
+                        <span class="text-secondary">Emojis</span>
+                        <span class="text-white font-medium">Moderate</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-border/50 pb-1.5">
+                        <span class="text-secondary">Sentence length</span>
+                        <span class="text-white font-medium">Short to medium</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-border/50 pb-1.5">
+                        <span class="text-secondary">Hashtags</span>
+                        <span class="text-white font-medium">Rarely</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-border/50 pb-1.5">
+                        <span class="text-secondary">Swearing</span>
+                        <span class="text-white font-medium">Occasionally</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-secondary">Caps</span>
+                        <span class="text-white font-medium">For EMPHASIS</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6: Off Limits -->
+            <div id="card-off-limits" class="bg-card border border-border rounded-[16px] p-5 card-hover flex flex-col">
+                <div class="flex items-center gap-2 mb-4">
+                    <i class="fa-solid fa-ban text-danger text-sm"></i>
+                    <h3 class="text-sm font-semibold text-white uppercase tracking-wide">Off Limits</h3>
+                </div>
+                
+                <div class="flex flex-wrap gap-2 mb-auto">
+                    <span class="px-2 py-1 bg-danger/10 text-danger text-xs font-medium rounded border border-danger/20 flex items-center gap-1">
+                        <i class="fa-solid fa-xmark text-[10px]"></i> Politics
+                    </span>
+                    <span class="px-2 py-1 bg-danger/10 text-danger text-xs font-medium rounded border border-danger/20 flex items-center gap-1">
+                        <i class="fa-solid fa-xmark text-[10px]"></i> Religion
+                    </span>
+                    <span class="px-2 py-1 bg-danger/10 text-danger text-xs font-medium rounded border border-danger/20 flex items-center gap-1">
+                        <i class="fa-solid fa-xmark text-[10px]"></i> Personal family
+                    </span>
+                    <span class="px-2 py-1 bg-danger/10 text-danger text-xs font-medium rounded border border-danger/20 flex items-center gap-1">
+                        <i class="fa-solid fa-xmark text-[10px]"></i> Health
+                    </span>
+                </div>
+
+                <button class="mt-4 w-full py-2 border border-dashed border-border rounded text-secondary text-xs hover:text-white hover:border-secondary transition-colors flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Add boundary
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Summary -->
+        <div class="text-center mb-8 px-4">
+            <p class="text-lg text-secondary font-medium">
+                You sound like a <span class="text-white">straight-talking British founder</span> who builds things at night and cares about <span class="text-white">good design</span>.
+            </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-4 w-full justify-center">
+            <button class="px-6 py-3 rounded-lg border border-border text-white font-medium hover:bg-white/5 transition-all focus:outline-none focus:ring-2 focus:ring-secondary/50">
+                <i class="fa-solid fa-microphone mr-2"></i> Record more
+            </button>
+            <button class="px-8 py-3 rounded-lg bg-success text-white font-bold hover:bg-success/90 transition-all shadow-[0_0_20px_rgba(34,197,94,0.3)] focus:outline-none focus:ring-2 focus:ring-success/50">
+                That’s me — continue <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Background Decoration -->
+    <div class="fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden">
+        <!-- Center Glow -->
+        <div class="absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-accent/5 rounded-full blur-[120px]"></div>
+    </div>
+
+    <!-- Bottom Nav Bar -->
+    <div class="fixed bottom-0 w-full h-[40px] border-t border-[#2a2b32] bg-[#131316] flex items-center justify-between px-6 z-50">
+        <div class="flex gap-2">
+            <!-- Pagination Dots -->
+            <div class="w-2 h-2 rounded-full bg-[#2a2b32]"></div>
+            <div class="w-2 h-2 rounded-full bg-[#2a2b32]"></div>
+            <div class="w-2 h-2 rounded-full bg-[#2a2b32]"></div>
+            <div class="w-2 h-2 rounded-full bg-white"></div>
+            <div class="w-2 h-2 rounded-full bg-[#2a2b32]"></div>
+            <div class="w-2 h-2 rounded-full bg-[#2a2b32]"></div>
+        </div>
+        
+        <div class="text-xs font-mono text-secondary">
+            Screen 4 of 14: Your Voice Profile
+        </div>
+
+        <div class="flex gap-4">
+            <button class="text-xs text-secondary hover:text-white">
+                <i class="fa-solid fa-chevron-left mr-1"></i> Previous
+            </button>
+            <button class="text-xs text-secondary hover:text-white">
+                Next <i class="fa-solid fa-chevron-right ml-1"></i>
+            </button>
+        </div>
+    </div>
+
+</body>
+</html>
