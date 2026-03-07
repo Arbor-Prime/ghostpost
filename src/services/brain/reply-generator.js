@@ -7,7 +7,10 @@
 
 const { selectResponseType, calculateReplyLength } = require('./reply-length');
 const { buildSystemPrompt } = require('./prompt-builder');
+const PromptEnricher = require('../learning/prompt-enricher');
 const db = require('../../config/database');
+
+const enricher = new PromptEnricher();
 
 const OLLAMA_URL = process.env.OLLAMA_URL || 'http://localhost:11434';
 
@@ -101,13 +104,25 @@ async function generateReply(userId, opportunityId) {
   }
 
   // Build system prompt
-  const systemPrompt = buildSystemPrompt(voiceProfile, persona, circadianTone, {
+  const rawPrompt = buildSystemPrompt(voiceProfile, persona, circadianTone, {
     responseType,
     targetWordCount,
     tweetContent: opportunity.tweet_content,
     tweetAuthor: opportunity.author_handle,
     tweetTopic: opportunity.scoring_reasons?.relevance?.detail,
   });
+
+  // Enrich with learned communication patterns (Sprint 17)
+  let systemPrompt = rawPrompt;
+  try {
+    systemPrompt = await enricher.enrichPrompt(rawPrompt, {
+      platform: 'x',
+      context: 'reply',
+      vertical: opportunity.scoring_reasons?.relevance?.vertical || null
+    });
+  } catch (enrichErr) {
+    console.warn('[Draft Gen] Enrichment failed, using base prompt:', enrichErr.message);
+  }
 
   // Call Ollama
   const response = await fetch(`${OLLAMA_URL}/api/generate`, {
