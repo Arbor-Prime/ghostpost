@@ -44,7 +44,7 @@ class BrowserSessionManager {
     return this.browser !== null && this.browser.isConnected();
   }
 
-  async launch(userId = 1) {
+  async launch(userId = 1, platform = 'x') {
     if (this.isActive()) {
       console.log('[BrowserSession] Already running, reusing existing session');
       return { success: true, reused: true };
@@ -53,6 +53,22 @@ class BrowserSessionManager {
     if (this.browser) {
       await this.close();
     }
+
+    this.platform = platform;
+
+    const PLATFORM_URLS = {
+      x: 'https://x.com',
+      instagram: 'https://www.instagram.com',
+      linkedin: 'https://www.linkedin.com',
+    };
+
+    const PLATFORM_COOKIE_DOMAINS = {
+      x: ['x.com', 'twitter.com'],
+      instagram: ['instagram.com'],
+      linkedin: ['linkedin.com'],
+    };
+
+    const startUrl = PLATFORM_URLS[platform] || 'https://x.com';
 
     try {
       const user = await db.query(
@@ -87,9 +103,10 @@ class BrowserSessionManager {
         timezoneId: fingerprint.timezone || 'America/New_York',
       });
 
+      // Load cookies for the requested platform
       const existing = await db.query(
-        "SELECT cookies_encrypted FROM browser_sessions WHERE user_id = $1 AND platform = 'x' AND is_valid = TRUE",
-        [userId]
+        'SELECT cookies_encrypted FROM browser_sessions WHERE user_id = $1 AND platform = $2 AND is_valid = TRUE',
+        [userId, platform]
       );
       if (existing.rows[0]?.cookies_encrypted) {
         try {
@@ -101,20 +118,20 @@ class BrowserSessionManager {
               sameSite: VALID_SAME_SITE.includes(c.sameSite) ? c.sameSite : 'Lax',
             }));
             await this.context.addCookies(sanitized);
-            console.log(`[BrowserSession] Loaded ${sanitized.length} existing cookies`);
+            console.log(`[BrowserSession] Loaded ${sanitized.length} existing ${platform} cookies`);
           }
         } catch (e) {
-          console.log(`[BrowserSession] No valid existing cookies, starting fresh: ${e.message}`);
+          console.log(`[BrowserSession] No valid ${platform} cookies, starting fresh: ${e.message}`);
         }
       }
 
       this.page = await this.context.newPage();
-      await this.page.goto('https://x.com', { waitUntil: 'domcontentloaded', timeout: 30000 });
+      await this.page.goto(startUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
 
-      this.startCookieWatcher(userId);
+      this.startCookieWatcher(userId, platform);
 
-      console.log('[BrowserSession] Browser launched successfully');
-      return { success: true, reused: false };
+      console.log(`[BrowserSession] Browser launched for ${platform} at ${startUrl}`);
+      return { success: true, reused: false, platform };
 
     } catch (err) {
       console.error('[BrowserSession] Launch failed:', err.message);
@@ -193,7 +210,10 @@ class BrowserSessionManager {
   }
 
   async handleMouseEvent(event) {
-    if (!this.cdpSession) return;
+    if (!this.cdpSession) {
+      console.log('[BrowserSession] Mouse event dropped — no CDP session');
+      return;
+    }
 
     try {
       switch (event.type) {
@@ -206,6 +226,7 @@ class BrowserSessionManager {
           break;
 
         case 'mousedown':
+          console.log(`[BrowserSession] Click at (${event.x}, ${event.y})`);
           await this.cdpSession.send('Input.dispatchMouseEvent', {
             type: 'mousePressed',
             x: event.x,
@@ -244,11 +265,15 @@ class BrowserSessionManager {
   }
 
   async handleKeyEvent(event) {
-    if (!this.cdpSession) return;
+    if (!this.cdpSession) {
+      console.log('[BrowserSession] Key event dropped — no CDP session');
+      return;
+    }
 
     try {
       if (event.type === 'keydown' || event.type === 'keyup') {
         const cdpType = event.type === 'keydown' ? 'keyDown' : 'keyUp';
+        if (event.type === 'keydown') console.log(`[BrowserSession] Key: ${event.key}`);
 
         await this.cdpSession.send('Input.dispatchKeyEvent', {
           type: cdpType,
@@ -283,60 +308,117 @@ class BrowserSessionManager {
     return modifiers;
   }
 
-  startCookieWatcher(userId) {
+  startCookieWatcher(userId, platform = 'x') {
     if (this.cookieWatchInterval) return;
+
+    const PLATFORM_CONFIG = {
+      x: {
+        cookieUrl: 'https://x.com',
+        authCookieNames: ['auth_token', 'ct0', 'twid', 'kdt'],
+        minAuthCookies: 2,
+        domainFilters: ['x.com', 'twitter.com'],
+      },
+      instagram: {
+        cookieUrl: 'https://www.instagram.com',
+        authCookieNames: ['sessionid', 'csrftoken', 'ds_user_id', 'ig_did'],
+        minAuthCookies: 2,
+        domainFilters: ['instagram.com'],
+      },
+      linkedin: {
+        cookieUrl: 'https://www.linkedin.com',
+        authCookieNames: ['li_at', 'JSESSIONID', 'lidc', 'bcookie'],
+        minAuthCookies: 1,
+        domainFilters: ['linkedin.com'],
+      },
+    };
+
+    const config = PLATFORM_CONFIG[platform] || PLATFORM_CONFIG.x;
 
     this.cookieWatchInterval = setInterval(async () => {
       if (!this.context) return;
 
       try {
-        const cookies = await this.context.cookies('https://x.com');
+        const cookies = await this.context.cookies(config.cookieUrl);
 
         const authCookies = cookies.filter(c =>
-          c.name === 'auth_token' ||
-          c.name === 'ct0' ||
-          c.name === 'twid' ||
-          c.name === 'kdt'
+          config.authCookieNames.includes(c.name)
         );
 
-        if (authCookies.length >= 2) {
+        if (authCookies.length >= config.minAuthCookies) {
           const cookieHash = JSON.stringify(authCookies.map(c => c.value).sort());
 
           if (cookieHash !== this.lastCookieHash) {
             this.lastCookieHash = cookieHash;
 
-            const allXCookies = cookies.filter(c =>
-              c.domain.includes('x.com') || c.domain.includes('twitter.com')
+            const platformCookies = cookies.filter(c =>
+              config.domainFilters.some(d => c.domain.includes(d))
             );
 
-            const encrypted = encrypt(JSON.stringify(allXCookies));
+            const encrypted = encrypt(JSON.stringify(platformCookies));
 
             await db.query(
               `INSERT INTO browser_sessions (user_id, platform, cookies_encrypted, last_used_at, is_valid)
-               VALUES ($1, 'x', $2, NOW(), TRUE)
+               VALUES ($1, $2, $3, NOW(), TRUE)
                ON CONFLICT (user_id, platform) DO UPDATE SET
                  cookies_encrypted = EXCLUDED.cookies_encrypted,
                  last_used_at = NOW(),
                  is_valid = TRUE`,
-              [userId, encrypted]
+              [userId, platform, encrypted]
             );
 
-            await db.query(
-              "UPDATE users SET cookie_status = 'valid', cookie_updated_at = NOW(), x_auth_status = 'active' WHERE id = $1",
-              [userId]
-            );
+            if (platform === 'x') {
+              await db.query(
+                "UPDATE users SET cookie_status = 'valid', cookie_updated_at = NOW(), x_auth_status = 'active' WHERE id = $1",
+                [userId]
+              );
+            }
+
+            // Also update platform_accounts if they exist
+            const username = platform === 'x' ? null : await this.detectUsername(platform);
+            if (username) {
+              await db.query(
+                `UPDATE platform_accounts SET status = 'active', last_used = NOW() WHERE platform = $1 AND username = $2`,
+                [platform, username]
+              ).catch(() => {});
+            }
 
             this.io.emit('browser:cookies-captured', {
-              count: allXCookies.length,
+              platform,
+              count: platformCookies.length,
               hasAuth: true,
               timestamp: new Date().toISOString(),
             });
 
-            console.log(`[BrowserSession] Captured ${allXCookies.length} X cookies (${authCookies.length} auth)`);
+            console.log(`[BrowserSession] Captured ${platformCookies.length} ${platform} cookies (${authCookies.length} auth)`);
           }
         }
       } catch (_) {}
     }, 3000);
+  }
+
+  /**
+   * Try to detect the logged-in username from the page
+   */
+  async detectUsername(platform) {
+    if (!this.page) return null;
+    try {
+      if (platform === 'instagram') {
+        // Instagram shows username in profile link or meta tag
+        return await this.page.evaluate(() => {
+          const el = document.querySelector('a[href*="/accounts/edit/"]');
+          if (el) return el.closest('div')?.textContent?.trim();
+          const meta = document.querySelector('meta[property="og:title"]');
+          return meta?.content?.split('(')[0]?.trim() || null;
+        }).catch(() => null);
+      }
+      if (platform === 'linkedin') {
+        return await this.page.evaluate(() => {
+          const el = document.querySelector('.profile-rail-card__actor-link');
+          return el?.textContent?.trim() || null;
+        }).catch(() => null);
+      }
+    } catch (_) {}
+    return null;
   }
 
   getStatus() {

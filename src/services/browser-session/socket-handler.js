@@ -16,17 +16,19 @@ function setupBrowserSocket(io, sessionManager) {
 
     sessionManager.onClientConnected();
 
-    socket.on('browser:launch', async () => {
+    socket.on('browser:launch', async (options = {}) => {
       try {
+        const platform = options.platform || 'x';
+
         if (sessionManager.isActive()) {
           console.log('[BrowserSocket] Reconnecting to existing browser session');
           await sessionManager.startScreencast(socket);
-          socket.emit('browser:launched', { success: true, reused: true, reconnected: true });
+          socket.emit('browser:launched', { success: true, reused: true, reconnected: true, platform: sessionManager.platform });
           socket.emit('browser:streaming', { active: true });
           return;
         }
 
-        const result = await sessionManager.launch(1);
+        const result = await sessionManager.launch(1, platform);
         socket.emit('browser:launched', result);
 
         await sessionManager.startScreencast(socket);
@@ -63,8 +65,10 @@ function setupBrowserSocket(io, sessionManager) {
       if (!sessionManager.page) return;
       try {
         const parsed = new URL(url);
-        if (!parsed.hostname.endsWith('x.com') && !parsed.hostname.endsWith('twitter.com')) {
-          socket.emit('browser:error', { message: 'Navigation restricted to x.com' });
+        const ALLOWED_DOMAINS = ['x.com', 'twitter.com', 'instagram.com', 'linkedin.com', 'accounts.google.com', 'facebook.com'];
+        const allowed = ALLOWED_DOMAINS.some(d => parsed.hostname.endsWith(d));
+        if (!allowed) {
+          socket.emit('browser:error', { message: `Navigation restricted. Allowed: ${ALLOWED_DOMAINS.join(', ')}` });
           return;
         }
         await sessionManager.page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
