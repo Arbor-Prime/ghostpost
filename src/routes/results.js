@@ -10,6 +10,15 @@ const db = require('../config/database');
 
 function registerResultsRoutes(app) {
 
+  // CORS middleware for results endpoints — allows CC to call from different domain
+  app.use('/api/results', (req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    if (req.method === 'OPTIONS') return res.sendStatus(204);
+    next();
+  });
+
   /**
    * GET /api/results/overview
    * Single call that gives the CC everything it needs for the GhostPost card.
