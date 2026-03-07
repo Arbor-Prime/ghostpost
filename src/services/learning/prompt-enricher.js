@@ -12,6 +12,7 @@
  */
 
 const db = require('../../config/database');
+const { getActionKnowledge } = require('../brain/knowledge/linkedin-methodology');
 
 class PromptEnricher {
 
@@ -160,20 +161,40 @@ class PromptEnricher {
    * @returns {string} enriched prompt
    */
   async enrichPrompt(existingPrompt, context = {}) {
-    const enrichment = await this.getEnrichment(context);
+    let additions = '';
 
-    if (!enrichment.hasPatterns) {
+    // Layer 1: Learned patterns from observation database
+    const enrichment = await this.getEnrichment(context);
+    if (enrichment.hasPatterns) {
+      additions += enrichment.text;
+    }
+
+    // Layer 2: Platform-specific methodology knowledge
+    if (context.platform === 'linkedin') {
+      // Map context to LinkedIn action type
+      const actionMap = {
+        'cold_dm': 'send_dm',
+        'reply': 'write_comment',
+        'follow_up': 'send_dm',
+        'engagement': 'write_comment',
+        'connection_request': 'send_connection',
+        'post': 'create_post'
+      };
+      const action = actionMap[context.context] || 'send_dm';
+      additions += '\n' + getActionKnowledge(action);
+    }
+
+    if (!additions) {
       return existingPrompt;
     }
 
-    // Insert the enrichment block before the HARD RULES section
+    // Insert before HARD RULES if present
     const hardRulesIndex = existingPrompt.indexOf('=== HARD RULES ===');
     if (hardRulesIndex !== -1) {
-      return existingPrompt.substring(0, hardRulesIndex) + enrichment.text + '\n' + existingPrompt.substring(hardRulesIndex);
+      return existingPrompt.substring(0, hardRulesIndex) + additions + '\n' + existingPrompt.substring(hardRulesIndex);
     }
 
-    // Fallback: append to end
-    return existingPrompt + '\n' + enrichment.text;
+    return existingPrompt + '\n' + additions;
   }
 
   /**

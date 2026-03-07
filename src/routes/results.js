@@ -30,17 +30,8 @@ function registerResultsRoutes(app) {
           (SELECT COUNT(*) FROM leads WHERE replied_at > NOW() - INTERVAL '7 days') as replies_this_week
       `).catch(() => ({ rows: [{}] }));
 
-      // LinkedIn content stats
-      const linkedin = await db.query(`
-        SELECT
-          (SELECT COUNT(*) FROM linkedin_posts) as total_posts,
-          (SELECT COUNT(*) FROM linkedin_posts WHERE status = 'draft') as drafts,
-          (SELECT COUNT(*) FROM linkedin_posts WHERE status = 'approved') as approved,
-          (SELECT COUNT(*) FROM linkedin_posts WHERE status = 'posted') as posted,
-          (SELECT COALESCE(SUM(impressions), 0) FROM linkedin_posts WHERE status = 'posted') as total_impressions,
-          (SELECT COALESCE(SUM(likes), 0) FROM linkedin_posts WHERE status = 'posted') as total_likes,
-          (SELECT COALESCE(SUM(leads_generated), 0) FROM linkedin_posts WHERE status = 'posted') as total_linkedin_leads
-      `).catch(() => ({ rows: [{}] }));
+      // LinkedIn content stats — placeholder until LinkedIn automation is live
+      const linkedin = { rows: [{ total_posts: '0', drafts: '0', approved: '0', posted: '0', total_impressions: '0', total_likes: '0', total_linkedin_leads: '0' }] };
 
       // X/Twitter stats
       const twitter = await db.query(`
@@ -136,7 +127,7 @@ function registerResultsRoutes(app) {
         (
           SELECT 'dm_sent' as type, platform, username as target, dm_sent_at as timestamp, message_used as detail
           FROM leads WHERE dm_sent_at IS NOT NULL
-          ORDER BY dm_sent_at DESC LIMIT 15
+          ORDER BY dm_sent_at DESC LIMIT 20
         )
         UNION ALL
         (
@@ -150,13 +141,7 @@ function registerResultsRoutes(app) {
             (SELECT author_handle FROM observed_tweets ot JOIN opportunities o ON o.tweet_id = ot.tweet_id WHERE o.id = d.opportunity_id LIMIT 1) as target,
             d.created_at as timestamp, d.reply_text as detail
           FROM drafts d WHERE d.status = 'pending'
-          ORDER BY d.created_at DESC LIMIT 10
-        )
-        UNION ALL
-        (
-          SELECT 'linkedin_post' as type, 'linkedin' as platform, pillar as target, created_at as timestamp, hook as detail
-          FROM linkedin_posts
-          ORDER BY created_at DESC LIMIT 10
+          ORDER BY d.created_at DESC LIMIT 15
         )
         ORDER BY timestamp DESC
         LIMIT 50
