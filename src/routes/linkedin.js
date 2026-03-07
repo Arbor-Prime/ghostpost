@@ -67,6 +67,62 @@ function registerLinkedInRoutes(app) {
     }
   });
 
+  // Generate edu-sell post (no CTA, pure education — Cleo method)
+  app.post('/api/linkedin/edu-sell', async (req, res) => {
+    const { userId = 1, pillar, framework, topic, tone, customPrompt } = req.body;
+    try {
+      const result = await engine.generateEduSell(userId, { pillar, framework, topic, tone, customPrompt });
+      res.json({ post: result });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // Generate launch post (scarcity, urgency, FOMO)
+  app.post('/api/linkedin/launch-post', async (req, res) => {
+    const { userId = 1, topic, customPrompt } = req.body;
+    try {
+      const result = await engine.generateLaunchPost(userId, { topic, customPrompt });
+      res.json({ post: result });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // Generate waitlist post (curiosity, exclusivity)
+  app.post('/api/linkedin/waitlist-post', async (req, res) => {
+    const { userId = 1, topic, customPrompt } = req.body;
+    try {
+      const result = await engine.generateWaitlistPost(userId, { topic, customPrompt });
+      res.json({ post: result });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // Generate waitlist nurture email sequence (10 emails, Cleo method)
+  app.post('/api/linkedin/nurture-sequence', async (req, res) => {
+    const { userId = 1, productName, launchDate, problemStatement, customPrompt } = req.body;
+    try {
+      const result = await engine.generateNurtureSequence(userId, { productName, launchDate, problemStatement, customPrompt });
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // Generate webinar / LinkedIn Live prep pack
+  app.post('/api/linkedin/webinar-prep', async (req, res) => {
+    const { userId = 1, topic, productName, webinarDate, customPrompt } = req.body;
+    if (!topic) return res.status(400).json({ error: 'topic required' });
+    try {
+      const result = await engine.generateWebinarPrep(userId, { topic, productName, webinarDate, customPrompt });
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
   // List posts
   app.get('/api/linkedin/posts', async (req, res) => {
     const { status, pillar, weekOf, limit = 20, offset = 0 } = req.query;

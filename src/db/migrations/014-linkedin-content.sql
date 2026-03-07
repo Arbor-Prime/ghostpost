@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS linkedin_posts (
     body TEXT,
     full_post TEXT NOT NULL,
     -- Classification
-    post_type VARCHAR(20) DEFAULT 'single' CHECK (post_type IN ('single', 'weekly', 'trend', 'rewrite')),
+    post_type VARCHAR(20) DEFAULT 'single' CHECK (post_type IN ('single', 'weekly', 'trend', 'rewrite', 'nurture')),
     pillar VARCHAR(20) CHECK (pillar IN ('growth', 'tam', 'sales')),
     framework VARCHAR(10) CHECK (framework IN ('slay', 'pas')),
     tone VARCHAR(20) DEFAULT 'default',

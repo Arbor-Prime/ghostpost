@@ -41,8 +41,13 @@ pm2 restart ghostpost
 
 | Method | Path | What |
 |--------|------|------|
-| POST | /api/linkedin/generate | Single post (pillar, framework, tone) |
-| POST | /api/linkedin/generate-week | 4-post weekly calendar |
+| POST | /api/linkedin/generate | Single post (pillar, framework, tone, mode, targetAudience) |
+| POST | /api/linkedin/generate-week | 4-post weekly calendar with ICP/IFP targeting |
+| POST | /api/linkedin/edu-sell | Edu-sell post — pure education, ZERO CTA (Cleo method) |
+| POST | /api/linkedin/launch-post | Launch post — scarcity, urgency, FOMO |
+| POST | /api/linkedin/waitlist-post | Waitlist post — curiosity, exclusivity |
+| POST | /api/linkedin/nurture-sequence | 10-email waitlist nurture sequence (Cleo method) |
+| POST | /api/linkedin/webinar-prep | Full LinkedIn Live prep pack (announcement, outline, demo script, pitch, follow-up) |
 | POST | /api/linkedin/trend-jack | Turn trending topic into post |
 | POST | /api/linkedin/scan-trends | AI finds 5 trending topics |
 | POST | /api/linkedin/rewrite | Improve existing post |

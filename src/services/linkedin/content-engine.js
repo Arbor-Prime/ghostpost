@@ -2,12 +2,18 @@
  * LinkedIn Content Engine
  * Ported from ReeveOS CC (Python/FastAPI) to GhostPost (Node.js)
  * 
- * Generates LinkedIn posts using Lara Acosta's methodology:
+ * Generates LinkedIn posts using Lara Acosta's FULL methodology:
  * - SLAY framework (Story → Lesson → Actionable → You)
  * - PAS framework (Problem → Agitate → Solution)
  * - 4-3-2-1 system (4 posts/week, 3 pillars, 2 frameworks, 1 brand)
  * - 8-word hooks, rehooks, broad→narrow→niche
+ * - Edu-selling: educate without CTA, build trust before asking
+ * - ICP (ideal client persona) vs IFP (ideal follower persona) targeting
+ * - Waitlist nurture sequences (10 emails before launch, no selling)
+ * - Webinar/live prep and announcement posts
+ * - Scarcity, FOMO, and urgency mechanics for launches
  * 
+ * Based on the Cleo launch playbook ($0 → $60K MRR in 2 months).
  * Uses the user's GhostPost voice profile to match their actual tone.
  */
 
@@ -47,7 +53,20 @@ FORMATTING RULES:
 - NO emojis in the hook or first 3 lines
 - Minimal emojis overall (max 2-3, only at end)
 - NO hashtags (they reduce reach on LinkedIn in 2026)
-- End with a question or feel-good statement
+
+EDU-SELLING (THE CLEO METHOD):
+- The highest-converting posts have ZERO call to action
+- You educate people on a problem. You answer their biggest questions. You tell them what they need to know.
+- There is no "check out my product" or "link in comments"
+- The post simply builds trust and takes mindshare
+- People find your product because they trust you, not because you linked it
+- When in "edu_sell" mode, the post must NOT contain any CTA, product plug, or link reference
+- Just educate. Just be useful. That's it.
+
+TWO AUDIENCES (ICP vs IFP):
+- ICP (Ideal Client Persona): These are potential BUYERS. Content for them focuses on their problems, the cost of inaction, specific solutions, and social proof.
+- IFP (Ideal Follower Persona): These are your COMMUNITY. Content for them focuses on education, entertainment, behind-the-scenes, and engagement. They may never buy but they amplify your reach, comment daily, and eventually some convert.
+- Every post should know which audience it targets. ICP posts drive leads. IFP posts drive engagement.
 
 SLAY FRAMEWORK:
 S = Story: Start with a personal anecdote or real event
@@ -65,13 +84,21 @@ THE 3 CONTENT PILLARS:
 2. TAM — Broad industry topics, market trends, economics, tech disruption
 3. SALES — Direct pitch with social proof, comparisons, case studies, savings
 
+SCARCITY AND LAUNCH PSYCHOLOGY:
+- Limited spots create urgency ("Only 500 beta spots")
+- Lifetime discounts incentivise early action ("50% off forever if you join now")
+- Waitlist exclusivity builds FOMO ("You can't buy this. You have to be invited.")
+- Beta access feels like a secret club, not a product launch
+- The best launches feel like you're letting people IN, not pushing something OUT
+
 WHAT MAKES POSTS VIRAL:
 - Personal stories with business lessons
-- Specific numbers and metrics
-- Contrarian takes
+- Specific numbers and metrics (not vague claims)
+- Contrarian takes ("The industry has it backwards")
 - Behind-the-scenes of building something
 - Underdog vs giant narratives
 - Real vulnerability mixed with determination
+- Edu-selling posts that give away the playbook
 
 WHAT KILLS POSTS:
 - Generic advice anyone could give
@@ -80,6 +107,8 @@ WHAT KILLS POSTS:
 - Lists without context or story
 - Anything that sounds like ChatGPT default output
 - Too many emojis or hashtags
+- Hard selling in the first line
+- CTAs in every single post (kills trust over time)
 
 OUTPUT FORMAT:
 Return ONLY valid JSON:
@@ -90,6 +119,8 @@ Return ONLY valid JSON:
   "full_post": "complete formatted post",
   "framework": "SLAY or PAS",
   "pillar": "growth, tam, or sales",
+  "target_audience": "icp or ifp",
+  "has_cta": true or false,
   "estimated_impressions": "low/medium/high/viral",
   "hook_score": 1-10,
   "reasoning": "why this should perform well"
@@ -104,13 +135,72 @@ THE 4-3-2-1 SYSTEM:
 - 2 frameworks alternated (SLAY and PAS)
 - 1 consistent brand voice
 
-WEEKLY SCHEDULE:
-- Monday: TAM content (broad industry topic) using SLAY
-- Tuesday: Growth content (business-specific story) using PAS
-- Thursday: Growth content (behind-the-scenes, feature, partner) using SLAY
-- Friday: Sales content (pitch, comparison, case study) using PAS
+WEEKLY SCHEDULE WITH AUDIENCE TARGETING:
+- Monday: TAM content (broad industry topic) using SLAY — TARGET: IFP (followers, community, engagement). This is an edu-sell post. NO CTA. Just educate. Build trust and mindshare.
+- Tuesday: Growth content (business-specific story) using PAS — TARGET: IFP (community, behind-the-scenes fans). Share the journey. Be vulnerable. Still NO hard CTA — soft at most ("thoughts?").
+- Thursday: Growth content (feature, partner, milestone) using SLAY — TARGET: ICP (potential buyers). This can have a soft CTA. Show what you've built and why it matters to THEM.
+- Friday: Sales content (pitch, comparison, case study) using PAS — TARGET: ICP (buyers). This is the ONE post per week that can directly pitch. Use social proof, specific numbers, and scarcity.
+
+CRITICAL: Only 1 out of 4 posts should directly sell. The other 3 build trust, educate, and create demand BEFORE people even know what you're selling. This is the Cleo method — the best SaaS launches pre-build trust for weeks before asking for money.
+
+Each post must include "target_audience": "icp" or "ifp" and "has_cta": true or false.
 
 Return as a JSON array of 4 posts. Each post must have completely different topics.`;
+
+const NURTURE_EMAIL_PROMPT = `Generate a waitlist nurture email sequence. These emails go out BEFORE a product launch to build trust, educate, and create desire.
+
+THE CLEO METHOD — 10 EMAILS BEFORE LAUNCH:
+- Emails 1-3: Emphasise the PROBLEM. Why does the current solution fail? What are people struggling with? Make them nod and say "yes, exactly."
+- Emails 4-6: Show WHY you're different. Not what your product does — why your APPROACH is different. Challenge assumptions.
+- Emails 7-8: Social proof and behind-the-scenes. Early tester feedback, building journey, real numbers.
+- Email 9: The "it's almost here" tease. Build maximum anticipation. Still don't sell.
+- Email 10: LAUNCH. "It's live. Try it now." Direct, urgent, short. No preamble. The trust is already built.
+
+CRITICAL RULES:
+- Emails 1-9 have ZERO sales CTA. No "buy now", no pricing, no product links.
+- Each email should feel like advice from a friend, not marketing from a company.
+- Use the founder's voice (punchy, direct, real examples, no corporate fluff).
+- Subject lines must create curiosity — under 6 words.
+- Each email is 150-300 words max. Nobody reads long emails.
+
+Return as a JSON array of 10 email objects:
+{
+  "email_number": 1-10,
+  "subject": "6 words max",
+  "preview_text": "the preview line in inbox",
+  "body": "the email body with \\n\\n for paragraphs",
+  "purpose": "what this email achieves",
+  "has_cta": false (true only for email 10),
+  "send_day": "day relative to launch (e.g. day -28, day -1, day 0)"
+}`;
+
+const WEBINAR_PREP_PROMPT = `Generate a LinkedIn Live / webinar preparation pack.
+
+THE CLEO METHOD — WEBINARS CONVERT:
+The structure is 20-20-20:
+- First 20 minutes: Pure education on ONE topic. Give away your best stuff.
+- Next 20 minutes: Live demo/walkthrough of the product. Show, don't tell.
+- Final 20 minutes: Pitch + Q&A. Send the link. Tell them where to buy.
+
+When you show up as a human — your mannerisms, your voice, how you look, where you live — people connect with you in a way content never achieves. This is the highest-converting channel.
+
+Generate:
+1. An announcement post (LinkedIn post format, 8-word hook, builds anticipation)
+2. A reminder post (for the day of the live, creates urgency)
+3. A topic outline (the 20-minute education section — 5 key talking points)
+4. Demo script bullet points (what to show, in what order)
+5. Pitch framework (how to transition from demo to offer without being salesy)
+6. Follow-up post (for after the live — recap + link for those who missed it)
+
+Return as JSON:
+{
+  "announcement_post": { "hook", "rehook", "body", "full_post" },
+  "reminder_post": { "hook", "rehook", "body", "full_post" },
+  "topic_outline": ["point 1", "point 2", ...],
+  "demo_script": ["show X", "show Y", ...],
+  "pitch_framework": "how to transition from demo to offer",
+  "followup_post": { "hook", "rehook", "body", "full_post" }
+}`;
 
 
 class LinkedInContentEngine {
@@ -178,7 +268,7 @@ Write LinkedIn posts that sound like THIS person — not a generic ghostwriter.
    * Generate a single LinkedIn post
    */
   async generatePost(userId, options = {}) {
-    const { pillar = 'tam', framework = 'slay', topic = null, tone = 'default', customPrompt = null } = options;
+    const { pillar = 'tam', framework = 'slay', topic = null, tone = 'default', customPrompt = null, mode = 'standard', targetAudience = null } = options;
 
     const voiceContext = await this.getUserContext(userId);
 
@@ -190,6 +280,19 @@ Write LinkedIn posts that sound like THIS person — not a generic ghostwriter.
       'story-heavy': 'Make this predominantly a personal story with the lesson woven in subtly.',
     };
 
+    const modeInstructions = {
+      standard: 'End with a question or engagement CTA.',
+      edu_sell: 'CRITICAL: This is an edu-sell post. There must be ZERO call to action. No product mention. No link. No "check out". No "DM me". Just educate. Just be useful. The post ends with a thought-provoking statement or question about the TOPIC, not about your product. This is how you build trust — by giving away your best knowledge for free.',
+      launch: 'This is a launch announcement. Create urgency and scarcity. Limited spots. Exclusive access. Time-sensitive.',
+      waitlist: 'Drive people to a waitlist. Build curiosity about something they cannot yet buy. Make exclusivity the selling point.',
+    };
+
+    const audienceInstruction = targetAudience === 'icp' 
+      ? 'TARGET AUDIENCE: ICP (Ideal Client Persona). These are potential BUYERS. Focus on their pain points, the cost of their current approach, and why they need to act.'
+      : targetAudience === 'ifp'
+      ? 'TARGET AUDIENCE: IFP (Ideal Follower Persona). These are your COMMUNITY. Focus on education, entertainment, relatability. They amplify your reach and build social proof.'
+      : '';
+
     const systemPrompt = `${voiceContext}\n${LINKEDIN_RULES}`;
     const userPrompt = `Generate a single LinkedIn post.
 Pillar: ${pillar.toUpperCase()}
@@ -197,8 +300,10 @@ Framework: ${framework.toUpperCase()}
 ${topic ? `Topic/angle: ${topic}` : 'Choose the most compelling topic'}
 ${customPrompt ? `Additional instructions: ${customPrompt}` : ''}
 ${toneInstructions[tone] || ''}
+${modeInstructions[mode] || modeInstructions.standard}
+${audienceInstruction}
 
-Remember: 8-word hook, compelling rehook, end with engagement CTA.
+Remember: 8-word hook, compelling rehook, broad to narrow to niche structure.
 Return as valid JSON.`;
 
     const result = await this.callAI(systemPrompt, userPrompt);
@@ -217,6 +322,8 @@ Return as valid JSON.`;
 
     result.id = insert.rows[0].id;
     result.status = 'draft';
+    result.mode = mode;
+    result.target_audience = targetAudience || result.target_audience;
     return result;
   }
 
@@ -336,6 +443,121 @@ Instructions: ${instructions}
 Keep the core message but improve hook, structure, and engagement. Return as valid JSON.`;
 
     return this.callAI(systemPrompt, userPrompt);
+  }
+
+  /**
+   * Generate a waitlist nurture email sequence (10 emails, Cleo method)
+   * Builds trust over 4 weeks before launch. Emails 1-9 have ZERO sales CTA.
+   */
+  async generateNurtureSequence(userId, options = {}) {
+    const { productName = 'the product', launchDate = null, problemStatement = null, customPrompt = null } = options;
+
+    const voiceContext = await this.getUserContext(userId);
+    const systemPrompt = `${voiceContext}\n\n${NURTURE_EMAIL_PROMPT}`;
+    const userPrompt = `Generate a 10-email waitlist nurture sequence.
+
+Product: ${productName}
+${launchDate ? `Launch date: ${launchDate}` : 'Launch date: 4 weeks from now'}
+${problemStatement ? `Core problem we solve: ${problemStatement}` : ''}
+${customPrompt ? `Additional context: ${customPrompt}` : ''}
+
+Remember: Emails 1-9 have ZERO sales CTA. Just educate and build trust.
+Email 10 is the launch email — short, direct, urgent.
+
+Return as a JSON array of 10 email objects.`;
+
+    const result = await this.callAI(systemPrompt, userPrompt);
+    const emails = Array.isArray(result) ? result : [result];
+
+    // Store each email in the linkedin_posts table with type 'nurture'
+    const saved = [];
+    for (let i = 0; i < emails.length; i++) {
+      const email = emails[i];
+      const insert = await db.query(`
+        INSERT INTO linkedin_posts (user_id, hook, body, full_post, post_type, topic_angle, status, notes)
+        VALUES ($1, $2, $3, $4, 'nurture', $5, 'draft', $6)
+        RETURNING id
+      `, [
+        userId,
+        email.subject || `Email ${i + 1}`,
+        email.body || '',
+        `Subject: ${email.subject || ''}\n\n${email.body || ''}`,
+        email.purpose || `Nurture email ${i + 1}`,
+        JSON.stringify({ email_number: email.email_number || i + 1, send_day: email.send_day, has_cta: email.has_cta, preview_text: email.preview_text })
+      ]);
+      email.id = insert.rows[0].id;
+      saved.push(email);
+    }
+
+    return { emails: saved, total: saved.length };
+  }
+
+  /**
+   * Generate a webinar/LinkedIn Live preparation pack (Cleo method)
+   * Announcement post, reminder post, topic outline, demo script, pitch framework, follow-up post
+   */
+  async generateWebinarPrep(userId, options = {}) {
+    const { topic, productName = null, webinarDate = null, customPrompt = null } = options;
+
+    if (!topic) throw new Error('topic required for webinar prep');
+
+    const voiceContext = await this.getUserContext(userId);
+    const systemPrompt = `${voiceContext}\n${LINKEDIN_RULES}\n\n${WEBINAR_PREP_PROMPT}`;
+    const userPrompt = `Generate a complete LinkedIn Live / webinar preparation pack.
+
+Topic for the 20-minute education section: ${topic}
+${productName ? `Product to demo: ${productName}` : ''}
+${webinarDate ? `Date: ${webinarDate}` : 'Date: next week'}
+${customPrompt ? `Additional context: ${customPrompt}` : ''}
+
+Remember the 20-20-20 structure: educate → demo → pitch.
+Return as valid JSON.`;
+
+    const result = await this.callAI(systemPrompt, userPrompt);
+
+    // Store the announcement and follow-up posts
+    if (result.announcement_post) {
+      const ann = result.announcement_post;
+      const insert = await db.query(`
+        INSERT INTO linkedin_posts (user_id, hook, rehook, body, full_post, post_type, topic_angle, status)
+        VALUES ($1, $2, $3, $4, $5, 'single', $6, 'draft')
+        RETURNING id
+      `, [userId, ann.hook || '', ann.rehook || '', ann.body || '', ann.full_post || '', `Webinar announcement: ${topic}`]);
+      result.announcement_post.id = insert.rows[0].id;
+    }
+
+    if (result.followup_post) {
+      const fu = result.followup_post;
+      const insert = await db.query(`
+        INSERT INTO linkedin_posts (user_id, hook, rehook, body, full_post, post_type, topic_angle, status)
+        VALUES ($1, $2, $3, $4, $5, 'single', $6, 'draft')
+        RETURNING id
+      `, [userId, fu.hook || '', fu.rehook || '', fu.body || '', fu.full_post || '', `Webinar follow-up: ${topic}`]);
+      result.followup_post.id = insert.rows[0].id;
+    }
+
+    return result;
+  }
+
+  /**
+   * Convenience: Generate an edu-sell post (no CTA, pure education)
+   */
+  async generateEduSell(userId, options = {}) {
+    return this.generatePost(userId, { ...options, mode: 'edu_sell', targetAudience: 'ifp' });
+  }
+
+  /**
+   * Convenience: Generate a launch post (scarcity, urgency, FOMO)
+   */
+  async generateLaunchPost(userId, options = {}) {
+    return this.generatePost(userId, { ...options, mode: 'launch', pillar: 'sales', targetAudience: 'icp' });
+  }
+
+  /**
+   * Convenience: Generate a waitlist post (curiosity, exclusivity)
+   */
+  async generateWaitlistPost(userId, options = {}) {
+    return this.generatePost(userId, { ...options, mode: 'waitlist', targetAudience: 'icp' });
   }
 
   parseJSON(text) {
