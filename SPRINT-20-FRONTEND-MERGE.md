@@ -1001,3 +1001,29 @@ node src/server.js 2>&1 | tee /tmp/gp.log &
 
 ### Nginx
 - `/etc/nginx/sites-enabled/ghostpost` (updated config)
+
+---
+
+## ADDENDUM: All Missing Code Created
+
+All missing files have been built and pushed to the Ghostpostu repo (https://github.com/Arbor-Prime/Ghostpostu.git).
+
+### Frontend (in Ghostpostu repo):
+- `src/app/components/screens/Login.tsx` — Login page (dark theme, matches XAuth design)
+- `src/app/components/screens/Signup.tsx` — Registration page (password validation indicators)
+- `src/app/components/screens/MarketingHome.tsx` — Full marketing page with live Instagram DM demo
+- `src/styles/marketing.css` — Scoped CSS for marketing page
+- `src/app/lib/api.ts` — API client (credentials, 401 redirect, upload support)
+- `src/app/lib/auth-context.tsx` — React auth context (login/signup/logout/refreshUser)
+- `src/app/lib/ProtectedRoute.tsx` — Route guard (redirects to login or onboarding)
+- `src/app/routes-new.ts` — Updated route map (rename to routes.ts)
+- `src/app/App-new.tsx` — Updated App with AuthProvider (rename to App.tsx)
+
+### Backend (in Ghostpostu repo under backend-additions/):
+- `middleware/auth.js` → copy to `/opt/ghostpost/src/middleware/auth.js`
+- `routes/user-auth.js` → copy to `/opt/ghostpost/src/routes/user-auth.js`
+- `routes/stats.js` → copy to `/opt/ghostpost/src/routes/stats.js`
+- `routes/drafts-query-fix.js` → apply to `/opt/ghostpost/src/routes/drafts.js`
+- `routes/tracked-profiles-query-fix.js` → apply to `/opt/ghostpost/src/routes/tracked-profiles.js`
+- `db/migrations/020-user-auth.sql` → copy to `/opt/ghostpost/src/db/migrations/`
+- `SERVER-PATCH-INSTRUCTIONS.js` → follow instructions to patch server.js
