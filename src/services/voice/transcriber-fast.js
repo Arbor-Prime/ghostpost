@@ -1,43 +1,81 @@
 /**
  * Fast Voice Transcriber
  * 
- * Replaces whisper.cpp with faster-whisper (Python CTranslate2 backend).
+ * Pipeline: Browser WebM → Audio Compressor (silence removal) → Whisper
  * 
- * Performance comparison on CPU (5-min audio):
- * - whisper.cpp small model: ~8-12 minutes
- * - faster-whisper base model: ~60-90 seconds
- * - faster-whisper small model: ~2-3 minutes
+ * The audio compressor strips dead air BEFORE Whisper sees it.
+ * A 10-minute recording with 40% silence becomes 6 minutes.
+ * Whisper processes 6 minutes instead of 10. Direct speed win.
  * 
- * Uses base model by default — good enough for voice profiling.
- * The filler stripper handles the lower accuracy on filler words.
- * 
- * Install: pip install faster-whisper --break-system-packages
+ * Engine priority:
+ * 1. faster-whisper (Python, CTranslate2) — 5-10x faster than whisper.cpp
+ * 2. whisper.cpp (C++) — fallback if Python not available
  */
 
 const { execFile, execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const { compressAudio, cleanupWav } = require('./audio-compressor');
 
 const WHISPER_MODEL = process.env.WHISPER_MODEL || 'base';
 
-// Check if faster-whisper is installed, fall back to whisper.cpp
+// Detect engine on startup
 let useFasterWhisper = false;
 try {
   execSync('python3 -c "import faster_whisper"', { timeout: 5000, stdio: 'pipe' });
   useFasterWhisper = true;
-  console.log('[Transcriber] Using faster-whisper (Python)');
+  console.log('[Transcriber] Engine: faster-whisper (Python)');
 } catch {
-  console.log('[Transcriber] faster-whisper not found, using whisper.cpp fallback');
+  console.log('[Transcriber] Engine: whisper.cpp (fallback)');
 }
 
 /**
- * Create a one-shot Python script for faster-whisper transcription.
- * Writing to a temp file avoids shell escaping issues.
+ * Main transcribe function.
+ * 
+ * 1. Compress audio (silence removal + normalisation)
+ * 2. Transcribe with best available engine
+ * 3. Return text + timing stats
  */
-function createTranscriptScript(wavPath, outputPath) {
-  return `
-import sys
+async function transcribe(audioBuffer, userId) {
+  // Step 1: Compress
+  const { wavPath, originalDuration, compressedDuration, compressionRatio } = compressAudio(audioBuffer, userId);
+
+  try {
+    // Step 2: Transcribe
+    console.log(`[Transcriber] Transcribing ${Math.round(compressedDuration)}s of speech (${compressionRatio}% silence removed)...`);
+    const startTime = Date.now();
+
+    let text;
+    if (useFasterWhisper) {
+      text = await transcribeFasterWhisper(wavPath, compressedDuration);
+    } else {
+      text = await transcribeWhisperCpp(wavPath, compressedDuration);
+    }
+
+    const elapsed = Math.round((Date.now() - startTime) / 1000);
+    const wordCount = text.split(/\s+/).filter(w => w.length > 0).length;
+    console.log(
+      `[Transcriber] Done: ${wordCount} words in ${elapsed}s ` +
+      `(${Math.round(compressedDuration)}s audio, ${(compressedDuration / Math.max(1, elapsed)).toFixed(1)}x realtime)`
+    );
+
+    return { text, duration: originalDuration };
+
+  } finally {
+    cleanupWav(wavPath);
+  }
+}
+
+/**
+ * faster-whisper engine (Python).
+ */
+async function transcribeFasterWhisper(wavPath, duration) {
+  const tmpDir = os.tmpdir();
+  const outputPath = path.join(tmpDir, `gp-fw-${Date.now()}.json`);
+  const scriptPath = path.join(tmpDir, `gp-fw-${Date.now()}.py`);
+
+  const script = `
 import json
 from faster_whisper import WhisperModel
 
@@ -48,131 +86,46 @@ text_parts = []
 for segment in segments:
     text_parts.append(segment.text.strip())
 
-result = {
-    "text": " ".join(text_parts),
-    "duration": info.duration,
-    "language": info.language,
-}
-
 with open("${outputPath}", "w") as f:
-    json.dump(result, f)
+    json.dump({"text": " ".join(text_parts)}, f)
 `;
-}
 
-/**
- * Transcribe using faster-whisper (Python).
- */
-async function transcribeFast(audioBuffer, userId) {
-  const tmpDir = os.tmpdir();
-  const ts = Date.now();
-  const webmPath = path.join(tmpDir, `gp-voice-${userId}-${ts}.webm`);
-  const wavPath = path.join(tmpDir, `gp-voice-${userId}-${ts}.wav`);
-  const outputPath = path.join(tmpDir, `gp-voice-${userId}-${ts}.json`);
-  const scriptPath = path.join(tmpDir, `gp-voice-${userId}-${ts}.py`);
+  fs.writeFileSync(scriptPath, script);
 
   try {
-    // Write WebM to temp file
-    fs.writeFileSync(webmPath, audioBuffer);
-
-    // Convert to 16kHz mono WAV
-    execSync(`ffmpeg -i "${webmPath}" -ar 16000 -ac 1 -c:a pcm_s16le "${wavPath}" -y`, {
-      timeout: 30000,
-      stdio: 'pipe',
-    });
-
-    // Get duration
-    const durationOutput = execSync(
-      `ffprobe -v error -show_entries format=duration -of csv=p=0 "${wavPath}"`,
-      { encoding: 'utf-8', stdio: 'pipe' }
-    );
-    const duration = parseFloat(durationOutput.trim());
-
-    console.log(`[Transcriber] Audio: ${Math.round(duration)}s, starting faster-whisper (${WHISPER_MODEL} model)...`);
-    const startTime = Date.now();
-
-    // Write and run Python script
-    fs.writeFileSync(scriptPath, createTranscriptScript(wavPath, outputPath));
-
-    // Timeout: 30s per minute of audio, minimum 60s
     const timeoutMs = Math.max(60000, Math.round(duration * 30) * 1000);
-
     await new Promise((resolve, reject) => {
       execFile('python3', [scriptPath], { timeout: timeoutMs, stdio: 'pipe' }, (err) => {
-        if (err) reject(err);
-        else resolve();
+        if (err) reject(err); else resolve(undefined);
       });
     });
 
-    const elapsed = Math.round((Date.now() - startTime) / 1000);
-    console.log(`[Transcriber] Transcription complete in ${elapsed}s (${Math.round(duration)}s audio → ${elapsed}s processing, ${(duration / elapsed).toFixed(1)}x realtime)`);
-
-    // Read result
     const result = JSON.parse(fs.readFileSync(outputPath, 'utf-8'));
-    return { text: result.text, duration: result.duration || duration };
-
+    return result.text || '';
   } finally {
-    // ALWAYS delete all temp files
-    [webmPath, wavPath, outputPath, scriptPath].forEach(f => {
-      try { fs.unlinkSync(f); } catch {}
-    });
+    try { fs.unlinkSync(scriptPath); } catch {}
+    try { fs.unlinkSync(outputPath); } catch {}
   }
 }
 
 /**
- * Transcribe using whisper.cpp (fallback).
+ * whisper.cpp engine (fallback).
  */
-async function transcribeWhisperCpp(audioBuffer, userId) {
+async function transcribeWhisperCpp(wavPath, duration) {
   const WHISPER_PATH = '/opt/whisper.cpp/build/bin/whisper-cli';
   const WHISPER_MODEL_PATH = '/opt/whisper.cpp/models/ggml-small.bin';
+  const outputPath = wavPath.replace('.wav', '');
 
-  const tmpDir = os.tmpdir();
-  const ts = Date.now();
-  const webmPath = path.join(tmpDir, `gp-voice-${userId}-${ts}.webm`);
-  const wavPath = path.join(tmpDir, `gp-voice-${userId}-${ts}.wav`);
-  const outputPath = path.join(tmpDir, `gp-voice-${userId}-${ts}`);
+  const timeoutMs = Math.max(120000, Math.round(duration * 60) * 1000);
 
-  try {
-    fs.writeFileSync(webmPath, audioBuffer);
-    execSync(`ffmpeg -i "${webmPath}" -ar 16000 -ac 1 -c:a pcm_s16le "${wavPath}" -y`, { timeout: 30000, stdio: 'pipe' });
+  execSync(
+    `${WHISPER_PATH} -m ${WHISPER_MODEL_PATH} -f "${wavPath}" -otxt -of "${outputPath}" --no-timestamps -l en`,
+    { timeout: timeoutMs, stdio: 'pipe' }
+  );
 
-    const durationOutput = execSync(
-      `ffprobe -v error -show_entries format=duration -of csv=p=0 "${wavPath}"`,
-      { encoding: 'utf-8', stdio: 'pipe' }
-    );
-    const duration = parseFloat(durationOutput.trim());
-
-    console.log(`[Transcriber] Audio: ${Math.round(duration)}s, starting whisper.cpp (small model)...`);
-    const startTime = Date.now();
-
-    // Timeout: 60s per minute of audio, minimum 120s
-    const timeoutMs = Math.max(120000, Math.round(duration * 60) * 1000);
-
-    execSync(
-      `${WHISPER_PATH} -m ${WHISPER_MODEL_PATH} -f "${wavPath}" -otxt -of "${outputPath}" --no-timestamps -l en`,
-      { timeout: timeoutMs, stdio: 'pipe' }
-    );
-
-    const elapsed = Math.round((Date.now() - startTime) / 1000);
-    console.log(`[Transcriber] whisper.cpp complete in ${elapsed}s`);
-
-    const text = fs.readFileSync(`${outputPath}.txt`, 'utf-8').trim();
-    return { text, duration };
-
-  } finally {
-    [webmPath, wavPath, `${outputPath}.txt`].forEach(f => {
-      try { fs.unlinkSync(f); } catch {}
-    });
-  }
-}
-
-/**
- * Main transcribe function — picks the best available engine.
- */
-async function transcribe(audioBuffer, userId) {
-  if (useFasterWhisper) {
-    return transcribeFast(audioBuffer, userId);
-  }
-  return transcribeWhisperCpp(audioBuffer, userId);
+  const text = fs.readFileSync(`${outputPath}.txt`, 'utf-8').trim();
+  try { fs.unlinkSync(`${outputPath}.txt`); } catch {}
+  return text;
 }
 
 module.exports = { transcribe };
