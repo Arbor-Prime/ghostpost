@@ -109,7 +109,7 @@ class BrowserSessionManager {
       }
 
       this.page = await this.context.newPage();
-      await this.page.goto('https://x.com', { waitUntil: 'domcontentloaded', timeout: 30000 });
+      await this.page.goto('https://www.google.co.uk', { waitUntil: 'domcontentloaded', timeout: 30000 });
 
       this.startCookieWatcher(userId);
 
