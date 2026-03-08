@@ -1,40 +1,51 @@
 /**
  * Browser Session Socket Handler
- * Wires Socket.io events between the frontend and BrowserSessionManager.
+ *
+ * Wires Socket.io events between the frontend canvas and
+ * the BrowserSessionManager (CDP screencast approach).
  */
 
 function setupBrowserSocket(io, sessionManager) {
   io.on('connection', (socket) => {
+    console.log(`[BrowserSocket] Client connected: ${socket.id}`);
 
-    if (sessionManager.onClientConnected) sessionManager.onClientConnected();
+    if (sessionManager.onClientConnected) {
+      sessionManager.onClientConnected();
+    }
 
     socket.on('browser:launch', async () => {
       try {
+        // Reconnect to existing session if active
         if (sessionManager.isActive()) {
-          console.log('[BrowserSocket] Reconnecting to existing session');
-          if (sessionManager.startScreencast) {
-            await sessionManager.startScreencast(socket);
-          }
+          console.log('[BrowserSocket] Reconnecting to existing browser session');
+          await sessionManager.startScreencast(socket);
           socket.emit('browser:launched', { success: true, reused: true });
           socket.emit('browser:streaming', { active: true });
           return;
         }
 
-        console.log('[BrowserSocket] Launching new browser');
+        // Launch fresh
         const result = await sessionManager.launch(1);
         socket.emit('browser:launched', result);
 
-        // Start CDP screencast — this sends frames to the client
-        if (sessionManager.startScreencast) {
-          await sessionManager.startScreencast(socket);
-          socket.emit('browser:streaming', { active: true });
-          console.log('[BrowserSocket] Screencast started');
-        } else {
-          socket.emit('browser:error', { message: 'Screencast not available' });
-        }
+        // Start CDP screencast → sends frames to this socket
+        await sessionManager.startScreencast(socket);
+        socket.emit('browser:streaming', { active: true });
       } catch (err) {
-        console.error('[BrowserSocket] Launch error:', err.message);
+        console.error('[BrowserSocket] Launch/screencast error:', err.message);
         socket.emit('browser:error', { message: err.message });
+      }
+    });
+
+    socket.on('browser:mouse', (event) => {
+      if (sessionManager.handleMouseEvent) {
+        sessionManager.handleMouseEvent(event);
+      }
+    });
+
+    socket.on('browser:key', (event) => {
+      if (sessionManager.handleKeyEvent) {
+        sessionManager.handleKeyEvent(event);
       }
     });
 
@@ -45,21 +56,13 @@ function setupBrowserSocket(io, sessionManager) {
         const allowed = ['x.com', 'twitter.com', 'instagram.com', 'linkedin.com', 'google.com', 'google.co.uk'];
         const isAllowed = allowed.some(d => parsed.hostname === d || parsed.hostname.endsWith('.' + d));
         if (!isAllowed) {
-          socket.emit('browser:error', { message: 'Navigation restricted to social platforms and Google' });
+          socket.emit('browser:error', { message: 'Navigation restricted to social platforms' });
           return;
         }
         await sessionManager.page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
       } catch (err) {
         socket.emit('browser:error', { message: `Navigation failed: ${err.message}` });
       }
-    });
-
-    socket.on('browser:mouse', (event) => {
-      if (sessionManager.handleMouseEvent) sessionManager.handleMouseEvent(event);
-    });
-
-    socket.on('browser:key', (event) => {
-      if (sessionManager.handleKeyEvent) sessionManager.handleKeyEvent(event);
     });
 
     socket.on('browser:back', async () => {
@@ -82,15 +85,19 @@ function setupBrowserSocket(io, sessionManager) {
     });
 
     socket.on('browser:close', async () => {
-      console.log('[BrowserSocket] User requested close');
+      console.log('[BrowserSocket] User requested browser close');
       await sessionManager.close();
       socket.emit('browser:closed');
     });
 
     socket.on('disconnect', async () => {
       console.log('[BrowserSocket] Client disconnected — keeping browser alive');
-      if (sessionManager.stopScreencast) await sessionManager.stopScreencast();
-      if (sessionManager.onClientDisconnected) sessionManager.onClientDisconnected();
+      if (sessionManager.stopScreencast) {
+        await sessionManager.stopScreencast();
+      }
+      if (sessionManager.onClientDisconnected) {
+        sessionManager.onClientDisconnected();
+      }
     });
   });
 }
