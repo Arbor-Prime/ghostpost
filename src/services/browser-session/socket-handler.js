@@ -16,6 +16,7 @@ function setupBrowserSocket(io, sessionManager) {
 
     sessionManager.onClientConnected();
 
+    console.log("[BrowserSocket] browser:launch received from", socket.id);
     socket.on('browser:launch', async () => {
       try {
         if (sessionManager.isActive()) {
@@ -63,8 +64,8 @@ function setupBrowserSocket(io, sessionManager) {
       if (!sessionManager.page) return;
       try {
         const parsed = new URL(url);
-        if (!parsed.hostname.endsWith('x.com') && !parsed.hostname.endsWith('twitter.com')) {
-          socket.emit('browser:error', { message: 'Navigation restricted to x.com' });
+        if (!parsed.hostname.endsWith('x.com') && !parsed.hostname.endsWith('twitter.com') && !parsed.hostname.endsWith('instagram.com') && !parsed.hostname.endsWith('linkedin.com')) {
+          socket.emit('browser:error', { message: 'Navigation restricted to social platforms' });
           return;
         }
         await sessionManager.page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
