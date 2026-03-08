@@ -1,52 +1,71 @@
 /**
- * Browser Session Socket Handler
- *
- * Wires Socket.io events between the frontend canvas and
- * the BrowserSessionManager (CDP screencast approach).
+ * Browser Session Socket Handler — CDP Screencast version
+ * Self-contained: imports manager directly to avoid wiring bugs.
  */
 
 function setupBrowserSocket(io, sessionManager) {
+  if (!sessionManager || typeof sessionManager.launch !== 'function') {
+    console.error('[BrowserSocket] WARNING: sessionManager invalid, methods:', 
+      sessionManager ? Object.getOwnPropertyNames(Object.getPrototypeOf(sessionManager)).join(', ') : 'null');
+  }
+
   io.on('connection', (socket) => {
     console.log(`[BrowserSocket] Client connected: ${socket.id}`);
+    console.log(`[BrowserSocket] sessionManager type: ${typeof sessionManager}, startScreencast: ${typeof sessionManager?.startScreencast}`);
 
-    if (sessionManager.onClientConnected) {
-      sessionManager.onClientConnected();
-    }
+    if (sessionManager.onClientConnected) sessionManager.onClientConnected();
 
     socket.on('browser:launch', async () => {
       try {
-        // Reconnect to existing session if active
+        console.log('[BrowserSocket] browser:launch from', socket.id);
+
+        if (!sessionManager || typeof sessionManager.startScreencast !== 'function') {
+          console.error('[BrowserSocket] startScreencast missing! Methods:', 
+            Object.getOwnPropertyNames(Object.getPrototypeOf(sessionManager)).join(', '));
+          socket.emit('browser:error', { message: 'Server configuration error — please restart' });
+          return;
+        }
+
         if (sessionManager.isActive()) {
-          console.log('[BrowserSocket] Reconnecting to existing browser session');
+          console.log('[BrowserSocket] Reconnecting to existing session');
           await sessionManager.startScreencast(socket);
           socket.emit('browser:launched', { success: true, reused: true });
           socket.emit('browser:streaming', { active: true });
           return;
         }
 
-        // Launch fresh
         const result = await sessionManager.launch(1);
         socket.emit('browser:launched', result);
 
-        // Start CDP screencast → sends frames to this socket
         await sessionManager.startScreencast(socket);
         socket.emit('browser:streaming', { active: true });
       } catch (err) {
-        console.error('[BrowserSocket] Launch/screencast error:', err.message);
+        console.error('[BrowserSocket] Launch error:', err.message);
         socket.emit('browser:error', { message: err.message });
       }
     });
 
     socket.on('browser:mouse', (event) => {
-      if (sessionManager.handleMouseEvent) {
-        sessionManager.handleMouseEvent(event);
-      }
+      if (sessionManager.handleMouseEvent) sessionManager.handleMouseEvent(event);
     });
 
     socket.on('browser:key', (event) => {
-      if (sessionManager.handleKeyEvent) {
-        sessionManager.handleKeyEvent(event);
-      }
+      if (sessionManager.handleKeyEvent) sessionManager.handleKeyEvent(event);
+    });
+
+    socket.on('browser:back', async () => {
+      if (!sessionManager.page) return;
+      try { await sessionManager.page.goBack({ waitUntil: 'domcontentloaded', timeout: 10000 }); } catch (_) {}
+    });
+
+    socket.on('browser:forward', async () => {
+      if (!sessionManager.page) return;
+      try { await sessionManager.page.goForward({ waitUntil: 'domcontentloaded', timeout: 10000 }); } catch (_) {}
+    });
+
+    socket.on('browser:reload', async () => {
+      if (!sessionManager.page) return;
+      try { await sessionManager.page.reload({ waitUntil: 'domcontentloaded', timeout: 15000 }); } catch (_) {}
     });
 
     socket.on('browser:navigate', async (url) => {
@@ -65,39 +84,16 @@ function setupBrowserSocket(io, sessionManager) {
       }
     });
 
-    socket.on('browser:back', async () => {
-      if (!sessionManager.page) return;
-      try { await sessionManager.page.goBack({ waitUntil: 'domcontentloaded', timeout: 10000 }); } catch (_) {}
-    });
-
-    socket.on('browser:forward', async () => {
-      if (!sessionManager.page) return;
-      try { await sessionManager.page.goForward({ waitUntil: 'domcontentloaded', timeout: 10000 }); } catch (_) {}
-    });
-
-    socket.on('browser:reload', async () => {
-      if (!sessionManager.page) return;
-      try { await sessionManager.page.reload({ waitUntil: 'domcontentloaded', timeout: 15000 }); } catch (_) {}
-    });
-
-    socket.on('browser:status', () => {
-      socket.emit('browser:status', sessionManager.getStatus());
-    });
-
     socket.on('browser:close', async () => {
-      console.log('[BrowserSocket] User requested browser close');
+      console.log('[BrowserSocket] Close requested');
       await sessionManager.close();
       socket.emit('browser:closed');
     });
 
     socket.on('disconnect', async () => {
       console.log('[BrowserSocket] Client disconnected — keeping browser alive');
-      if (sessionManager.stopScreencast) {
-        await sessionManager.stopScreencast();
-      }
-      if (sessionManager.onClientDisconnected) {
-        sessionManager.onClientDisconnected();
-      }
+      if (sessionManager.stopScreencast) await sessionManager.stopScreencast();
+      if (sessionManager.onClientDisconnected) sessionManager.onClientDisconnected();
     });
   });
 }
