@@ -1,7 +1,9 @@
 /**
- * Browser Session Socket Handler — CDP Screencast + Input Relay
+ * Browser Session Socket Handler — CDP Screencast + Input Relay + AI Chat
  * Self-contained: screencast AND mouse/keyboard through same CDP session
  */
+
+const { processChat } = require('../outreach/ai-chat');
 
 function setupBrowserSocket(io, sessionManager) {
   io.on('connection', (socket) => {
@@ -134,6 +136,41 @@ function setupBrowserSocket(io, sessionManager) {
         await sessionManager.page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
       } catch (err) {
         socket.emit('browser:error', { message: `Navigation failed: ${err.message}` });
+      }
+    });
+
+    // ── AI Chat ──
+    socket.on('chat:message', async (data) => {
+      const { message, userId } = data;
+      if (!message || !userId) return;
+      try {
+        socket.emit('chat:thinking', { active: true });
+        const result = await processChat(userId, message);
+        socket.emit('chat:response', result);
+
+        // Execute browser action if returned
+        if (result.browserAction && sessionManager.page) {
+          try {
+            if (result.browserAction.type === 'navigate') {
+              await sessionManager.page.goto(result.browserAction.url, {
+                waitUntil: 'domcontentloaded',
+                timeout: 30000,
+              });
+            }
+          } catch (navErr) {
+            socket.emit('chat:response', {
+              response: `Browser navigation failed: ${navErr.message}`,
+              browserAction: null,
+            });
+          }
+        }
+      } catch (err) {
+        socket.emit('chat:response', {
+          response: `Error: ${err.message}`,
+          browserAction: null,
+        });
+      } finally {
+        socket.emit('chat:thinking', { active: false });
       }
     });
 

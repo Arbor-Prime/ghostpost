@@ -1,0 +1,232 @@
+{
+  "products": {
+    "dojo_go": {
+      "name": "Dojo Go",
+      "type": "Card Machine",
+      "description": "Portable card machine with receipt printer, Wi-Fi and 4G",
+      "price": "From £15/month or £79 upfront",
+      "features": ["Contactless", "Chip & PIN", "Apple Pay", "Google Pay", "Samsung Pay", "Built-in receipt printer", "10hr battery", "4G backup", "600+ EPOS integrations"]
+    },
+    "dojo_pocket": {
+      "name": "Dojo Pocket",
+      "type": "Card Machine",
+      "description": "Compact handheld for table-side orders and payments",
+      "price": "Add-on to Dojo Go",
+      "features": ["Table service", "Cloud EPOS sync", "Order + pay in one", "Virtual PIN pad", "Compact smartphone size"]
+    },
+    "dojo_wired": {
+      "name": "Dojo Wired",
+      "type": "Card Machine",
+      "description": "Stationary countertop terminal for fixed checkout and kiosks",
+      "price": "£20/month",
+      "features": ["Countertop", "Push buttons", "Kiosk ready", "No charging needed", "EPOS integration"]
+    },
+    "tap_to_pay": {
+      "name": "Tap to Pay on iPhone",
+      "type": "Software",
+      "description": "Accept contactless payments with just an iPhone",
+      "price": "Free with Dojo account",
+      "features": ["No extra hardware", "Debit & credit cards", "Apple Pay", "Digital wallets", "Instant setup"]
+    },
+    "payment_links": {
+      "name": "Payment Links",
+      "type": "Software",
+      "description": "Send customers a link to pay online",
+      "price": "Included with Dojo",
+      "features": ["Pre-authorised deposits", "Custom branding", "Share via text/email/social", "No website needed"]
+    },
+    "virtual_terminal": {
+      "name": "Virtual Terminal",
+      "type": "Software",
+      "description": "Take phone orders and remote billing from any device",
+      "price": "Included with Dojo",
+      "features": ["Phone orders", "Mail orders", "No hardware needed", "PCI compliant", "Real-time processing"]
+    },
+    "online_checkout": {
+      "name": "Online Checkout",
+      "type": "Software",
+      "description": "Website payment integration with plug-ins",
+      "price": "Included with Dojo",
+      "features": ["Shopping cart plug-ins", "Click & collect", "Secure checkout", "Custom branding"]
+    },
+    "pay_by_qr": {
+      "name": "Pay by QR",
+      "type": "Software",
+      "description": "QR code for dine-in pay, tip and review",
+      "price": "Included with Dojo",
+      "features": ["Pay at table", "Tipping", "Google review prompt", "Reduce staff admin"]
+    },
+    "business_funding": {
+      "name": "Business Funding",
+      "type": "Finance",
+      "description": "Cash advance from £1k to £1M repaid as % of daily card takings",
+      "price": "Fixed fee, no interest",
+      "features": ["Same-day funding under £10k", "No fixed monthly repayments", "Pay more on busy days less on slow", "No early repayment fees", "6-9 month typical repayment"]
+    },
+    "bookings": {
+      "name": "Dojo Bookings",
+      "type": "Software",
+      "description": "Discovery, reservations and automatic seating for restaurants",
+      "price": "Included with Dojo",
+      "features": ["Get discovered by diners", "Take reservations", "Automatic seating", "Reduce no-shows"]
+    }
+  },
+
+  "selling_points": [
+    "Next-day payouts 7 days a week including weekends and bank holidays",
+    "We'll cover your exit fees up to £3,000 when you switch",
+    "30-day no-commitment trial — cancel any time",
+    "99.99% uptime with dual Wi-Fi and 4G",
+    "PCI compliance simplified to a 2-step process",
+    "Over 140,000 UK businesses already use Dojo",
+    "UK-based support 7 days a week",
+    "600+ EPOS system integrations"
+  ],
+
+  "referral_programme": {
+    "description": "Existing Dojo customers can refer other businesses",
+    "payouts": {
+      "first": 50,
+      "second": 75,
+      "thereafter": 100
+    },
+    "terms": "Uncapped. Paid 14 days after referred customer goes live.",
+    "note": "Only pitch referrals to YOUR Dojo customers — there are 500+ PCs in UK and Ireland"
+  },
+
+  "pricing": {
+    "fix": {
+      "name": "Fix",
+      "price": "£39.99/month",
+      "description": "Covers up to £3,999 card turnover per month. 1% on excess.",
+      "target": "Small businesses under £100k annual card turnover"
+    },
+    "flex": {
+      "name": "Flex",
+      "price": "Custom",
+      "description": "Negotiable debit, credit and secure transaction rates",
+      "target": "Growing businesses needing flexibility"
+    },
+    "pro": {
+      "name": "Pro",
+      "price": "Bespoke",
+      "description": "Fully bespoke deal with reduced fees and tailored setup",
+      "target": "Complex businesses with £1M+ annual card turnover"
+    }
+  },
+
+  "sector_pitches": {
+    "cafe_restaurant": {
+      "label": "Cafe / Restaurant",
+      "keywords": ["cafe", "coffee", "restaurant", "bistro", "brasserie", "diner", "eatery", "brunch", "deli", "cafeteria"],
+      "lead_products": ["dojo_go", "tap_to_pay", "dojo_pocket"],
+      "extras": ["bookings", "pay_by_qr", "business_funding"],
+      "pain_points": ["Slow payouts tying up cash flow", "Clunky old card machines", "High transaction fees", "No table-side payments"],
+      "opener_angles": ["Mention specific menu items or food photos", "Reference their busy service or reviews", "Talk about table turnover and speed"]
+    },
+    "pub_bar": {
+      "label": "Pub / Bar / Nightclub",
+      "keywords": ["pub", "bar", "ale house", "tap room", "wine bar", "cocktail", "nightclub", "brewery"],
+      "lead_products": ["dojo_go", "business_funding"],
+      "extras": ["pay_by_qr", "tap_to_pay"],
+      "pain_points": ["Cash flow gaps between busy nights", "Locked into expensive contracts", "Slow weekend payouts"],
+      "opener_angles": ["Reference their drinks menu or events", "Talk about weekend payout speed", "Mention exit fee coverage if switching"]
+    },
+    "takeaway_fast_food": {
+      "label": "Takeaway / Fast Food",
+      "keywords": ["takeaway", "takeout", "fast food", "pizza", "kebab", "chippy", "fish and chips", "sandwich shop"],
+      "lead_products": ["dojo_go"],
+      "extras": ["business_funding"],
+      "pain_points": ["Multiple payment systems", "Slow reconciliation", "No EPOS integration"],
+      "opener_angles": ["Reference their food or delivery service", "Talk about speed of service", "Mention EPOS integration"]
+    },
+    "barber_beauty": {
+      "label": "Barber / Beautician / Hair Salon",
+      "keywords": ["barber", "hairdresser", "hair salon", "beautician", "beauty", "tanning", "nails", "aesthetics", "tattoo", "spa"],
+      "lead_products": ["dojo_go", "tap_to_pay"],
+      "extras": ["business_funding"],
+      "pain_points": ["Basic card readers with high fees", "No business support or funding", "Want something modern and simple"],
+      "opener_angles": ["Compliment their work or style photos", "Reference their booking system", "Talk about Tap to Pay simplicity"]
+    },
+    "mechanic_trade": {
+      "label": "Mechanic / Plumber / Electrician / Trade",
+      "keywords": ["mechanic", "garage", "mot", "plumber", "electrician", "builder", "carpenter", "boiler", "gas engineer", "tyre", "vehicle"],
+      "lead_products": ["dojo_go", "tap_to_pay"],
+      "extras": ["virtual_terminal", "business_funding"],
+      "pain_points": ["Taking payment on-site is awkward", "Cash flow for parts and materials", "Chasing invoices"],
+      "opener_angles": ["Reference their services or reviews", "Talk about getting paid on the spot", "Mention funding for equipment"]
+    },
+    "retail_shop": {
+      "label": "Retail Shop",
+      "keywords": ["shop", "store", "boutique", "gift", "clothing", "fashion", "footwear", "pet shop", "florist", "bookshop", "newsagent"],
+      "lead_products": ["dojo_go"],
+      "extras": ["payment_links", "business_funding"],
+      "pain_points": ["Tied into expensive long contracts", "Old hardware that breaks", "Want modern customer experience"],
+      "opener_angles": ["Reference their products or window display", "Talk about exit fee coverage", "Mention next-day payouts"]
+    },
+    "hotel_bnb": {
+      "label": "Hotel / B&B / Guest House",
+      "keywords": ["hotel", "guest house", "b&b", "bed and breakfast", "self catering", "accommodation"],
+      "lead_products": ["dojo_go", "online_checkout"],
+      "extras": ["payment_links", "business_funding"],
+      "pain_points": ["Complex deposit and advance payment management", "Multiple payment channels to reconcile", "Seasonal cash flow"],
+      "opener_angles": ["Reference their property or location", "Talk about deposit management", "Mention funding for renovations"]
+    },
+    "dentist_health": {
+      "label": "Dentist / Health Practitioner",
+      "keywords": ["dentist", "orthodontist", "physiotherapist", "chiropractor", "osteopath", "optician", "chiropodist", "dermatologist"],
+      "lead_products": ["dojo_go"],
+      "extras": ["payment_links", "business_funding"],
+      "pain_points": ["Deposit management for treatments", "Reconciliation across multiple services", "Patient payment flexibility"],
+      "opener_angles": ["Reference their practice or speciality", "Talk about deposit collection via payment links", "Mention patient convenience"]
+    },
+    "bakery_dessert": {
+      "label": "Bakery / Patisserie / Dessert Shop",
+      "keywords": ["bakery", "patisserie", "cake", "dessert", "ice cream", "doughnut", "cookie", "pasty"],
+      "lead_products": ["dojo_go", "tap_to_pay"],
+      "extras": ["business_funding"],
+      "pain_points": ["High volume small transactions", "Speed of service matters", "Simple setup needed"],
+      "opener_angles": ["Reference their baked goods or photos", "Talk about contactless speed", "Mention Tap to Pay for pop-ups"]
+    },
+    "grocery_convenience": {
+      "label": "Grocery / Convenience Store",
+      "keywords": ["grocery", "supermarket", "corner shop", "convenience", "newsagent", "off licence"],
+      "lead_products": ["dojo_go"],
+      "extras": ["business_funding"],
+      "pain_points": ["Low margins need low fees", "Reliability is everything", "Long contracts with current provider"],
+      "opener_angles": ["Reference their local community role", "Talk about competitive rates", "Mention exit fee coverage"]
+    }
+  },
+
+  "prohibited_categories": [
+    "Adult Entertainment", "Airlines", "Auctions", "Banking & Financial Services",
+    "Bridal Shop", "Car & Vehicle Hire", "Used Car Dealerships", "Charities",
+    "Construction (bathrooms/kitchens)", "Schools & Universities", "Counselling",
+    "Digital Books & Catalogue Sales", "Driving Instructors", "Drugs & CBD",
+    "Equipment Rental", "Fertility Clinics", "Furniture", "Gaming & Gambling",
+    "Guns & Weapons", "Gyms & Fitness Classes", "Haulage & Freight",
+    "Health & Exercise Classes", "Home Improvements (windows/doors/solar)",
+    "Hypnotherapy & Alternative Therapy", "Investments & Trading", "Jewellers",
+    "Legal Services", "Livestock", "Marinas & Boat Hire", "Marquee Renting",
+    "Medical Laboratories", "Medical Surgery", "Membership Organisations",
+    "MLM & Pyramid Schemes", "Nursing & Care Homes", "Pawn Brokers",
+    "Property & Estate Agents", "Raffles & Lotteries", "Recruitment",
+    "Remote IT Repair", "Scrap & Skip Hire", "Security Services",
+    "Subscription Services", "Surgical Procedures", "Telecoms",
+    "Training Courses", "Travel Services", "Utilities", "Venue & Event Hire",
+    "Visa & Passport Services", "Website Design & SEO", "Weddings"
+  ],
+
+  "review_categories": [
+    "Accountants & Auditors", "Aesthetics & Tattoo", "Amusement & Recreation",
+    "Antique Shops", "Art Dealers & Galleries", "Automotive Sales",
+    "Building & Construction", "Camera & Photography Studios",
+    "Camping & Outdoor (knives/axes)", "Caterers", "Chemist & Pharmacy",
+    "Child Day Care", "Dentists", "Fashion Accessories (jewellery)",
+    "Fireworks", "Golf Clubs", "Hearing Aids & Health Practitioners",
+    "Hotels & B&Bs", "Mobility Scooters", "Sports Clubs",
+    "Social & Working Mens Clubs", "Tailoring", "Tile Stores",
+    "Tobacco & Vape", "Caravan Parks", "Transportation & Taxi",
+    "Undertakers & Funeral Directors"
+  ]
+}
