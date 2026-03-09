@@ -24,6 +24,10 @@ const dojoKnowledge = JSON.parse(
 
 /**
  * Fast AI generation via xAI (Grok). Falls back to Ollama if no key.
+ * 
+ * SAFETY: This is for CHAT ASSISTANT ONLY — answering questions,
+ * intent detection, product lookups, navigation commands.
+ * NEVER for content that represents the user to another person.
  */
 async function aiGenerate(prompt, options = {}) {
   const { temperature = 0.5, maxTokens = 500 } = options;
@@ -49,6 +53,18 @@ async function aiGenerate(prompt, options = {}) {
   }
 
   // Fallback: Ollama local
+  return ollamaGenerate(prompt, temperature);
+}
+
+/**
+ * Ollama-only generation. Used for ALL content that represents the user.
+ * 
+ * SAFETY: DMs, replies, outreach messages — anything sent to another person
+ * MUST go through Ollama. This keeps content generation local, controlled
+ * by Voice DNA, emotional state, and circadian persona.
+ * Grok NEVER writes content that leaves the system.
+ */
+async function ollamaGenerate(prompt, temperature = 0.7) {
   const ollamaUrl = process.env.OLLAMA_URL || 'http://localhost:11434';
   const response = await fetch(`${ollamaUrl}/api/generate`, {
     method: 'POST',
@@ -256,7 +272,9 @@ RULES:
 Write ONLY the DM text, nothing else.`;
 
   try {
-    let dm = await aiGenerate(prompt, { temperature: 0.7, maxTokens: 300 });
+    // SAFETY: Content creation ALWAYS through Ollama — controlled by Voice DNA
+    // Grok NEVER writes content that gets sent to another person
+    let dm = await ollamaGenerate(prompt, 0.7);
 
     // Clean up any markdown or quotes
     dm = dm.replace(/^["']|["']$/g, '').replace(/^#+\s*/gm, '').trim();
