@@ -139,6 +139,14 @@ function setupBrowserSocket(io, sessionManager) {
       }
     });
 
+    // ── Paste relay via CDP ──
+    socket.on('browser:paste', async (data) => {
+      if (!cdpSession || !data.text) return;
+      try {
+        await cdpSession.send('Input.insertText', { text: data.text });
+      } catch (_) {}
+    });
+
     // ── AI Chat ──
     socket.on('chat:message', async (data) => {
       const { message, userId } = data;
