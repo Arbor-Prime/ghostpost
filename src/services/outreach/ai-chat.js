@@ -207,7 +207,7 @@ async function handleSearchProspects(userId, intent, ollamaUrl) {
     response: `Searching for ${category} in ${location} on Instagram.${sectorInfo}\n\nI'll navigate to the search now. Once you find a business profile, tell me to "draft a DM" and I'll write a personalised message.`,
     browserAction: {
       type: 'navigate',
-      url: `https://www.google.co.uk/search?q=${encodeURIComponent(`${category} ${location} instagram`)}`,
+      url: `https://www.google.co.uk/search?q=${encodeURIComponent(`${category} ${location} instagram`)}&hl=en&gl=uk`,
     },
   };
 }
