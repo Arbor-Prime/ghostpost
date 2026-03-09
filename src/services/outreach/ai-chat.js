@@ -6,17 +6,63 @@
  * - "draft a DM for this business" → generates personalised message
  * - "what Dojo products suit a pub?" → product knowledge lookup
  * 
- * Uses Ollama/Mistral + Dojo knowledge base + user's voice profile
+ * Uses xAI (Grok) for fast chat/DM generation
+ * Ollama/Mistral stays for background voice profile processing
  */
 
 const fs = require('fs');
 const path = require('path');
 const db = require('../../config/database');
 
+const XAI_API_KEY = process.env.XAI_API_KEY;
+const XAI_MODEL = 'grok-3-mini-fast';
+
 // Load Dojo knowledge
 const dojoKnowledge = JSON.parse(
   fs.readFileSync(path.join(__dirname, '../../data/dojo-knowledge.json'), 'utf-8')
 );
+
+/**
+ * Fast AI generation via xAI (Grok). Falls back to Ollama if no key.
+ */
+async function aiGenerate(prompt, options = {}) {
+  const { temperature = 0.5, maxTokens = 500 } = options;
+
+  if (XAI_API_KEY) {
+    // xAI — fast cloud
+    const response = await fetch('https://api.x.ai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${XAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: XAI_MODEL,
+        messages: [{ role: 'user', content: prompt }],
+        temperature,
+        max_tokens: maxTokens,
+      }),
+    });
+    const data = await response.json();
+    if (data.error) throw new Error(data.error.message || 'xAI API error');
+    return data.choices?.[0]?.message?.content || '';
+  }
+
+  // Fallback: Ollama local
+  const ollamaUrl = process.env.OLLAMA_URL || 'http://localhost:11434';
+  const response = await fetch(`${ollamaUrl}/api/generate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'mistral',
+      prompt,
+      stream: false,
+      options: { temperature },
+    }),
+  });
+  const data = await response.json();
+  return data.response || '';
+}
 
 /**
  * Process a chat message from the user.
@@ -210,20 +256,9 @@ RULES:
 Write ONLY the DM text, nothing else.`;
 
   try {
-    const response = await fetch(`${ollamaUrl}/api/generate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'mistral',
-        prompt,
-        stream: false,
-        options: { temperature: 0.7 },
-      }),
-    });
-    const data = await response.json();
-    let dm = (data.response || '').trim();
+    let dm = await aiGenerate(prompt, { temperature: 0.7, maxTokens: 300 });
 
-    // Clean up any markdown or quotes Mistral might add
+    // Clean up any markdown or quotes
     dm = dm.replace(/^["']|["']$/g, '').replace(/^#+\s*/gm, '').trim();
 
     // Store as draft
@@ -335,19 +370,9 @@ User message: ${message}
 Respond helpfully and concisely. British English. No corporate jargon.`;
 
   try {
-    const response = await fetch(`${ollamaUrl}/api/generate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'mistral',
-        prompt,
-        stream: false,
-        options: { temperature: 0.5 },
-      }),
-    });
-    const data = await response.json();
+    const result = await aiGenerate(prompt, { temperature: 0.5, maxTokens: 400 });
     return {
-      response: (data.response || 'Sorry, I couldn\'t process that.').trim(),
+      response: result.trim() || 'Sorry, I couldn\'t process that.',
       browserAction: null,
     };
   } catch (err) {
