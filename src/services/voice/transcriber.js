@@ -44,10 +44,10 @@ async function transcribe(audioBuffer, userId) {
     );
     const duration = parseFloat(durationOutput.trim());
 
-    // Run whisper.cpp
+    // Run whisper.cpp (CPU-based: ~1x realtime for small model, so 5min audio ≈ 5-8min processing)
     execSync(
       `${WHISPER_PATH} -m ${WHISPER_MODEL} -f "${wavPath}" -otxt -of "${outputPath}" --no-timestamps -l en`,
-      { timeout: 120000 }
+      { timeout: 600000 }
     );
 
     // Read transcription output
