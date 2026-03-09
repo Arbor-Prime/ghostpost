@@ -16,7 +16,6 @@ const natural = require('natural');
 const nlp = require('compromise');
 
 const tokenizer = new natural.WordTokenizer();
-const TfIdf = new natural.TfIdf;
 
 /**
  * Run full NLP extraction on a voice transcription.
@@ -35,9 +34,11 @@ async function extractVoiceProfile(text, ollamaUrl = 'http://localhost:11434') {
   const totalUniqueWords = uniqueWords.size;
 
   // TF-IDF to find signature words (high frequency relative to general English)
-  TfIdf.addDocument(text.toLowerCase());
+  // MUST create fresh instance per call — module-level TfIdf leaks between users
+  const tfidf = new natural.TfIdf();
+  tfidf.addDocument(text.toLowerCase());
   const tfidfScores = [];
-  TfIdf.listTerms(0).forEach(item => {
+  tfidf.listTerms(0).forEach(item => {
     if (item.term.length > 3) {
       tfidfScores.push({ word: item.term, score: item.tfidf });
     }
