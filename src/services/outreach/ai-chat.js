@@ -132,9 +132,15 @@ function detectIntent(msg) {
   for (const pattern of searchPatterns) {
     const match = msg.match(pattern);
     if (match) {
+      // Strip filler words from category
+      let category = match[1]?.trim() || '';
+      category = category.replace(/^(me|us|some|a few|all|all the|the)\s+/gi, '');
+      category = category.replace(/\s+(me|us|some|a few|please)$/gi, '');
+      category = category.trim();
+
       return {
         type: 'search_prospects',
-        category: match[1]?.trim(),
+        category,
         location: match[2]?.trim() || 'Nottingham',
       };
     }
@@ -201,7 +207,7 @@ async function handleSearchProspects(userId, intent, ollamaUrl) {
     response: `Searching for ${category} in ${location} on Instagram.${sectorInfo}\n\nI'll navigate to the search now. Once you find a business profile, tell me to "draft a DM" and I'll write a personalised message.`,
     browserAction: {
       type: 'navigate',
-      url: `https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent(searchQuery)}`,
+      url: `https://www.google.co.uk/search?q=${encodeURIComponent(`${category} ${location} instagram`)}`,
     },
   };
 }
