@@ -15,7 +15,7 @@ const path = require('path');
 const db = require('../../config/database');
 
 const XAI_API_KEY = process.env.XAI_API_KEY;
-const XAI_MODEL = 'grok-3-mini-fast';
+const XAI_MODEL = 'grok-3-mini';
 
 // Load Dojo knowledge
 const dojoKnowledge = JSON.parse(
