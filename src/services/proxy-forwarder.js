@@ -21,7 +21,8 @@ const LOCAL_PORT = 8899;
 
 async function startProxy() {
   const sessionTag = `gp-${Date.now()}`;
-  const upstreamUrl = `http://${PROXY_USER}_country-${PROXY_COUNTRY}_session-${sessionTag}_lifetime-30m:${PROXY_PASS}@${PROXY_HOST}:${PROXY_PORT}`;
+  const authPass = `${PROXY_PASS}_country-${PROXY_COUNTRY}_session-${sessionTag}_lifetime-30m`;
+  const upstreamUrl = `http://${PROXY_USER}:${authPass}@${PROXY_HOST}:${PROXY_PORT}`;
 
   const server = new ProxyChain.Server({
     port: LOCAL_PORT,
