@@ -74,8 +74,10 @@ class BrowserSessionManager {
         ],
       };
 
-      if (row?.proxy_host) {
-        launchOptions.args.push(`--proxy-server=http://${row.proxy_host}:${row.proxy_port}`);
+      if (row?.proxy_host || process.env.PROXY_HOST) {
+        // Use local proxy forwarder (handles IPRoyal auth + country-gb)
+        launchOptions.args.push('--proxy-server=http://localhost:8899');
+        console.log('[BrowserSession] Proxy: localhost:8899 → IPRoyal (UK residential)');
       }
 
       this.browser = await chromium.launch(launchOptions);
@@ -388,3 +390,4 @@ class BrowserSessionManager {
 }
 
 module.exports = BrowserSessionManager;
+
